@@ -135,6 +135,7 @@ export default {
 
 .sign-in-item {
   width: 50px;
+  cursor: pointer;
 }
 
 .box {
