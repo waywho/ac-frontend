@@ -1,0 +1,112 @@
+$color-silver: #cccbcb !default;
+$color-lightgray: #d4d4d4 !default;
+$color-midgray: #c9c7c7 !default;
+$color-darkgray: #706d6c !default;
+$color-black: #0d0d0e !default;
+$color-highlight: #edf2ff !default; // color-focus 15% opacity
+$color-gold: #cd9d2b !default;
+$color-tile: #faf6f6 !default;
+$color-darkred: #73020d !default;
+$color-mud: #c3bbad !default;
+$color-body: #f9f9f9 !default;
+
+// States
+$color-error: #f03c69 !default;
+$color-success: #35beb1 !default;
+$color-warning: #9e0b0f !default;
+$color-focus: #cd9d2b !default;
+
+$color-text: #3e3c3c !default;
+$color-link: $color-text;
+$color-link-hover: #cd9d2b;
+$color-headings: $color-text;
+
+// Font
+$font-family: 'Raleway', Helvetica, Arial, sans-serif;
+$headings-font-family: $font-family;
+
+// Font Size
+$font-size: 16px !default;
+$font-size-smaller: $font-size - 4px !default;
+$font-size-small: $font-size - 2px !default;
+$font-size-big: $font-size + 2px !default;
+$font-size-large: $font-size + 4px !default;
+$input-font-size: 15px !default;
+$input-font-size-smaller: $input-font-size - 4px !default;
+$input-font-size-small: $input-font-size - 2px !default;
+$input-font-size-big: $input-font-size + 2px !default;
+$input-font-size-large: $input-font-size + 4px !default;
+// Margin
+$text-margin-bottom: $font-size !default;
+
+// Headings
+// Font Size
+// By default: 60, 48, 36, 24, 21, 18, 16
+$heading-font-size-title: 60px !default;
+$heading-font-size-1: 48px !default;
+$heading-font-size-2: 36px !default;
+$heading-font-size-3: 24px !default;
+$heading-font-size-4: 21px !default;
+$heading-font-size-5: 18px !default;
+$heading-font-size-6: 16px !default;
+
+// Baseline
+$heading-base-line-title: 64px !default;
+$heading-base-line-1: 52px !default;
+$heading-base-line-2: 40px !default;
+$heading-base-line-3: 32px !default;
+$heading-base-line-4: 32px !default;
+$heading-base-line-5: 28px !default;
+$heading-base-line-6: 24px !default;
+
+// Margin
+$heading-margin-bottom: $font-size !default;
+
+// Baseline
+$base-line: 22px !default;
+$base-line-smaller: 18px !default;
+$base-line-small: 16px !default;
+$base-line-big: 24px !default;
+$base-line-large: 28px !default;
+$textarea-base-line: 16px !default;
+
+// Height
+$input-height: 40px !default;
+$input-height-small: 36px !default;
+$input-height-big: 48px !default;
+$input-height-large: 56px !default;
+
+// Padding
+$input-padding-rl: 12px !default;
+$input-padding-small-rl: 12px !default;
+$input-padding-big-rl: 12px !default;
+$input-padding-large-rl: 12px !default;
+$input-textarea-padding-tb: 8px !default;
+
+// States
+$input-border-width: 1px !default;
+$input-border-color: $color-lightgray !default;
+$input-background-color: #fff !default;
+$input-box-shadow: none !default;
+
+$input-focus-background-color: #fff !default;
+$input-focus-border-color: $color-focus !default;
+$input-focus-box-shadow: 0 0 1px $color-focus inset !default;
+
+$input-error-background-color: $color-error !default;
+$input-error-border-color: $color-error !default;
+$input-error-focus-box-shadow: 0 0 1px $color-error inset !default;
+
+$input-success-background-color: $color-success !default;
+$input-success-border-color: $color-success !default;
+$input-success-focus-box-shadow: 0 0 1px $color-success inset !default;
+
+$input-disabled-opacity: .6;
+$input-disabled-color: rgba(0, 0, 0, .5);
+
+// Radius
+$input-border-radius: 15px !default;
+
+// header
+$header-height: 100px !default;
+$header-height-mobile: 163px !default;
