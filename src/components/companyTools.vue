@@ -20,6 +20,7 @@ import settingsTool from './settingsTool';
 import messageTool from './messageTool';
 import budgetTool from './budgetTool';
 import mediaTool from './mediaTool';
+import ticketTool from './ticektTool';
 
 export default {
   name: 'tools',
@@ -28,7 +29,8 @@ export default {
     'company-settings': settingsTool,
     'company-message': messageTool,
     'company-budget': budgetTool,
-    'company-media': mediaTool
+    'company-media': mediaTool,
+    'company-ticket': ticketTool
   },
   props: {
     profileId: String
