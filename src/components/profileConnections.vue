@@ -25,7 +25,7 @@
 
 <script>
 export default {
-  name: 'connections',
+  name: 'profileConnections',
   props: {
   	connections: Array 
   },
