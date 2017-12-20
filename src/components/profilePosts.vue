@@ -65,7 +65,7 @@
 
 <script>
 export default {
-  name: 'posts',
+  name: 'profilePosts',
   props: {
   	name: String,
   	posts: Array,
