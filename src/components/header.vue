@@ -11,12 +11,12 @@
       </li>
       <li v-if="currentUser" class="header-avatar" v-on:click="notificationActive = !notificationActive">
         <app-notificationBubble v-if="!notificationActive" class="notification-bubble"></app-notificationBubble>
-          <div class="avatar-small-border avatar-space" >
-          <img src="../assets/images/myopera-logo.png" />
+        <div class="avatar-small-border avatar-space" >
+            <img src="../assets/images/myopera-logo.png" />
         </div>
-        
       </li>
       <li v-if="!currentUser" class='avatar-space sign-in-item' id="show-modal" v-on:click="showModal()">Sign in</li>
+
       <li :class="['menu-button', {open: isActive}]">
           <i v-on:click="toggleMenu()" class="fa fa-bars fa-2x is-darkgray" aria-hidden="true"></i>
       </li>
@@ -34,6 +34,7 @@ import menuMixin from '../mixins/menuMixin'
 import notifications from './notifications'
 import notificationBubble from './notificationBubble'
 import { mixin as clickaway } from 'vue-clickaway'
+import currentUser from '../mixins/currentUserMixin';
 
 export default {
   components: {
@@ -41,8 +42,7 @@ export default {
     'app-notificationBubble': notificationBubble
   },
   props: {
-    isActive: Boolean,
-    currentUser: Boolean
+    isActive: Boolean
   },
   data() {
     return {
@@ -63,7 +63,7 @@ export default {
     }
     
   },
-  mixins: [menuMixin, clickaway]
+  mixins: [menuMixin, clickaway, currentUser]
 }
 </script>
 

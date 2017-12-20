@@ -11,6 +11,7 @@ import 'chart.js'
 import VueMediaEmbed from 'vue-media-embed'
 import 'hchs-vue-charts'
 import Vuex from 'vuex'
+import * as firebase from 'firebase'
 
 
 Vue.use(VueMediaEmbed, { store })
@@ -36,5 +37,14 @@ new Vue({
   store: store,
   router,
   template: '<App/>',
-  components: { App }
+  components: { App },
+  created() {
+  	firebase.initializeApp({
+	  	apiKey: 'AIzaSyBj0LSNuwTZNyD1BKZxwYQE62n9CpOT3E0',
+		authDomain: 'artist-center.firebaseapp.com',
+		databaseURL: 'https://artist-center.firebaseio.com',
+		projectId: 'artist-center',
+		storageBucket: 'artist-center.appspot.com'
+	})
+  }
 })

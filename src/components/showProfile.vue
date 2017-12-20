@@ -3,14 +3,14 @@
 		<div class="profile-banner">
 			<div class="profile-banner-assets">
 
-				<div class="profile-cover" :style="{'background-image': 'url('+ profile.coverImage +')'}">
+				<div class="profile-cover" :style="{'background-image': 'url('+ profileCover +')'}">
 					<div class="cover-edit">
 				 		<i class="fa fa-camera" aria-hidden="true"></i>Update Cover Photo
 					</div>
 				</div>
 
 				<div class="profile-avatar-wrap" >
-					<div class="profile-avatar" :style="{'background-image': 'url('+ profile.image +')'}">
+					<div class="profile-avatar" :style="{'background-image': 'url('+ profileImage +')'}">
 	
 						<svg height="100%" width="100%">
 							<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
@@ -68,6 +68,20 @@ export default {
 		}
 	},
 	computed: {
+		profileImage () {
+			if (this.profile.image !== null && this.profile.image !== undefined) {
+				return this.profile.image
+			} else {
+				return require("../assets/images/avatar-holder.jpg")
+			}
+		},
+		profileCover () {
+			if (this.profile.coverImage !== null && this.profile.coverImage !== undefined) {
+				return this.profile.coverImage
+			} else {
+				return require("../assets/images/cover-holder.jpg")
+			}
+		}
 	},
 	created () {
 		this.profile = this.$store.state.profiles[this.id]

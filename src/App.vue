@@ -3,7 +3,7 @@
     <app-menu :class="['app-menu', {'menu-open': isActive}]" v-on:toggleMenu="menuToggle($event)"></app-menu>
     <div id="app">
       <app-signIn v-if="showModal" @close="showModal = false"></app-signIn>
-      <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:modalShow="showModal = true" :isActive="isActive" :current-user="currentUser"></app-header>
+      <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:modalShow="showModal = true" :isActive="isActive"></app-header>
       <router-view class="main-body" @scroll="handleScroll"/>
       <app-footer></app-footer>
     </div>
@@ -20,6 +20,7 @@ import searchResults from './components/searchResults'
 import landing from './components/landing'
 import signIn from './components/signInModal'
 import pageStatic from './components/pageStatic'
+import currentUser from './mixins/currentUserMixin';
 
 export default {
   name: 'app',
@@ -41,10 +42,10 @@ export default {
       scrollPosition: 0,
       navPosition: '',
       isActive: false,
-      currentUser: false,
       showModal: false
     }
   },
+  mixins: [currentUser],
   methods: {
     handleScroll: function(e) {
        var currentScrollPosition = e.srcElement.scrollTop;
@@ -58,6 +59,11 @@ export default {
     menuToggle: function(msg) {
       this.isActive = !this.isActive;
       document.body.classList.toggle('push-left')
+    }
+  },
+  computed: {
+    userIsAuthenticated() {
+      return this.$store.getters.user !== null && this.$store.getters.user !== undefined
     }
   },
   created() {

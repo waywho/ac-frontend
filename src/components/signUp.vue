@@ -26,14 +26,14 @@ export default {
   name: 'signUp',
   components: {
   	'signUpCredentials': signUpCredentials,
- 	'signUpProfileType': signUpProfileType,
- 	'signUpDetails': signUpDetails,
- 	'signUpSocials': signUpSocials,
- 	'signUpPhotos': signUpPhotos,
- 	'signUpArtistConnections': signUpArtistConnections,
- 	'signUpCompanyConnections': signUpCompanyConnections,
- 	'signUpComplete': signUpComplete,
- 	'next-last-step': nextLastStep
+   	'signUpProfileType': signUpProfileType,
+   	'signUpDetails': signUpDetails,
+   	'signUpSocials': signUpSocials,
+   	'signUpPhotos': signUpPhotos,
+   	'signUpArtistConnections': signUpArtistConnections,
+   	'signUpCompanyConnections': signUpCompanyConnections,
+   	'signUpComplete': signUpComplete,
+   	'next-last-step': nextLastStep
   },
   data () {
     return {
@@ -43,13 +43,13 @@ export default {
       progressPosition: '',
       scrollPosition: 0,
       signUpSteps: [
-      	  	'signUpCredentials',
-		 	'signUpProfileType',
-		 	'signUpDetails',
-		 	'signUpPhotos',
-		 	'signUpSocials',
-		 	'signUpArtistConnections',
-		 	'signUpComplete'
+      	'signUpCredentials',
+  		 	'signUpProfileType',
+  		 	'signUpDetails',
+  		 	'signUpPhotos',
+  		 	'signUpSocials',
+  		 	'signUpArtistConnections',
+  		 	'signUpComplete'
       ]
     }
   },
