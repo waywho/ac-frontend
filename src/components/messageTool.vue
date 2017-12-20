@@ -113,7 +113,7 @@ export default {
 	// border: 1px solid #dddcdc;
 	background-color: #fff;
 	height: 100%;
-	flex-basis: 42%;
+	flex-basis: 41%;
 }
 
 .message-header {
