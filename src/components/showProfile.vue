@@ -30,9 +30,7 @@
 			<artist-details v-if="profile.type === 'artist'" class="profile-banner-text" v-bind:profile-details="profile.details"></artist-details>
 		</div>
 
-		<company-tools v-if="profile.type === 'company'" v-bind:profile-id="profile.id" class="section-margins"></company-tools>
-
-		<artist-tools v-if="profile.type === 'artist'" v-bind:profile-id="profile.id" class="section-margins"></artist-tools>
+		<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
 
 		<profile-connections class="profile-section" :connections="profile.connections" v-bind:profile-id="profile.id"></profile-connections>
 
@@ -45,21 +43,19 @@
 <script>
 import companyDetails from './companyDetails';
 import artistDetails from './artistDetails';
-import companyTools from './companyTools';
-import artistTools from './artistTools';
+import profileTools from './profileTools';
 import auditions from './auditions';
-import posts from './posts';
-import connections from './connections';
+import profilePosts from './profilePosts';
+import profileConnections from './profileConnections';
 
 export default {
 	components: {
 		'company-details': companyDetails,
-		'company-tools': companyTools,
+		'profile-tools': profileTools,
 		'company-auditions': auditions,
 		'artist-details': artistDetails,
-		'profile-posts': posts,
-		'profile-connections': connections,
-		'artist-tools': artistTools
+		'profile-posts': profilePosts,
+		'profile-connections': profileConnections
 	},
 	data() {
 		return {
