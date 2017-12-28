@@ -1,15 +1,15 @@
 <template>
-	<div class="connection-tile tile-container" v-on:click="sendConnection(connection.id)">
-
-			<input :id="connection.id" type='checkbox' :value="connection.id" v-model='connectionID' />
-	       	<label :for="connection.id"><span></span></label>
+	<div class="connection-tile tile-container">
+<!-- I am not in use -->
+			<input :id="connection.name" type='checkbox' :value="connection.id" @click="sendConnection($event.target.value)" />
+	       	<label :for="connection.name"><span></span></label>
 
 			<div class="avatar-medium connection-avatar">
 				<img v-bind:src="connection.img" :alt="connection.firstName + connection.lastName + ' photo'" />
 			</div>
-			<div class="name strong small">{{ connection.firstName}} {{ connection.lastName }}</div>
+			<div class="name strong small">{{ connection.name }}</div>
 			<div class="place tiny">{{connection.city}} {{connection.province}}</div>
-			<div class="role smaller">{{ connection.role }}</div>
+			<div v-if="connection.type === 'artist'" class="role smaller">{{ connection.role }}</div>
 		<span class="small">CONNECT</span>
 	</div>
 </template>
@@ -18,17 +18,17 @@
 export default {
   name: 'connectionTile',
   props: {
-  	connection: Object
+  	connection: Object,
+  	value: Array
   },
   data () {
     return {
-      connectionID: []
     }
   },
   methods: {
-  	sendConnection: function(key) {
-  		this.connectionID.push(key)
-  		this.$emit('addConnection', this.connectionID)
+  	sendConnection: function(id) {
+  		console.log(id);
+  		this.$emit('change', id);
   	}
   }
 }
@@ -71,6 +71,10 @@ export default {
 	color: $color-gold;
 	width: 16px;
 	height: 16px;
+}
+
+.name {
+	margin-bottom: 5px;
 }
 
 </style>

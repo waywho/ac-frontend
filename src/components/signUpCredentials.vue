@@ -42,7 +42,7 @@ export default {
   watch: {
     user(value) {
       if(value !== null && value !== undefined) {
-        this.saveData(1, this.credentials)
+        this.takeStep(1, null)
       }
     }
   },

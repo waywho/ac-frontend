@@ -42,6 +42,14 @@ export const store = new Vuex.Store({
 						console.log(error)
 					}
 				)
+		},
+		createUserProfile({commit}, payload) {
+			firebase.database().ref('profiles/' + payload.userId).set(payload.data)
+				.then(
+					function(data) {
+						console.log(data)
+					}
+				)
 		}
 	},
 	getters: {
