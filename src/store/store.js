@@ -6,7 +6,10 @@ import createPersistedState from 'vuex-persistedstate';
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
-	plugins: [createPersistedState()],
+	plugins: [createPersistedState({
+		key: "artistCenter",
+		storage: window.sessionStorage
+	})],
 	strict: false,
 	mutations: {
 		setUser (state, payload) {
@@ -15,6 +18,11 @@ export const store = new Vuex.Store({
 		setViewingProfile (state, payload) {
 			console.log(payload)
 			state.viewingProfile = payload;
+		},
+		resetState (state, payload) {
+			state.user = null;
+			state.profile = {};
+			localStorage.removeItem('artistCenter')
 		}
 	},
 	actions: {

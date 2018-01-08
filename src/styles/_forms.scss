@@ -19,6 +19,9 @@ legend {
 input,
 textarea,
 select {
+    -moz-appearance: none;/* older firefox */
+    -webkit-appearance: none; /* safari, chrome */
+    appearance: none; /* rest */
     display: block;
     width: 100%;
 	font-family: inherit;
