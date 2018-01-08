@@ -47,6 +47,7 @@ import profileTools from './profileTools';
 import auditions from './auditions';
 import profilePosts from './profilePosts';
 import profileConnections from './profileConnections';
+import { mapGetters } from 'vuex';
 
 export default {
 	components: {
@@ -60,15 +61,17 @@ export default {
 	data() {
 		return {
 			id: this.$route.params.id,
-			profile: {}
 		}
 	},
 	computed: {
+		...mapGetters([
+			'profile'
+			]),
 		profileImage () {
 			if (this.profile.image !== null && this.profile.image !== undefined) {
 				return this.profile.image
 			} else {
-				return require("../assets/images/avatar-holder.jpg")
+				return require("../assets/images/avatar-holder.png")
 			}
 		},
 		profileCover () {
@@ -80,7 +83,7 @@ export default {
 		}
 	},
 	created () {
-		this.profile = this.$store.state.profiles[this.id]
+		this.$store.dispatch('getProfile', {userId: this.id})
 		console.log(this.id)
 		console.log(this.profile)
 		// find out all voice types

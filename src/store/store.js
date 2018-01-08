@@ -1,14 +1,20 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import * as firebase from 'firebase';
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
+	plugins: [createPersistedState()],
 	strict: false,
 	mutations: {
 		setUser (state, payload) {
 			state.user = payload;
+		},
+		setViewingProfile (state, payload) {
+			console.log(payload)
+			state.viewingProfile = payload;
 		}
 	},
 	actions: {
@@ -50,16 +56,29 @@ export const store = new Vuex.Store({
 						console.log(data)
 					}
 				)
+		},
+		getProfile({commit}, payload) {
+			firebase.database().ref('profiles/' + payload.userId).once('value')
+				.then(
+				function(snapshot) {
+					console.log(snapshot.val());
+					commit('setViewingProfile', snapshot.val())
+				}	
+			 )
 		}
 	},
 	getters: {
 		user(state) {
 			return state.user;
+		},
+		profile(state) {
+			return state.viewingProfile;
 		}
 	},
 	state: {
 		user: null,
 		profile: {},
+		viewingProfile: {},
 		staticPages: {
 			"center": {
 				title: "About",

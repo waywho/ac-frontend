@@ -22,7 +22,11 @@ Vue.use(require('vue-moment'));
 Vue.config.productionTip = false
 
 Vue.filter('to-uppercase', function(value) {
-	return value.toUpperCase()
+	if (value !== null && value !== undefined) {
+    return value.toUpperCase()
+  } else {
+    return ''
+  }
 })
 
 Vue.filter('capitalize', function (value) {
