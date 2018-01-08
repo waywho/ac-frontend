@@ -2,15 +2,15 @@
   <modal @close="$emit('close')">
   	<img slot='header' src='../assets/images/logo-placeholder.png' alt="operaop logo" class="logo-image" />
   	<h3 slot='header' class='signin-heading'>Sign in.</h3>
-  	<form slot='body' class="signin-form">
-  		<input  type="text" placeholder="email" class='form-element' />
+  	<form slot='body' class="signin-form" @submit.prevent="onSignIn">
+  		<input  type="text" placeholder="email" class='form-element' v-model="email" />
 	  	<div class="checkbox form-element">
 	          <input id='remember' type='radio' :value='remember' v-model='remember' />
 	          <label for='remember'><span></span>Remeber me</label>
 	    </div>
-	  	<input slot='body' type="password" placeholder="password" class='form-element' />
+	  	<input slot='body' type="password" placeholder="password" class='form-element' v-model="password" />
 	  	<div class="password form-element is-darkgray">forgot password</div>
-	  	<input type="submit" class="button" value="Submit" @click="$emit('close')">
+	  	<button type="submit" class="button">Sign in</button>
   	</form>
   	<div slot='footer' class="modal-footer is-darkgray">@artist.center 2017. All Rights Reserved.</div>
   </modal>
@@ -25,8 +25,29 @@ export default {
   },
   data () {
     return {
-      remember: true
+      	remember: true,
+      	email: "",
+  		password: ""
     }
+  },
+  computed: {
+    user() {
+      return this.$store.getters.user
+    }
+  },
+  methods: {
+  	onSignIn: function(){
+  		this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
+  	}
+  },
+  watch: {
+  	user (value) {
+  		if (value !== null && value !== undefined) {
+  			console.log(value)
+  			this.$router.push({name: 'profile', params: { id: value.id }})
+  			this.$emit('close')
+  		}
+  	}
   }
 }
 </script>

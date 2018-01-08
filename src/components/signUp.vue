@@ -17,8 +17,7 @@ import signUpProfileType from './signUpProfileType'
 import signUpDetails from './signUpDetails'
 import signUpSocials from './signUpSocials'
 import signUpPhotos from './signUpPhotos'
-import signUpArtistConnections from './signUpArtistConnections'
-import signUpCompanyConnections from './signUpCompanyConnections'
+import signUpConnections from './signUpConnections'
 import signUpComplete from './signUpComplete'
 import nextLastStep from './nextLastStep'
 
@@ -26,14 +25,13 @@ export default {
   name: 'signUp',
   components: {
   	'signUpCredentials': signUpCredentials,
- 	'signUpProfileType': signUpProfileType,
- 	'signUpDetails': signUpDetails,
- 	'signUpSocials': signUpSocials,
- 	'signUpPhotos': signUpPhotos,
- 	'signUpArtistConnections': signUpArtistConnections,
- 	'signUpCompanyConnections': signUpCompanyConnections,
- 	'signUpComplete': signUpComplete,
- 	'next-last-step': nextLastStep
+   	'signUpProfileType': signUpProfileType,
+   	'signUpDetails': signUpDetails,
+   	'signUpSocials': signUpSocials,
+   	'signUpPhotos': signUpPhotos,
+   	'signUpConnections': signUpConnections,
+   	'signUpComplete': signUpComplete,
+   	'next-last-step': nextLastStep
   },
   data () {
     return {
@@ -43,29 +41,32 @@ export default {
       progressPosition: '',
       scrollPosition: 0,
       signUpSteps: [
-      	  	'signUpCredentials',
-		 	'signUpProfileType',
-		 	'signUpDetails',
-		 	'signUpPhotos',
-		 	'signUpSocials',
-		 	'signUpArtistConnections',
-		 	'signUpComplete'
+      	'signUpCredentials',
+  		 	'signUpProfileType',
+  		 	'signUpDetails',
+  		 	'signUpPhotos',
+  		 	'signUpSocials',
+  		 	'signUpConnections',
+  		 	'signUpComplete'
       ]
     }
   },
   methods: {
   	updateProfile: function(object) {
-  	  this.currentStep += object.theStep	
-      this.component = this.signUpSteps[this.currentStep]
-      this.newProfile = Object.assign({}, this.newProfile, object.newData)
+      console.log(object)
+      this.newProfile = Object.assign({}, this.newProfile, object.newData);
+      this.nextComponent(object.theStep);
     },
     saveProfile: function(object) {
-      this.component = object.theStep
       this.newProfile = Object.assign({}, this.newProfile, object.newData)
       // add setter to add new profile to database
       // if successful
-      this.currentStep += object.theStep	
-      this.component = this.signUpSteps[this.currentStep]
+      this.$store.dispatch('createUserProfile', {userId: this.$store.getters.user.id, data: this.newProfile} )
+      this.nextComponent(object.theStep);
+    },
+    nextComponent: function(step) {
+      this.currentStep += step;
+      this.component = this.signUpSteps[this.currentStep];
     },
     handleScroll: function(e) {
     	var currentScrollPosition = e.srcElement.scrollTop;
@@ -80,7 +81,7 @@ export default {
   computed: {
   	progress: function() {
     	var progress = (this.currentStep + 1) * 14.3;
-    	console.log("width: " + progress + '%;')
+    	// console.log("width: " + progress + '%;')
     	return "width: " + progress + '%;';
     }
   },

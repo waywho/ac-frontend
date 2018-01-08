@@ -2,19 +2,19 @@
   <div class="">
   	<h3>Profile Details</h3>
   	<div class="row">
-  	<div v-for="(detail, key, index) in details" class="col-xs-12, col-sm-6" :id="key">
-  		<label class="strong">{{key | capitalize}}</label>
-  		<input v-if="key !== 'descriptions'" type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter your ' + key" v-model="details[key]" />
-  		<textarea v-if="key === 'descriptions'" type="text" class="signup-input" name="name" placeholder="Your description" v-model="detail.description" /></textarea>
-  	</div>
+    	<div v-for="(detail, key, index) in details" class="col-xs-12 col-sm-6" :id="key">
+    		<label class="strong">{{key | capitalize}}</label>
+    		<input v-if="key !== 'descriptions'" type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter your ' + key" v-model="details[key]" />
+    		<textarea v-if="key === 'descriptions'" type="text" class="signup-input" name="name" placeholder="Your description" v-model="details.descriptions" /></textarea>
+    	</div>
   	</div>
 
-	<next-last-step v-on:click.native="takeStep(1, details)" :step="'next'" class="step-container"></next-last-step>
+	<next-last-step v-on:click.native="saveData(1, {'details': details})" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 
 <script>
-import nextLastStep from './nextLastStep'
+import nextLastStep from './nextLastStep';
 import stepMixin from '../mixins/stepMixin';
 
 export default {
@@ -29,6 +29,7 @@ export default {
       	phoneNumber: "",
       	address: "",
       	city: "",
+        postcode: "",
       	country: "",
       	descriptions: ""
       }
@@ -51,7 +52,7 @@ export default {
 }
 
 #address, #descriptions {
-	flex-basis: 100%;
+	flex-basis: 100% !important;
 	max-width: 100%;
 }
 
