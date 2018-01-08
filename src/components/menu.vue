@@ -5,7 +5,7 @@
 		</div>
 		<div class="row between-xs between-sm menu-brand">
 		  	<div v-on:click="toggleMenu()" class="col-sm col-xs large"><router-link to="/">artistcenter.com</router-link></div>
-		  	<span class="col-sm col-xs large">Sign Out</span>
+		  	<span v-if="currentUser" class="col-sm col-xs large" v-on:click="signOut();"><router-link to="/">Sign Out</router-link></span>
 		</div>
 		<ul class="menu-list non-list">
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/auditions">Auditions</router-link></li>
@@ -32,6 +32,8 @@
 
 <script>
 import menuMixin from '../mixins/menuMixin'
+import currentUser from '../mixins/currentUserMixin';
+
 export default {
   name: 'app-menu',
   props: {
@@ -42,7 +44,13 @@ export default {
       
     }
   },
-  mixins: [menuMixin]
+  methods: {
+  	signOut: function() {
+  		this.$store.commit('resetState');
+  		this.toggleMenu();
+  	}
+  },
+  mixins: [menuMixin, currentUser]
 }
 </script>
 

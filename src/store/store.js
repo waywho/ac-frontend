@@ -1,11 +1,92 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import * as firebase from 'firebase';
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
+	plugins: [createPersistedState({
+		key: "artistCenter",
+		storage: window.sessionStorage
+	})],
 	strict: false,
+	mutations: {
+		setUser (state, payload) {
+			state.user = payload;
+		},
+		setViewingProfile (state, payload) {
+			console.log(payload)
+			state.viewingProfile = payload;
+		},
+		resetState (state, payload) {
+			state.user = null;
+			state.profile = {};
+			localStorage.removeItem('artistCenter')
+		}
+	},
+	actions: {
+		signUserUp({commit}, payload) {
+			firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+				.then(
+					user => {
+						const newUser = {
+							id: user.uid
+						}
+					commit('setUser', newUser)
+					}
+				)
+				.catch(
+					error => {
+						console.log(error)
+					}
+				)
+		},
+		signUserIn({commit}, payload) {
+			firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+				.then(
+					user => {
+						const newUser = {
+							id: user.uid
+						}
+						commit('setUser', newUser)
+					}
+				).catch(
+					error => {
+						console.log(error)
+					}
+				)
+		},
+		createUserProfile({commit}, payload) {
+			firebase.database().ref('profiles/' + payload.userId).set(payload.data)
+				.then(
+					function(data) {
+						console.log(data)
+					}
+				)
+		},
+		getProfile({commit}, payload) {
+			firebase.database().ref('profiles/' + payload.userId).once('value')
+				.then(
+				function(snapshot) {
+					console.log(snapshot.val());
+					commit('setViewingProfile', snapshot.val())
+				}	
+			 )
+		}
+	},
+	getters: {
+		user(state) {
+			return state.user;
+		},
+		profile(state) {
+			return state.viewingProfile;
+		}
+	},
 	state: {
+		user: null,
+		profile: {},
+		viewingProfile: {},
 		staticPages: {
 			"center": {
 				title: "About",
@@ -1030,14 +1111,5 @@ export const store = new Vuex.Store({
 			},
 		}
 
-	},
-	getters: {
-		
-	},
-	mutations: {
-		
-	},
-	actions: {
-		
 	}
 })
