@@ -11,8 +11,8 @@
       </li>
       <li v-if="currentUser" class="header-avatar" v-on:click="notificationActive = !notificationActive">
         <app-notificationBubble v-if="!notificationActive" class="notification-bubble"></app-notificationBubble>
-        <div class="avatar-small-border avatar-space" >
-            <img src="../assets/images/myopera-logo.png" />
+        <div class="avatar avatar-small-border avatar-space" >
+            <img :src="currentUserAvatar" />
         </div>
       </li>
       <li v-if="!currentUser" class='avatar-space sign-in-item' id="show-modal" v-on:click="showModal()">Sign in</li>
@@ -60,8 +60,18 @@ export default {
     },
     showModal: function() {
       this.$emit('modalShow', true)
+    }    
+  },
+  computed: {
+    currentUserAvatar() {
+      if(currentUser) {
+        return this.$store.getters.profile.avatarURL
+      } else if (this.$store.getters.profile.avatarURL !== null && this.$store.getters.profile.avatarURL !== undefined) {
+        return this.avatarURL
+      } else {
+        return require("../assets/images/avatar-holder.png")
+      }
     }
-    
   },
   mixins: [menuMixin, clickaway, currentUser]
 }
@@ -131,6 +141,7 @@ export default {
 
 .avatar img {
   width: 100%;
+  border-radius: 50%;
 }
 
 .sign-in-item {
