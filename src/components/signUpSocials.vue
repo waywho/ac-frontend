@@ -8,7 +8,7 @@
 	  		<input type="text" class="signup-input" :key="key" :name="key" placeholder="Enter Your Profile URL" v-model="socials[key]" />
 	  	</div>
   	</div>
-  	<next-last-step v-on:click.native="saveData(1, {'socials': socials})" :step="'next'" class="step-container"></next-last-step>
+  	<next-last-step v-on:click.native="updateData(1, {'socials': socials})" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 

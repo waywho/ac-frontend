@@ -4,18 +4,25 @@
   	<p>Please upload a profile image and cover photo image for your account. All image must be in .jpeg .png or .gif format. File size must not exceed 5MB.</p>
 
   	<div class="image-uploader">
-  		<div class="uploadbox">
-  			<div class="avatar-medium-border upload-avatar">
-  				<i class="fa fa-user fa-4x is-dargray" aria-hidden="true"></i>
+  		<div class="uploadbox" v-on:click="onPickFile('avatarInput')">
+  			<div :class="['avatar-medium', 'upload-avatar', {'upload-avatar-border': avatarURL === null}]"><img v-if="avatarURL !== null" :src="avatarURL" />
+  				<i v-if="avatarURL === null" class="fa fa-user fa-4x is-dargray" aria-hidden="true"></i>
+
   			</div>
   			<div>Profile Image</div>
+
+        <input type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
   		</div>
-   		<div class="uploadbox">
-  			<div class="avatar-medium-border upload-avatar">
-  				<i class="fa fa-picture-o fa-4x is-darkgray" aria-hidden="true"></i>
+
+   		<div class="uploadbox" v-on:click="onPickFile('coverInput')">
+        <img v-if="coverURL !== null" :src="coverURL" class='upload-avatar'/>
+  			<div v-if="coverURL === null" :class="['avatar-medium', 'upload-avatar', {'upload-avatar-border': coverURL === null}]">
+  				<i v-if="coverURL === null" class="fa fa-picture-o fa-4x is-darkgray" aria-hidden="true"></i>
   			</div>
   			<div>Cover Image</div>
+        <input type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
   		</div>
+          
   	</div>
 
   	<next-last-step v-on:click.native="takeStep(1, {})" :step="'next'" class="step-container"></next-last-step>
@@ -24,7 +31,8 @@
 
 <script>
 import nextLastStep from './nextLastStep'
-import stepMixin from '../mixins/stepMixin';
+import stepMixin from '../mixins/stepMixin'
+import profileImagesMixin from '../mixins/profileImagesMixin'
 
 export default {
   name: 'signUpStepSix',
@@ -33,10 +41,13 @@ export default {
   },
   data () {
     return {
-
+      avatar: null,
+      avatarURL: null,
+      cover: null,
+      coverURL: null
     }
   },
-  mixins: [stepMixin]
+  mixins: [stepMixin, profileImagesMixin]
 }
 </script>
 
@@ -63,8 +74,10 @@ export default {
 	justify-content: center;
 	align-item: center;
 	margin: 25px auto;
-	border: solid 9px $color-darkgray;
+}
 
+.upload-avatar-border {
+  border: solid 9px $color-darkgray;
 }
 
 .uploadbox:hover, .uploadbox:hover .upload-avatar, .uploadbox:hover .fa {
