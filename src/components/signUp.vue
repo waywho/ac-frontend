@@ -5,7 +5,7 @@
 	  	<h1>Create Profile</h1>
 		<div class="strong subheadline">Create your account, and start connecting today.</div>
 		<keep-alive>
-	  		<component :is="component" v-on:takeStep="updateProfile($event)" v-on:saveData="saveProfile($event)" class="signup-content"></component>
+	  		<component :is="component" v-on:takeStep="nextComponent($event.theStep)" v-on:saveData="createProfile($event)" v-on:updateData="updateProfile($event)" class="signup-content"></component>
 	  	</keep-alive>
   	</div>
   </div>
@@ -53,14 +53,13 @@ export default {
   },
   methods: {
   	updateProfile: function(object) {
-      console.log(object)
-      this.newProfile = Object.assign({}, this.newProfile, object.newData);
+      // console.log(object)
+      // this.newProfile = Object.assign({}, this.newProfile, object.newData);
+      this.$store.dispatch('updateUserProfile', {userId: this.$store.getters.user.id, data: object.newData})
       this.nextComponent(object.theStep);
     },
-    saveProfile: function(object) {
+    createProfile: function(object) {
       this.newProfile = Object.assign({}, this.newProfile, object.newData)
-      // add setter to add new profile to database
-      // if successful
       this.$store.dispatch('createUserProfile', {userId: this.$store.getters.user.id, data: this.newProfile} )
       this.nextComponent(object.theStep);
     },

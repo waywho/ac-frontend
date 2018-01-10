@@ -4,26 +4,29 @@
 			<div class="profile-banner-assets">
 
 				<div class="profile-cover" :style="{'background-image': 'url('+ profileCover +')'}">
-					<div class="cover-edit">
+					<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
 				 		<i class="fa fa-camera" aria-hidden="true"></i>Update Cover Photo
 					</div>
+					<input v-if="authorizedUser" type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
 				</div>
 
 				<div class="profile-avatar-wrap" >
 					<div class="profile-avatar" :style="{'background-image': 'url('+ profileImage +')'}">
-	
+
 						<svg height="100%" width="100%">
 							<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
 						</svg>
 						
-
-						<div class="avatar-edit"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><span>Update Photo</span></div>
+						<div v-if="authorizedUser" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><span>Update Photo</span></div>
+						<input v-if="authorizedUser" type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
 					</div>
 					
 <!-- 					<i class="fa fa-ellipsis-h fa-2x is-darkgray profile-options"></i> -->
 				</div><!-- 
 				<div class="xs-visible sm-hide profile-options-xs"><i class="fa fa-ellipsis-h fa-3x is-darkgray opions-icon-xs"></i></div> -->
+
 			</div>
+			
 			<div class="profile-name"><h1>{{ profile.name }}</h1></div>
 
 			<company-details v-if="profile.type === 'company'" class="profile-banner-text" v-bind:profile-details="profile.details"></company-details>
@@ -48,6 +51,9 @@ import auditions from './auditions';
 import profilePosts from './profilePosts';
 import profileConnections from './profileConnections';
 import { mapGetters } from 'vuex';
+import * as firebase from 'firebase';
+import profileImagesMixin from '../mixins/profileImagesMixin';
+import currentUser from '../mixins/currentUserMixin';
 
 export default {
 	components: {
@@ -58,34 +64,45 @@ export default {
 		'profile-posts': profilePosts,
 		'profile-connections': profileConnections
 	},
+  	mixins: [profileImagesMixin, currentUser],
 	data() {
 		return {
 			id: this.$route.params.id,
+			profile: {},
+			avatarURL: null,
+			coverURL: null,
+			avatar: null,
+			cover: null
 		}
 	},
 	computed: {
-		...mapGetters([
-			'profile'
-			]),
 		profileImage () {
-			if (this.profile.image !== null && this.profile.image !== undefined) {
-				return this.profile.image
+			if (this.profile.avatarURL !== null && this.profile.avatarURL !== undefined) {
+				return this.profile.avatarURL
+			} else if (this.avatarURL !== null && this.avatarURL !== undefined) {
+				return this.avatarURL
 			} else {
 				return require("../assets/images/avatar-holder.png")
 			}
 		},
 		profileCover () {
-			if (this.profile.coverImage !== null && this.profile.coverImage !== undefined) {
-				return this.profile.coverImage
+			if (this.profile.coverURL !== null && this.profile.coverURL !== undefined) {
+				return this.profile.coverURL
+			} else if (this.coverURL !== null && this.coverURL !== undefined) {
+				return this.coverURL
 			} else {
 				return require("../assets/images/cover-holder.jpg")
 			}
 		}
 	},
 	created () {
-		this.$store.dispatch('getProfile', {userId: this.id})
-		console.log(this.id)
-		console.log(this.profile)
+		firebase.database().ref('profiles/' + this.id).once('value')
+				.then(snapshot => {
+					// console.log(snapshot.val());
+					this.profile = snapshot.val();
+				})
+		// console.log(this.id)
+		// console.log(this.profile)
 		// find out all voice types
 		// const voices = []
 		// for (var i=0; 1< this.profile.auditionCandidates.length; i++) {
@@ -162,6 +179,7 @@ circle {
 	align-items: center;
 	justify-content: flex-start;
 	visibility: hidden;
+	cursor: pointer;
 }
 
 .cover-edit .fa {
@@ -189,14 +207,13 @@ circle {
 	margin: 0 auto;
 	background-position: center;
     background-repeat: no-repeat;
-    background-size: 95%;
-	cursor: pointer;
+    background-size: 99%;
 	position: relative;
 }
 
 .profile-avatar svg {
 	position: absolute;
-	z-index: 16;
+	z-index: 5;
 	top: 0;
 	left: 0;
 }
