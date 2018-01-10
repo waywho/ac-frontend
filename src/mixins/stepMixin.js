@@ -5,6 +5,9 @@ export default{
 	  	},
 	  	saveData(step, object) {
 	  		this.$emit('saveData', { theStep: step, newData: object});
+	  	},
+	  	updateData(step, object) {
+	  		this.$emit('updateData', { theStep: step, newData: object});
 	  	}
 	}
 }

@@ -13,7 +13,6 @@
 </template>
 
 <script>
-
 import stepMixin from '../mixins/stepMixin';
 
 export default {
@@ -42,7 +41,7 @@ export default {
   watch: {
     user(value) {
       if(value !== null && value !== undefined) {
-        this.takeStep(1, null)
+        this.saveData(1, {id: value.id})
       }
     }
   },

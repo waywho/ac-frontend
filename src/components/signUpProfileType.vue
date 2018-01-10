@@ -8,7 +8,7 @@
           	</div>
           	<span class="small color-lightgray option-hint">{{profileType.description}}</span>
         </div>
-		<next-last-step v-on:click.native="saveData(1, {'type': type})" :step="'next'" class="step-container"></next-last-step>
+		<next-last-step v-on:click.native="updateData(1, {'type': type})" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 

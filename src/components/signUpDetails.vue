@@ -9,7 +9,7 @@
     	</div>
   	</div>
 
-	<next-last-step v-on:click.native="saveData(1, {'details': details})" :step="'next'" class="step-container"></next-last-step>
+	<next-last-step v-on:click.native="updateData(1, {'details': details})" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 

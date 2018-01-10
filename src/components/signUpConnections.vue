@@ -39,14 +39,14 @@
 <!--   		<connection-tile v-for="(connection, index) in filteredConnections" :connection="connection" :key="index" v-model="connectionRequests" class="col-xs col-sm"></connection-tile> -->
 
   	
-  	<next-last-step v-on:click.native="saveData(1, {'connectionRequests': connectionRequests})" :step="'next'" class="step-container"></next-last-step>
+  	<next-last-step v-on:click.native="updateData(1, {'connectionRequests': connectionRequests})" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 
 <script>
 import connectionTile from './connectionTile'
 import nextLastStep from './nextLastStep'
-import stepMixin from '../mixins/stepMixin';
+import stepMixin from '../mixins/stepMixin'
 
 export default {
   name: 'signUpArtistconnections',
@@ -64,6 +64,7 @@ export default {
     	companyCities: ['Ontario', 'British Columbia', 'Quebec', 'Alberta', 'Manitoba']
     }
   },
+  mixins: [stepMixin],
   computed: {
   	filteredConnections: function() {
   		return this.connections.filter((connection) => {
@@ -98,8 +99,7 @@ export default {
   		usersArray.push(this.connections[key]);
   	}
   	this.connections = usersArray;
-  },
-  mixins: [stepMixin]
+  }
 }
 </script>
 

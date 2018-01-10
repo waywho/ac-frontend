@@ -15,9 +15,9 @@ export const store = new Vuex.Store({
 		setUser (state, payload) {
 			state.user = payload;
 		},
-		setViewingProfile (state, payload) {
+		setUserProfile (state, payload) {
 			console.log(payload)
-			state.viewingProfile = payload;
+			state.userProfile = payload;
 		},
 		resetState (state, payload) {
 			state.user = null;
@@ -50,6 +50,7 @@ export const store = new Vuex.Store({
 							id: user.uid
 						}
 						commit('setUser', newUser)
+						dispatch('getProfile', newUser)
 					}
 				).catch(
 					error => {
@@ -58,21 +59,54 @@ export const store = new Vuex.Store({
 				)
 		},
 		createUserProfile({commit}, payload) {
+			console.log(payload)
 			firebase.database().ref('profiles/' + payload.userId).set(payload.data)
 				.then(
 					function(data) {
 						console.log(data)
 					}
+				).catch(
+					error => {
+						console.log(error)
+					}
+				)
+		},
+		updateUserProfile({commit}, payload) {
+			firebase.database().ref('profiles/' + payload.userId).update(payload.data)
+				.then(
+					function(data) {
+						console.log(data)
+					}
+				).catch(
+					error => 
+					console.log(error)
 				)
 		},
 		getProfile({commit}, payload) {
-			firebase.database().ref('profiles/' + payload.userId).once('value')
-				.then(
-				function(snapshot) {
-					console.log(snapshot.val());
-					commit('setViewingProfile', snapshot.val())
-				}	
-			 )
+			firebase.database().ref('profiles/' + payload.id).once('value')
+				.then(function(snapshot) {
+					// console.log(snapshot.val());
+					commit('setUserProfile', snapshot.val())
+				})
+		},
+		saveProfileImages({commit}, payload) {
+			console.log(payload.data)
+			const filename = Object.keys(payload.data)[0]
+			console.log(filename)
+			let imageURL
+			let key = payload.userId
+			const ext = filename.slice(filename.lastIndexOf('.'))
+			firebase.storage().ref('profileImages').child(key + '/' + key + filename + '.' + ext).put(payload.data[filename])
+				.then( fileData => {
+					imageURL = fileData.metadata.downloadURLs[0]
+					let dataURL = {}
+					dataURL[filename + 'URL'] = imageURL
+					console.log(dataURL)
+					return firebase.database().ref('profiles').child(key).update(dataURL)		
+				}).catch(error => {
+					console.log(error)
+					}
+				)
 		}
 	},
 	getters: {
@@ -80,13 +114,12 @@ export const store = new Vuex.Store({
 			return state.user;
 		},
 		profile(state) {
-			return state.viewingProfile;
+			return state.userProfile;
 		}
 	},
 	state: {
 		user: null,
-		profile: {},
-		viewingProfile: {},
+		userProfile: {},
 		staticPages: {
 			"center": {
 				title: "About",
