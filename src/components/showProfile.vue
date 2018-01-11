@@ -29,8 +29,7 @@
 			
 			<div class="profile-name"><h1>{{ profile.name }}</h1></div>
 
-			<company-details v-if="profile.type === 'company'" class="profile-banner-text" v-bind:profile-details="profile.details"></company-details>
-			<artist-details v-if="profile.type === 'artist'" class="profile-banner-text" v-bind:profile-details="profile.details"></artist-details>
+			<profile-details v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details"></profile-details>
 		</div>
 
 		<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
@@ -44,8 +43,7 @@
 </template>
 
 <script>
-import companyDetails from './companyDetails';
-import artistDetails from './artistDetails';
+import profileDetails from './profileDetails';
 import profileTools from './profileTools';
 import auditions from './auditions';
 import profilePosts from './profilePosts';
@@ -57,10 +55,9 @@ import currentUser from '../mixins/currentUserMixin';
 
 export default {
 	components: {
-		'company-details': companyDetails,
+		'profile-details': profileDetails,
 		'profile-tools': profileTools,
 		'company-auditions': auditions,
-		'artist-details': artistDetails,
 		'profile-posts': profilePosts,
 		'profile-connections': profileConnections
 	},
