@@ -1,44 +1,58 @@
 <template>
 	<div class="profile-account">
-		<div class="profile-banner">
-			<div class="profile-banner-assets">
-
-				<div class="profile-cover" :style="{'background-image': 'url('+ profileCover +')'}">
-					<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
-				 		<i class="fa fa-camera" aria-hidden="true"></i>Update Cover Photo
+		<div v-if="loading">
+			<div class="profile-banner">
+				<div class="profile-banner-assets">
+					<div class="profile-cover" :style="{'background-image': 'url('+ coverHolder +')'}">
 					</div>
-					<input v-if="authorizedUser" type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
+					<div class="profile-avatar-wrap" >
+						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarHolder +')'}">
+						</div>
+					</div>
 				</div>
-
-				<div class="profile-avatar-wrap" >
-					<div class="profile-avatar" :style="{'background-image': 'url('+ profileImage +')'}">
-
-						<svg height="100%" width="100%">
-							<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
-						</svg>
-						
-						<div v-if="authorizedUser" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><span>Update Photo</span></div>
-						<input v-if="authorizedUser" type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
-					</div>
-					
-<!-- 					<i class="fa fa-ellipsis-h fa-2x is-darkgray profile-options"></i> -->
-				</div><!-- 
-				<div class="xs-visible sm-hide profile-options-xs"><i class="fa fa-ellipsis-h fa-3x is-darkgray opions-icon-xs"></i></div> -->
-
 			</div>
-			
-			<div class="profile-name"><h1>{{ profile.name }}</h1></div>
-
-			<profile-details v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details"></profile-details>
 		</div>
+		<div v-if="profile">	
+			<div class="profile-banner">
+				<div class="profile-banner-assets">
 
-		<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
+					<div class="profile-cover" :style="{'background-image': 'url('+ profileCover +')'}">
+						<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
+					 		<i class="fa fa-camera" aria-hidden="true"></i>Update Cover Photo
+						</div>
+						<input v-if="authorizedUser" type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
+					</div>
 
-		<profile-connections class="profile-section" :connections="profile.connections" v-bind:profile-id="profile.id"></profile-connections>
+					<div class="profile-avatar-wrap" >
+						<div class="profile-avatar" :style="{'background-image': 'url('+ profileImage +')'}">
 
-		<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions>
-			
-		<profile-posts :name="profile.name" :posts="profile.posts" v-bind:profile-id="profile.id"></profile-posts>
+							<svg height="100%" width="100%">
+								<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
+							</svg>
+							
+							<div v-if="authorizedUser" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><span>Update Photo</span></div>
+							<input v-if="authorizedUser" type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
+						</div>
+						
+	<!-- 					<i class="fa fa-ellipsis-h fa-2x is-darkgray profile-options"></i> -->
+					</div><!-- 
+					<div class="xs-visible sm-hide profile-options-xs"><i class="fa fa-ellipsis-h fa-3x is-darkgray opions-icon-xs"></i></div> -->
+
+				</div>
+				
+				<div class="profile-name"><h1>{{ profile.name }}</h1></div>
+
+				<profile-details v-if="profile" v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details" :connection-level="connectionLevel"></profile-details>
+			</div>
+
+			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" v-bind:profile-tool-data="profile.tools" class="section-margins"></profile-tools>
+
+			<profile-connections class="profile-section" :connections="profile.connections" v-bind:profile-id="profile.id"></profile-connections>
+
+			<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions>
+				
+			<profile-posts :name="profile.name" :posts="profile.posts" v-bind:profile-id="profile.id"></profile-posts>
+		</div>
 	</div>
 </template>
 
@@ -54,6 +68,7 @@ import profileImagesMixin from '../mixins/profileImagesMixin';
 import currentUser from '../mixins/currentUserMixin';
 
 export default {
+	name: 'profile',
 	components: {
 		'profile-details': profileDetails,
 		'profile-tools': profileTools,
@@ -65,12 +80,38 @@ export default {
 	data() {
 		return {
 			id: this.$route.params.id,
-			profile: {},
+			profile: null,
 			avatarURL: null,
 			coverURL: null,
 			avatar: null,
-			cover: null
+			cover: null,
+			loading: false,
+			error: null,
+			avatarHolder: require("../assets/images/avatar-holder.png"),
+			coverHolder: require("../assets/images/cover-holder.jpg")
 		}
+	},
+	methods: {
+		getProfile: function() {
+			this.error = this.post = null;
+			this.loading = true;
+			firebase.database().ref('profiles/' + this.id).once('value')
+				.then(snapshot => {
+					// console.log(snapshot.val());
+					return snapshot.val();
+				}).then(data => {
+					
+					this.profile = data;
+					if (this.profile !== null && this.profile !== undefined) {
+						this.loading = false;
+					} else {
+						this.loading = true;
+					}
+				})
+		}
+	},
+	watch: {
+		'$route': 'getProfile'
 	},
 	computed: {
 		profileImage () {
@@ -90,14 +131,36 @@ export default {
 			} else {
 				return require("../assets/images/cover-holder.jpg")
 			}
+		},
+		connectionLevel () {
+			let connectionLevels = [
+					{name: "Connection ALLSTAR", levelFrom: 80, levelTo: 100},
+					{name: "Connection ?", levelFrom: 60, levelTo: 79},
+					{name: "Connection ?", levelFrom: 40, levelTo: 59},
+					{name: "Connection ?", levelFrom: 20, levelTo: 39},
+					{name: "Connection ?", levelFrom: 0, levelTo: 19}
+				]
+
+			if (this.profile.connections !== null && this.profile.connections !== undefined) {
+				// var connectionNum = this.profile.connections.length
+				var connectionNum = 55
+				if (connectionNum >= 100) {
+					return {strength: '100', name: 'Connection ALLSTAR'}
+				} else {
+					let level = connectionLevels.filter(function(object) {
+						return connectionNum >= object.levelFrom && connectionNum <= object.levelTo
+					})
+					return {strength: connectionNum, name: level[0].name}
+				}
+			} else {
+				return {strength: '0', name: 'Connection ?'}
+			}
+
 		}
 	},
 	created () {
-		firebase.database().ref('profiles/' + this.id).once('value')
-				.then(snapshot => {
-					// console.log(snapshot.val());
-					this.profile = snapshot.val();
-				})
+		this.getProfile();
+
 		// console.log(this.id)
 		// console.log(this.profile)
 		// find out all voice types

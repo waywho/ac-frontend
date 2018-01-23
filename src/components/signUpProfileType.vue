@@ -8,7 +8,7 @@
           	</div>
           	<span class="small color-lightgray option-hint">{{profileType.description}}</span>
         </div>
-		<next-last-step v-on:click.native="updateData(1, {'type': type})" :step="'next'" class="step-container"></next-last-step>
+		<next-last-step v-on:click.native="profileToolsSetup();" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 
@@ -34,6 +34,45 @@ export default {
       		description: "as an artist, you can connect with opera companies."
       	}
       ]
+    }
+  },
+  methods:{
+    profileToolsSetup: function(type) {
+      let toolSuite = {}
+        toolSuite['settings'] = {notification_settings: [{  
+            title: "Notifications on",
+            desc: "Lorum ipsum deus domine allorum deus ipsum. Ave Maria lorum ipsum",
+            isChecked: true
+          }, {
+            title: "Notifications sound",
+            desc: "Lorum ipsum deus domine allorum deus ipsum. Ave Maria lorum ipsum",
+            isChecked: true
+        }]}
+        toolSuite['calendar'] = [{
+          date: 'enter a datae',
+          start: 'enter a start time',
+          end: 'enter an end time',
+          title: 'enter event title',
+          location: 'enter local',
+          desc: 'enter description',
+          type: 'please select event type'
+        }]
+        toolSuite['media'] = [{
+          id: 'myopera5325',
+          type: "video",
+          source: 'enter host address',
+          host: "enter host source"}]
+
+      if(this.type === 'artist') {
+        toolSuite['portfolio'] = { biography:
+          'please create your portfolio'
+        }
+      } else if (this.type === 'company') {
+        toolSuite['budget'] = 'budget data'
+      }
+      // console.log(toolSuite)
+      this.updateData(1, {'type': this.type})
+      this.$store.dispatch('createUserTools', {userId: this.$store.getters.user.id, data: toolSuite})
     }
   },
   mixins: [stepMixin]

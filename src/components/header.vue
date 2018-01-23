@@ -15,7 +15,7 @@
             <img :src="currentUserAvatar" />
         </div>
       </li>
-      <li v-if="!currentUser" class='avatar-space sign-in-item' id="show-modal" v-on:click="showModal()">Sign in</li>
+      <li v-if="!currentUser" class='avatar-space sign-in-item' id="show-modal" v-on:click="showSignIn()">Sign in</li>
 
       <li :class="['menu-button', {open: isActive}]">
           <i v-on:click="toggleMenu()" class="fa fa-bars fa-2x is-darkgray" aria-hidden="true"></i>
@@ -44,6 +44,7 @@ export default {
   props: {
     isActive: Boolean
   },
+  mixins: [menuMixin, clickaway, currentUser],
   data() {
     return {
       notificationActive: false
@@ -58,22 +59,24 @@ export default {
       // console.log('entereds')
       this.$router.push({ path: '/search', query: {profiles: term}})
     },
-    showModal: function() {
-      this.$emit('modalShow', true)
+    showSignIn: function() {
+      this.$emit('signInModalShow', true)
     }    
   },
   computed: {
     currentUserAvatar() {
       if(currentUser) {
-        return this.$store.getters.profile.avatarURL
-      } else if (this.$store.getters.profile.avatarURL !== null && this.$store.getters.profile.avatarURL !== undefined) {
-        return this.avatarURL
+        var avatarURL = this.$store.getters.profile.avatarURL
+        if (avatarURL !== null && avatarURL !== undefined) {
+          return avatarURL
+        } else {
+          return require("../assets/images/avatar-holder.png")
+        }
       } else {
         return require("../assets/images/avatar-holder.png")
       }
     }
-  },
-  mixins: [menuMixin, clickaway, currentUser]
+  }
 }
 </script>
 

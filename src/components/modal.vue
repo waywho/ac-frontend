@@ -72,6 +72,7 @@ export default {
 }
 
 .modal-wrapper {
+  position: fixed;
 	z-index: 9999;
 	max-width: 603px;
 	width: 90%;
@@ -89,11 +90,11 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
   font-family: Helvetica, Arial, sans-serif;
+  overflow-y: scroll;
 }
 
 .modal-header {
   text-align: center;
-  margin-top: 80px;
 }
 
 .modal-header h3 {
