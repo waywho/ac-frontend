@@ -5,11 +5,11 @@
   		<input type="date" class="input-addon-field" v-model="event.date" />
   	</div>
   	<div class="inline-inputs">
-	  	<div class="input-addon">
+	  	<div class="input-addon margin-right">
 	  		<span class="input-addon-item">Start</span>
 	  		<input type="time" class="input-addon-field" v-model="event.start"/>
 	  	</div>
-	  	  <div class="input-addon">
+	  	<div class="input-addon">
 	  		<span class="input-addon-item">End</span>
 	  		<input type="time" class="input-addon-field" v-model="event.end"/>
 	  	</div>
@@ -22,11 +22,13 @@
   		<option v-for="type in types">{{type}}</option>
   	</select>
 
-  	<button>Add Event</button>
+  	<button @click="updateProfileTools('event', 'calendar')">Add Event</button>
   </div>
 </template>
 
 <script>
+import profileToolsMixin from '../mixins/profileToolsMixin'
+
 export default {
   name: 'calendarForm',
   data () {
@@ -42,7 +44,8 @@ export default {
       	type: ""
       }
     }
-  }
+  },
+  mixins: [profileToolsMixin]
 }
 </script>
 
@@ -57,5 +60,9 @@ export default {
 
 .form-field {
 	margin-bottom: 20px;
+}
+
+.margin-right {
+  margin-right: 10px;
 }
 </style>

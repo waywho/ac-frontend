@@ -12,7 +12,7 @@
       </div>
       <div class="calendar">
         <keep-alive>
-          <component :events="companyEvents" :is="component"></component>
+          <component :events="currentEvents" :is="component" @updateCalendar="calendarUpdate($event)"></component>
         </keep-alive>
       </div>
   </div>
@@ -25,15 +25,25 @@ export default {
   components: {
     'calendar-form': calendarForm
   },
+  props: {
+    calendar: Array
+  },
   data () {
     return {
-      component: 'vue-event-calendar'  
+      component: 'vue-event-calendar',
+      currentEvents: []
+    }
+  },
+  methods: {
+    calendarUpdate: function(object) {
+      this.currentEvents.push(object.event)
     }
   },
   computed: {
-    companyEvents() {
-      return this.$store.state.profiles.companyXYZ.events;
-    }
+
+  },
+  created() {
+    this.currentEvents = this.calendar
   }
 }
 </script>

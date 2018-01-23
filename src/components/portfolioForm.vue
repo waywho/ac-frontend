@@ -8,7 +8,7 @@
 			<textarea id="biography" v-model="biography" placeholder="please enter your biography"></textarea>
       <div class="row reverse middle-xs middle-sm form-utilities">
         <div class='col-xs-2 col-sm-2'>
-          <button @click="updatePortfolio('biography')" class="form-button">save</button>
+          <button @click="updateProfileTools('biography', 'portfolio')" class="form-button">save</button>
         </div>
         <success-warning-notice  v-if="messageShow['biography']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
@@ -29,7 +29,7 @@
 			<span @click="addFields('role', 'operaRoles')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
       <div class="row reverse middle-xs middle-sm form-utilities">
         <div class='col-xs-2 col-sm-2'>
-			     <button @click="updatePortfolio('operaRoles')" class="form-button">save</button>
+			     <button @click="updateProfileTools('operaRoles', 'portfolio')" class="form-button">save</button>
           </div>
         <success-warning-notice  v-if="messageShow['operaRoles']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
@@ -45,7 +45,7 @@
 			<span @click="addFields('concert', 'concertAndOratorios')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
       <div class="row reverse middle-xs middle-sm form-utilities">
         <div class='col-xs-2 col-sm-2'>
-			     <button @click="updatePortfolio('concertAndOratorios')" class="form-button">save</button>
+			     <button @click="updateProfileTools('concertAndOratorios', 'portfolio')" class="form-button">save</button>
            </div>
         <success-warning-notice  v-if="messageShow['concertAndOratorios']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
@@ -61,7 +61,7 @@
 			<span @click="addFields('training', 'trainingAndEducations')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
 			<div class="row reverse middle-xs middle-sm form-utilities">
         <div class='col-xs-2 col-sm-2'>
-          <button @click="updatePortfolio('trainingAndEducations')" class="form-button">save</button>
+          <button @click="updateProfileTools('trainingAndEducations', 'portfolio')" class="form-button">save</button>
         </div>
         <success-warning-notice  v-if="messageShow['trainingAndEducations']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
@@ -77,7 +77,7 @@
 			<span @click="addFields('award', 'competitionAwardScholarships')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
 			<div class="row reverse middle-xs middle-sm form-utilities">
         <div class='col-xs-2 col-sm-2'>
-          <button @click="updatePortfolio('competitionAwardScholarships')" class="form-button">save</button>
+          <button @click="updateProfileTools('competitionAwardScholarships', 'portfolio')" class="form-button">save</button>
         </div>
         <success-warning-notice  v-if="messageShow['competitionAwardScholarships']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
@@ -87,7 +87,7 @@
 			<textarea id="skills" v-model="skills" placeholder="please enter your skills, eg. languages, dance, instruments"></textarea>
       <div class="row reverse middle-xs middle-sm form-utilities">
         <div class='col-xs-2 col-sm-2'>
-			    <button @click="updatePortfolio('skills')" class="form-button">save</button>
+			    <button @click="updateProfileTools('skills')" class="form-button">save</button>
         </div>
         <success-warning-notice  v-if="messageShow['skills']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
@@ -101,6 +101,7 @@
 <script>
 import modal from './modal';
 import successWarningNotice from './successWarningNotice';
+import profileToolsMixin from '../mixins/profileToolsMixin';
 
 export default {
   name: '',
@@ -111,10 +112,9 @@ export default {
   props: {
   	portfolio: Object
   },
+  mixins: [profileToolsMixin],
   data () {
     return {
-      message: null,
-      messageType: null,
       messageShow: {
         biography: false,
         operaRoles: false,
@@ -128,35 +128,7 @@ export default {
       concertAndOratorios: [],
       trainingAndEducations: [],
       competitionAwardScholarships:[],
-      skills: '',
-      role: {
-      	composer: '',
-      	opera: '',
-      	role: '',
-      	company: '',
-      	conductor: '',
-      	director: '',
-      	year: '',
-      	scenesOrCovers: false,
-      },
-      concert: {
-      	composer: '',
-      	work: '',
-      	role: '',
-      	company: '',
-      	conductor: '',
-      	year: ''
-      },
-      award: {
-      	achievement: '',
-      	competitionAwardScholarship: '',
-      	year: ''
-      },
-      training: {
-      	programmeOrDegree: '',
-      	institution: '',
-      	year: ''
-      }
+      skills: ''
     }
   },
   methods: {
@@ -165,37 +137,68 @@ export default {
   		this.$delete(this[fields], index)
   	},
   	addFields: function(field, fields) {
-  		this[fields].push(this[field])
-  	},
-  	updatePortfolio: function(fields) {
-  		let portfolio = { [fields]: this[fields]}
+      let portfolioFields = {
+        role: {
+            composer: '', opera: '', role: '', company: '', conductor: '',
+            director: '', year: '', scenesOrCovers: false,
+        },
+        concert: {
+            composer: '', work: '', role: '', company: '',
+            conductor: '', year: ''
+        },
+        award: {
+          achievement: '',
+          competitionAwardScholarship: '',
+          year: ''
+        },
+        training: {
+          programmeOrDegree: '',
+          institution: '',
+          year: ''
+        }
+    }
 
- 		  this.$store.dispatch('updateUserTools', {userId: this.$store.getters.user.id, toolName: 'portfolio', data: portfolio}).then((response) => {
-        this.message = 'Updated Successfully',
-        this.messageType = 'success',
-        this.messageShow[fields] = true,
-        this.$emit('updatePortfolio', portfolio);
-    });
-  		
+  		this[fields].push(portfolioFields[field])
   	}
   },
   created () {
-  	if (this.portfolio !== null && this.portfolio !== undefined) {
-  		let sections = {'operaRoles': 'role', 'concertAndOratorios': 'concert', 'competitionAwardScholarships': 'award', 'trainingAndEducations': 'training'}
+    let portfolioFields = {
+        role: {
+            composer: '', opera: '', role: '', company: '', conductor: '',
+            director: '', year: '', scenesOrCovers: false,
+        },
+        concert: {
+            composer: '', work: '', role: '', company: '',
+            conductor: '', year: ''
+        },
+        award: {
+          achievement: '',
+          competitionAwardScholarship: '',
+          year: ''
+        },
+        training: {
+          programmeOrDegree: '',
+          institution: '',
+          year: ''
+        }
+    }
 
+    let sections = {'operaRoles': 'role', 'concertAndOratorios': 'concert', 'competitionAwardScholarships': 'award', 'trainingAndEducations': 'training'}
+    
+  	if (this.portfolio !== null && this.portfolio !== undefined) {
+  		
   		Object.keys(sections).forEach((sectionKey) => {
   			if(this.portfolio[sectionKey] !== null && this.portfolio[sectionKey] !== undefined) {
   				this[sectionKey] = this.portfolio[sectionKey]
-  				this[sectionKey].push(this[sections[sectionKey]])
+  				this[sectionKey].push(portfolioFields[sections[sectionKey]])
   			} else {
-  				this[sectionKey].push(this[sections[sectionKey]])
+  				this[sectionKey].push(portfolioFields[sections[sectionKey]])
   			}
   		})
   	} else {
-  		this.operaRoles.push(this.role)
-  		this.concertAndOratorios.push(this.concert)
-  		this.competitionAwardScholarships.push(this.award)
-  		this.trainingAndEducations.push(this.training)
+      Object.keys(sections).forEach((sectionKey) => {
+        this[sectionKey].push(portfolioFields[sections[sectionKey]])
+      })
   	}
   }
 }

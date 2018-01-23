@@ -15,25 +15,25 @@
 
 	  	<h5 v-if="fullOperaRoles" class="is-golden">Opera Roles</h5>
 	  	<div v-for="role in fullOperaRoles" class="row between-xs between-sm">
-	  		<div class="col-xs col-sm small">{{role.role}}</div>
+	  		<div class="col-xs col-sm small text-left">{{role.role}}</div>
         <div class="col-xs col-sm small">{{role.opera}} <span v-if="role.composer">| {{role.composer}}</span></div>
         <div class="col-xs col-sm small">{{role.company}}</div>
-        <div class="col-xs col-sm small year"><span class="year-inner">{{role.year}}</span></div>
+        <div class="col-xs col-sm small text-right"><span class="year-inner">{{role.year}}</span></div>
 	  	</div>
 
       <h5 v-if="scenesCovers" class="is-golden">Scenes and Covers</h5>
       <div v-for="role in scenesCovers" class="row between-xs between-sm">
-        <div class="col-xs col-sm small">{{role.role}}</div>
+        <div class="col-xs col-sm small text-left">{{role.role}}</div>
         <div class="col-xs col-sm small">{{role.opera}} <span v-if="role.composer">| {{role.composer}}</span></div>
         <div class="col-xs col-sm small">{{role.company}}</div>
-        <div class="col-xs col-sm small year"><span class="year-inner">{{role.year}}</span></div>
+        <div class="col-xs col-sm small text-right"><span class="year-inner">{{role.year}}</span></div>
       </div>
 
       <h5 v-if="currentPortfolio.concertAndOratorios" class="is-golden">Concert and Oratorios</h5>
         <div v-for="concert in currentPortfolio.concertAndOratorios" class="row between-xs between-sm">
           <div  class="col-xs col-sm small">{{concert.role}}</div>
           <div class="col-xs col-sm small">{{concert.work}} <span v-if="concert.composer">| {{concert.composer}}</span></div>
-          <div  class="col-xs col-sm small year"><span class="year-inner">{{concert.year}}</span></div>
+          <div  class="col-xs col-sm small text-right"><span class="year-inner">{{concert.year}}</span></div>
         </div>
 
 
@@ -106,7 +106,7 @@ export default {
   methods: {
     portfolioUpdate(object) {
       let keysArray = Object.keys(object)
-      console.log(this.currentPortfolio)
+      // console.log(this.currentPortfolio)
       keysArray.forEach((element) => {
         // console.log(element)
         // console.log({[element]: object[element]})
@@ -136,10 +136,6 @@ export default {
   padding-bottom: 40px;
 	height: 476px;
 	overflow-y: scroll;
-}
-
-.year {
-  text-align: right;
 }
 
 .year-inner {
