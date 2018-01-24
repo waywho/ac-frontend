@@ -1,17 +1,12 @@
 <template>
 	<div class="">
 
-    <div v-for="(detail, key, index) in profileDetails" class="col-xs-12 col-sm-6" :id="key">
 
-        <p><span></span></p>
-    </div>
-
-
-		<p><span>{{ profileDetails.city }}, {{ profileDetails.province }} </span><br class="xs-break" /><span class="is-golden" v-if="dataAvailable(profileDetails.connectionStrength)">{{ profileDetails.connectionStrength }}% {{ profileDetails.connectionLevel | to-uppercase }}</span></p>
+		<p><span>{{ profileDetails.city }}, {{ profileDetails.province }} </span><br class="xs-break" /><span class="is-golden" v-if="dataAvailable(connectionLevel.strength)">{{ connectionLevel.strength }}% {{ connectionLevel.name | to-uppercase }}</span></p>
 
     <p v-if="profileType === 'company'">{{ profileDetails.type }} Opera Company based in {{ profileDetails.country }} |<br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
 
-		<p v-if="profiletype === 'artist'">{{ profileDetails.voiceType }} based in {{ profileDetails.country }} <br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
+		<p v-if="profileType === 'artist'">{{ profileDetails.voiceType }} based in {{ profileDetails.country }} <br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
 	</div>
 </template>
 
@@ -20,7 +15,8 @@ export default {
   name: 'artistDetails',
   props: {
   	profileDetails: Object,
-    profileType: String
+    profileType: String,
+    connectionLevel: Object
   },
   data () {
     return {
@@ -42,6 +38,9 @@ export default {
         false
       }
     }
+  },
+  created() {
+    // console.log(this.profileDetails)
   }
 }
 </script>

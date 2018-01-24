@@ -15,25 +15,30 @@ export const store = new Vuex.Store({
 		setUser (state, payload) {
 			state.user = payload;
 		},
-		setUserProfile (state, payload) {
-			console.log(payload)
-			state.userProfile = payload;
+		setCurrentUserProfile (state, payload) {
+			// console.log(payload)
+			state.currentUserProfile = payload;
 		},
 		resetState (state, payload) {
 			state.user = null;
 			state.profile = {};
 			localStorage.removeItem('artistCenter')
+		},
+		setUserTools (state, payload) {
+			state.currentUserTools = payload;
 		}
 	},
 	actions: {
-		signUserUp({commit}, payload) {
+		signUserUp({commit, dispatch}, payload) {
 			firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
 				.then(
 					user => {
+						console.log(user.idToken)
 						const newUser = {
 							id: user.uid
 						}
-					commit('setUser', newUser)
+					commit('setUser', newUser);
+					dispatch('getProfile', newUser);
 					}
 				)
 				.catch(
@@ -42,7 +47,7 @@ export const store = new Vuex.Store({
 					}
 				)
 		},
-		signUserIn({commit}, payload) {
+		signUserIn({commit, dispatch}, payload) {
 			firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
 				.then(
 					user => {
@@ -51,19 +56,21 @@ export const store = new Vuex.Store({
 						}
 						commit('setUser', newUser)
 						dispatch('getProfile', newUser)
-					}
-				).catch(
+						dispatch('getTools', newUser)
+					})
+				.catch(
 					error => {
 						console.log(error)
 					}
 				)
 		},
-		createUserProfile({commit}, payload) {
-			console.log(payload)
+		createUserProfile({commit, dispatch}, payload) {
+			// console.log(payload)
 			firebase.database().ref('profiles/' + payload.userId).set(payload.data)
 				.then(
-					function(data) {
-						console.log(data)
+					function() {
+						// console.log(data)
+						dispatch('getProfile', {id: payload.userId})
 					}
 				).catch(
 					error => {
@@ -71,11 +78,13 @@ export const store = new Vuex.Store({
 					}
 				)
 		},
-		updateUserProfile({commit}, payload) {
+		updateUserProfile({commit, dispatch}, payload) {
+			// console.log(payload.data)
 			firebase.database().ref('profiles/' + payload.userId).update(payload.data)
 				.then(
 					function(data) {
-						console.log(data)
+						// console.log(data)
+						dispatch('getProfile', {id: payload.userId})
 					}
 				).catch(
 					error => 
@@ -86,13 +95,15 @@ export const store = new Vuex.Store({
 			firebase.database().ref('profiles/' + payload.id).once('value')
 				.then(function(snapshot) {
 					// console.log(snapshot.val());
-					commit('setUserProfile', snapshot.val())
+					commit('setCurrentUserProfile', snapshot.val())
+				}).catch(error => {
+					console.log(error)
 				})
 		},
 		saveProfileImages({commit}, payload) {
-			console.log(payload.data)
+			// console.log(payload.data)
 			const filename = Object.keys(payload.data)[0]
-			console.log(filename)
+			// console.log(filename)
 			let imageURL
 			let key = payload.userId
 			const ext = filename.slice(filename.lastIndexOf('.'))
@@ -101,25 +112,64 @@ export const store = new Vuex.Store({
 					imageURL = fileData.metadata.downloadURLs[0]
 					let dataURL = {}
 					dataURL[filename + 'URL'] = imageURL
-					console.log(dataURL)
+					// console.log(dataURL)
 					return firebase.database().ref('profiles').child(key).update(dataURL)		
 				}).catch(error => {
 					console.log(error)
 					}
 				)
+		},
+		createUserTools({commit}, payload) {
+			firebase.database().ref('tools/' + payload.userId).set(payload.data)
+				.then(
+					function() {
+						// console.log(data)
+						dispatch('getTools', {id: payload.userId})
+					}
+				).catch(
+					error => {
+						console.log(error)
+					}
+				)
+		},
+		updateUserTools({commit, dispatch}, payload) {
+			firebase.database().ref('tools/' + payload.userId).child(payload.toolName).update(payload.data)
+				.then(
+					function(data) {
+						// console.log(data)
+						dispatch('getTools', {id: payload.userId})
+					}
+				).catch(
+					error => 
+					console.log(error)
+				)
 		}
+		,
+		getTools({commit}, payload) {
+			firebase.database().ref('tools/' + payload.id).once('value')
+				.then((snapshot) => {
+					console.log(snapshot.val());
+					commit('setUserTools', snapshot.val())
+				}).catch(error => {
+					console.log(error)
+				})
+		},
 	},
 	getters: {
 		user(state) {
 			return state.user;
 		},
 		profile(state) {
-			return state.userProfile;
+			return state.currentUserProfile;
+		},
+		userTools(state) {
+			return state.currentUserTools
 		}
 	},
 	state: {
 		user: null,
-		userProfile: {},
+		currentUserProfile: {},
+		currentUserTools: {},
 		staticPages: {
 			"center": {
 				title: "About",

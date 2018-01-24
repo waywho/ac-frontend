@@ -10,18 +10,22 @@
 		<br />
 		<div class="strong">Continue to Account</div class="strong">
   		<div class="icon-container last-step">
-			<i class="fa fa-chevron-right is-golden icon" aria-hidden="true"></i>
+			<router-link :to="{ name: 'profile', params: { id: user.id }}"><i class="fa fa-chevron-right is-golden icon" aria-hidden="true"></i></router-link>
 		</div>
   </div>
 </template>
 
 <script>
+	import { mapGetters } from 'vuex'
 export default {
   name: 'signUpStepEight',
   data () {
     return {
       
     }
+  },
+  computed: {
+  	...mapGetters(['user'])
   }
 }
 </script>
