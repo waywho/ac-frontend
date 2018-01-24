@@ -66,6 +66,7 @@ import { mapGetters } from 'vuex';
 import * as firebase from 'firebase';
 import profileImagesMixin from '../mixins/profileImagesMixin';
 import currentUser from '../mixins/currentUserMixin';
+import axios from 'axios';
 
 export default {
 	name: 'profile',
@@ -95,19 +96,33 @@ export default {
 		getProfile: function() {
 			this.error = this.post = null;
 			this.loading = true;
-			firebase.database().ref('profiles/' + this.id).once('value')
-				.then(snapshot => {
-					// console.log(snapshot.val());
-					return snapshot.val();
-				}).then(data => {
-					
-					this.profile = data;
-					if (this.profile !== null && this.profile !== undefined) {
+			axios.get("https://artist-center.firebaseio.com/profiles/" + this.id + ".json")
+				.then(res => {
+					console.log(res)
+					this.profile = res.data
+					if (res.data !== null && res.data !== undefined) {
 						this.loading = false;
 					} else {
-						this.loading = true;
+						this.loading = true
 					}
 				})
+				.catch(error => console.log(error))
+
+				// TODO: add message if data is not found somwehere
+
+			// firebase.database().ref('profiles/' + this.id).once('value')
+			// 	.then(snapshot => {
+			// 		// console.log(snapshot.val());
+			// 		return snapshot.val();
+			// 	}).then(data => {
+					
+			// 		this.profile = data;
+			// 		if (this.profile !== null && this.profile !== undefined) {
+			// 			this.loading = false;
+			// 		} else {
+			// 			this.loading = true;
+			// 		}
+			// 	})
 		}
 	},
 	watch: {

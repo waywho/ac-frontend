@@ -5,6 +5,7 @@ import searchResults from '@/components/searchResults'
 import landing from '@/components/landing'
 import membershipDetails from '@/components/membershipDetails'
 import pageStatic from '@/components/pageStatic'
+import store from '@/store/store'
 
 Vue.use(Router)
 
