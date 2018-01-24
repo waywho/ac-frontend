@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="main-app">
     <app-menu :class="['app-menu', {'menu-open': isActive}]" v-on:toggleMenu="menuToggle($event)"></app-menu>
     <div id="app">
-      <app-signIn v-if="showModal" @close="showModal = false"></app-signIn>
-      <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:modalShow="showModal = true" :isActive="isActive"></app-header>
+      <app-signIn v-if="showSignInModal" @close="showSignInModal = false"></app-signIn>
+      <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive"></app-header>
       <router-view class="main-body" @scroll="handleScroll"/>
       <app-footer></app-footer>
     </div>
@@ -42,7 +42,7 @@ export default {
       scrollPosition: 0,
       navPosition: '',
       isActive: false,
-      showModal: false
+      showSignInModal: false
     }
   },
   mixins: [currentUser],

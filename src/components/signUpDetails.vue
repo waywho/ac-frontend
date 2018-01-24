@@ -3,7 +3,7 @@
   	<h3>Profile Details</h3>
   	<div class="row">
     	<div v-for="(detail, key, index) in details" class="col-xs-12 col-sm-6" :id="key">
-    		<label class="strong">{{key | capitalize}}</label>
+    		<label class="strong label-header">{{key | camel-to-space}}</label>
     		<input v-if="key !== 'descriptions'" type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter your ' + key" v-model="details[key]" />
     		<textarea v-if="key === 'descriptions'" type="text" class="signup-input" name="name" placeholder="Your description" v-model="details.descriptions" /></textarea>
     	</div>

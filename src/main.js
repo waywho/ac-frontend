@@ -35,6 +35,15 @@ Vue.filter('capitalize', function (value) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 })
 
+Vue.filter('camel-to-space', function (value) {
+  if (value !== null && value !== undefined) {
+    value = value.replace(/([A-Z])/g, " $1");
+    return value.charAt(0).toUpperCase() + value.slice(1)
+  } else {
+    return ''
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

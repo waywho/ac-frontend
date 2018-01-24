@@ -351,7 +351,7 @@ input:checked + .slider:before {
 .input-addon {
 	display: flex;
 	flex: 1;
-	margin: 0px 10px 20px 0px;
+	margin: 0px 0px 20px 0px;
 }
 
 .input-addon-field {
@@ -381,11 +381,11 @@ input:checked + .slider:before {
 }
 .input-addon-field:first-child,
 .input-addon-item:first-child {
-  border-radius: 15px 0 0 15px;
+  border-radius: 0 0 0 0;
 }
 .input-addon-field:last-child,
 .input-addon-item:last-child {
-  border-radius: 0 15px 15px 0;
+  border-radius: 0 0 0 0;
 }
 
 .inline-inputs {

@@ -43,7 +43,9 @@ export default {
   	}
   },
   created() {
-  	this.slicedConnections = this.connections.slice(0, 4);
+  	if (this.connections !== null && this.connections !== undefined) {
+  		this.slicedConnections = this.connections.slice(0, 4)
+  	};
   }
 }
 </script>

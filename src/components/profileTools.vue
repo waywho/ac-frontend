@@ -1,10 +1,10 @@
 <template>
   <div class="profile-tools">
     <keep-alive>
-      <component :is="component" :profile-id="profileId" class="tool-panel"></component>
+      <component :is="component" :profile-id="profileId" class="tool-panel" v-bind="toolData"></component>
     </keep-alive>
     <div class="toolbox">
-      <div v-for="tool in profileTools" @click="component = tool.component" class="toolbox-tile is-lightgray"><i :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i>{{tool.name}}</div>
+      <div v-for="tool in profileTools" @click="component = tool.component" class="toolbox-tile is-lightgray"><i :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i><br />{{tool.name}}</div>
      </div>
   </div>
 </template>
@@ -16,40 +16,44 @@ import messageTool from './messageTool';
 import budgetTool from './budgetTool';
 import mediaTool from './mediaTool';
 import ticketTool from './ticektTool';
-import cvTool from './cvTool'
+import portfolioTool from './portfolioTool'
+import currentUser from '../mixins/currentUserMixin'
 
 export default {
   name: 'tools',
   components: {
-    'tool-calendar': calendar,
-    'tool-settings': settingsTool,
-    'tool-message': messageTool,
-    'tool-budget': budgetTool,
-    'tool-media': mediaTool,
-    'tool-ticket': ticketTool,
-    'tool-cv': cvTool
+    'calendar': calendar,
+    'settings': settingsTool,
+    'message': messageTool,
+    'budget': budgetTool,
+    'media': mediaTool,
+    'ticket': ticketTool,
+    'portfolio': portfolioTool
   },
   props: {
     profileId: String,
     profileType: String
   },
+  mixins: [currentUser],
   data () { 
     return {
-      component: 'tool-calendar',
+      id: this.$route.params.id,
+      profileToolData: {},
+      component: 'calendar',
       artistTools: [
-        { name: 'Schedule', component: 'tool-calendar', icon: 'fa-calendar' },
-        { name: 'Settings', component: 'tool-settings', icon: 'fa-cogs' },
-        { name: 'Messages', component: 'tool-message', icon: 'fa-comments-o' },
-        { name: 'Media', component: 'tool-media', icon: 'fa-play-circle' },
-        { name: 'CV/Resume', component: 'tool-cv', icon: 'fa-file-text-o' }
+        { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
+        { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
+        { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
+        { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' }
       ],
       companyTools: [
-        { name: 'Schedule', component: 'tool-calendar', icon: 'fa-calendar' },
-        { name: 'Settings', component: 'tool-settings', icon: 'fa-cogs' },
-        { name: 'Messages', component: 'tool-message', icon: 'fa-comments-o' },
-        { name: 'Budget', component: 'tool-budget', icon: 'fa-bar-chart' },
-        { name: 'Media', component: 'tool-media', icon: 'fa-play-circle' },
-        { name: 'Ticket', component: 'tool-ticket', icon: 'fa-ticket' }
+        { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
+        { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
+        { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
+        { name: 'Budget', component: 'budget', icon: 'fa-bar-chart' },
+        { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
       ]
     }
   },
@@ -60,10 +64,15 @@ export default {
         } else if (this.profileType === 'company') {
           return this.companyTools
         }
+    },
+    toolData() {
+      return {[this.component]: this.profileToolData[this.component]}
     }
   },
-  method: {
-
+  created() {
+      if(this.authorizedUser) {
+        return this.profileToolData = this.$store.getters.userTools
+      }
   }
 }
 </script>
