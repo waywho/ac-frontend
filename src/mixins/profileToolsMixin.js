@@ -12,8 +12,6 @@ export default{
 
 	 		this.$store.dispatch('updateUserTools', {userId: this.$store.getters.user.id, toolName: toolName, data: toolData})
 	 		  	.then((response) => {
-		        this.message = 'Updated Successfully',
-		        this.messageType = 'success',
 		        this.messageShow[fields] = true,
 		        this.$emit(updateTool, toolData);
 	    	});

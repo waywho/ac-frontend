@@ -16,8 +16,9 @@ import messageTool from './messageTool';
 import budgetTool from './budgetTool';
 import mediaTool from './mediaTool';
 import ticketTool from './ticektTool';
-import portfolioTool from './portfolioTool'
-import currentUser from '../mixins/currentUserMixin'
+import portfolioTool from './portfolioTool';
+import currentUser from '../mixins/currentUserMixin';
+import firebaseAxios from '../axios-firebase.js';
 
 export default {
   name: 'tools',
@@ -37,7 +38,6 @@ export default {
   mixins: [currentUser],
   data () { 
     return {
-      id: this.$route.params.id,
       profileToolData: {},
       component: 'calendar',
       artistTools: [
@@ -70,9 +70,17 @@ export default {
     }
   },
   created() {
-      if(this.authorizedUser) {
-        return this.profileToolData = this.$store.getters.userTools
-      }
+      // if(this.authorizedUser) {
+        firebaseAxios.get("/tools/" + this.profileId + ".json" + '?auth=' + this.currentUser.idToken)
+        .then(res => {
+          // console.log('tools', res)
+          this.profileToolData = res.data
+        }).catch(error => {
+          console.log(error)
+        })
+
+        // return this.profileToolData = this.$store.getters.userTools
+      // }
   }
 }
 </script>

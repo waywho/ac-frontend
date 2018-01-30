@@ -9,6 +9,7 @@
 	          <label for='remember'><span></span>Remeber me</label>
 	    </div>
 	  	<input slot='body' type="password" placeholder="password" class='form-element' v-model="password" />
+      <success-warning-notice v-if="messageShow" class="form-element"></success-warning-notice>
 	  	<div class="password form-element is-darkgray">forgot password</div>
 	  	<button type="submit" class="button">Sign in</button>
   	</form>
@@ -18,33 +19,42 @@
 
 <script>
 import modal from './modal';
+import successWarningNotice from './successWarningNotice'; 
+
 export default {
   name: 'signIn',
   components: {
-  	'modal': modal
+  	'modal': modal,
+    'success-warning-notice': successWarningNotice
   },
   data () {
     return {
-      	remember: true,
-      	email: "",
+      messageShow: false,
+      remember: true,
+      email: "",
   		password: ""
     }
   },
   computed: {
-    user() {
-      return this.$store.getters.user
+    user () {
+      return this.$store.getters.currentUser
     }
   },
   methods: {
   	onSignIn: function(){
+      this.messageShow = false
   		this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
+        .then(() => {},
+          error => {
+            this.messageShow = true
+          })
   	}
   },
   watch: {
   	user (value) {
   		if (value !== null && value !== undefined) {
-  			console.log(value)
-  			this.$router.push({name: 'profile', params: { id: value.id }})
+  			// console.log(value)
+  			this.$router.push({name: 'profiles', params: { id: value.id }})
   			this.$emit('close')
   		}
   	}

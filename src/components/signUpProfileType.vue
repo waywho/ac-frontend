@@ -72,7 +72,7 @@ export default {
       }
       // console.log(toolSuite)
       this.updateData(1, {'type': this.type})
-      this.$store.dispatch('createUserTools', {userId: this.$store.getters.user.id, data: toolSuite})
+      this.$store.dispatch('createUserTools', {userId: this.$store.getters.currentUser.id, data: toolSuite})
     }
   },
   mixins: [stepMixin]

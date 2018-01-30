@@ -45,7 +45,7 @@
 				<profile-details v-if="profile" v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details" :connection-level="connectionLevel"></profile-details>
 			</div>
 
-			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" v-bind:profile-tool-data="profile.tools" class="section-margins"></profile-tools>
+			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
 
 			<profile-connections class="profile-section" :connections="profile.connections" v-bind:profile-id="profile.id"></profile-connections>
 
@@ -66,7 +66,7 @@ import { mapGetters } from 'vuex';
 import * as firebase from 'firebase';
 import profileImagesMixin from '../mixins/profileImagesMixin';
 import currentUser from '../mixins/currentUserMixin';
-import axios from 'axios';
+import firebaseAxios from '../axios-firebase.js';
 
 export default {
 	name: 'profile',
@@ -78,9 +78,12 @@ export default {
 		'profile-connections': profileConnections
 	},
   	mixins: [profileImagesMixin, currentUser],
+  	props: {
+  		id: String
+  	},
 	data() {
 		return {
-			id: this.$route.params.id,
+			profileId: this.id,
 			profile: null,
 			avatarURL: null,
 			coverURL: null,
@@ -96,33 +99,21 @@ export default {
 		getProfile: function() {
 			this.error = this.post = null;
 			this.loading = true;
-			axios.get("https://artist-center.firebaseio.com/profiles/" + this.id + ".json")
+			
+			firebaseAxios.get("/profiles/" + this.id + ".json")
 				.then(res => {
 					console.log(res)
 					this.profile = res.data
-					if (res.data !== null && res.data !== undefined) {
+					if (this.profile !== null && this.profile !== undefined) {
 						this.loading = false;
 					} else {
 						this.loading = true
 					}
 				})
+				// TODO: add message if data is not found somwehere
 				.catch(error => console.log(error))
 
-				// TODO: add message if data is not found somwehere
-
-			// firebase.database().ref('profiles/' + this.id).once('value')
-			// 	.then(snapshot => {
-			// 		// console.log(snapshot.val());
-			// 		return snapshot.val();
-			// 	}).then(data => {
-					
-			// 		this.profile = data;
-			// 		if (this.profile !== null && this.profile !== undefined) {
-			// 			this.loading = false;
-			// 		} else {
-			// 			this.loading = true;
-			// 		}
-			// 	})
+				
 		}
 	},
 	watch: {
@@ -176,14 +167,6 @@ export default {
 	created () {
 		this.getProfile();
 
-		// console.log(this.id)
-		// console.log(this.profile)
-		// find out all voice types
-		// const voices = []
-		// for (var i=0; 1< this.profile.auditionCandidates.length; i++) {
-		// 		voices.push(this.profile.auditionCandidates[i].voice_type);
-		// 		console.log(voices);
-		// };
 	}
 }
 </script>

@@ -20,7 +20,7 @@ export default{
 			let newData = {}
 			newData[imageType] = this[imageType]
 
-			this.$store.dispatch('saveProfileImages', {userId: this.$store.getters.user.id, data: newData} )
+			this.$store.dispatch('saveProfileImages', {userId: this.$store.getters.currentUser.id, data: newData} )
 		}
 	}
 }

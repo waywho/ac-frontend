@@ -9,13 +9,13 @@
       <li class="search" id="search-element">
         <input v-on:keyup.enter="searchResults($event.target.value)" type="search" id="search" class="small" placeholder="search profiles" />
       </li>
-      <li v-if="currentUser" class="header-avatar" v-on:click="notificationActive = !notificationActive">
+      <li v-if="signedIn" class="header-avatar" v-on:click="notificationActive = !notificationActive">
         <app-notificationBubble v-if="!notificationActive" class="notification-bubble"></app-notificationBubble>
         <div class="avatar avatar-small-border avatar-space" >
-            <img :src="currentUserAvatar" />
+            <img :src="currentUserAvatar" class="user-avatar" />
         </div>
       </li>
-      <li v-if="!currentUser" class='avatar-space sign-in-item' id="show-modal" v-on:click="showSignIn()">Sign in</li>
+      <li v-if="!signedIn" class='avatar-space sign-in-item' id="show-modal" v-on:click="showSignIn()">Sign in</li>
 
       <li :class="['menu-button', {open: isActive}]">
           <i v-on:click="toggleMenu()" class="fa fa-bars fa-2x is-darkgray" aria-hidden="true"></i>
@@ -65,8 +65,8 @@ export default {
   },
   computed: {
     currentUserAvatar() {
-      if(currentUser) {
-        var avatarURL = this.$store.getters.profile.avatarURL
+      if(this.signedIn) {
+        var avatarURL = !this.$store.getters.profile ? null : this.$store.getters.profile.avatarURL
         if (avatarURL !== null && avatarURL !== undefined) {
           return avatarURL
         } else {
@@ -140,6 +140,10 @@ export default {
 
 .avatar-space {
     margin: 0px 30px 0px 30px;
+}
+
+.user-avatar {
+    z-index: -1;
 }
 
 .avatar img {
@@ -232,6 +236,8 @@ export default {
   .avatar-space {
     margin: 0px 20px 0px 20px;
   }
+
+
 
   .notification-bubble {
     right: 15px;

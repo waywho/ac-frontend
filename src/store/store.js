@@ -1,173 +1,411 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import * as firebase from 'firebase';
-import createPersistedState from 'vuex-persistedstate';
+// import authAxios from '../axios-auth.js';
+import firebaseAxios from '../axios-firebase.js';
+import router from '../router';
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
-	plugins: [createPersistedState({
-		key: "artistCenter",
-		storage: window.sessionStorage
-	})],
 	strict: false,
 	mutations: {
-		setUser (state, payload) {
-			state.user = payload;
+		authUser (state, userData) {
+			state.idToken = userData.token
+			state.userId = userData.userId
+			state.userEmail = userData.userEmail
+			state.expires = userData.expires
 		},
 		setCurrentUserProfile (state, payload) {
-			// console.log(payload)
+			// console.log('setCurrentUserProfile state', payload)
 			state.currentUserProfile = payload;
 		},
-		resetState (state, payload) {
-			state.user = null;
-			state.profile = {};
-			localStorage.removeItem('artistCenter')
+		clearAuthData (state) {
+			state.idToken = null;
+			state.userId = null;
+			state.currentUserProfile = {};
+			state.userEmail = null;
+			state.expires = null;
+		},
+		setToken (state, payload) {
+			state.idToken = payload.idToken
 		},
 		setUserTools (state, payload) {
 			state.currentUserTools = payload;
+		},
+		setExpirationDate(state, date) {
+			state.expires = date
+		},
+		setMessage(state, payload) {
+			state.message = payload.message
+			state.messageType = payload.messageType
 		}
 	},
 	actions: {
+		setSessionStorage({state}) {
+			// console.log('setting Session')
+			let sessionData = {
+				idToken: state.idToken, 
+				userId: state.userId, 
+				userEmail: state.userEmail, 
+				expires: state.expires, 
+				currentUserProfile: state.currentUserProfile
+			}
+			sessionStorage.setItem('artistCenter', JSON.stringify(sessionData))
+		},
+		// function not being used right now
+		setSignoutTimer({commit, dispatch}, expirationTime) {
+			setTimeout(() => {
+				commit('clearAuthData')
+				sessionStorage.removeItem('artistCenter')
+			}, expirationTime * 1000)
+		},
+		setRefreshTokenTimer({commit, disptach}, expirationTime) {
+			setTimeout(() => {
+				dispatch('resetToken')
+			}, expirationTime * 1000)
+		},
+		resetToken({commit, dispatch, state}, idToken) {
+			const now = new Date()
+			if(now >= state.expires) {
+				dispatch('signOut')
+			}
+
+			firebase.auth().currentUser.getIdToken(true).then(idToken => {
+				commit('setToken', {'idToken': idToken})
+				dispatch('setSessionStorage')
+			})
+			dispatch('setRefreshtokenTimer', 3550)
+		},
 		signUserUp({commit, dispatch}, payload) {
-			firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+			// authAxios.post('/signupNewUser?key=' + process.env.FIREBASE_API_KEY, {
+			// 	email: payload.email,
+			// 	password: payload.password
+			// }).then(res => {
+			// 	// consoel.log(res)
+			// 	const newUser = {
+			// 		token: res.data.idToken,
+			// 		userId: res.data.localId
+			// 	}
+			// 	commit('authUser', newUser);
+			// 	dispatch('getUserProfile', newUser);
+
+			// }).catch(error => console.log(error))
+			
+			return firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
 				.then(
 					user => {
-						console.log(user.idToken)
-						const newUser = {
-							id: user.uid
-						}
-					commit('setUser', newUser);
-					dispatch('getProfile', newUser);
+						// console.log('sign up', user)
+						user.getIdToken(true).then(idToken => {
+							// console.log('token', idToken)
+							// set token expiry at 24 hours from now
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 86400 * 1000)
+
+							const newUser = {
+								userId: user.uid,
+								token: idToken,
+								userEmail: user.email,
+								expires: expirationDate
+								}
+
+								commit('authUser', newUser);
+								dispatch('createUser', {userId: user.uid, email: user.email});
+								dispatch('getUserProfile', newUser);
+								
+								// dispatch('setSessionStorage'); // being called at get User
+							})
+						dispatch('setRefreshTokenTimer', 3550)
 					}
 				)
 				.catch(
 					error => {
-						console.log(error)
+						// console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
+						return Promise.reject(error)
 					}
 				)
 		},
 		signUserIn({commit, dispatch}, payload) {
-			firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+
+			return firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
 				.then(
 					user => {
-						const newUser = {
-							id: user.uid
-						}
-						commit('setUser', newUser)
-						dispatch('getProfile', newUser)
-						dispatch('getTools', newUser)
+						console.log('sign in', user)
+						user.getIdToken(true).then(idToken => {
+							// console.log('token', idToken)
+							// set token expiry at 24 hours from now
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 86400 * 1000)
+
+							const newUser = {
+								token: idToken,
+								userId: user.uid,
+								userEmail: user.email,
+								expires: expirationDate
+							}
+							// set token expiry at 24 hours from now
+
+							commit('authUser', newUser);
+							dispatch('getUserProfile', newUser);
+							dispatch('getTools', newUser);
+
+							// dispatch('setSessionStorage'); // being called at get User
+						})
+					dispatch('setRefreshTokenTimer', 3550)
+				})
+			.catch(
+				error => {
+					// console.log(error)
+					commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
 					})
-				.catch(
-					error => {
-						console.log(error)
-					}
-				)
+					return Promise.reject(error)
+				}
+			)
+			// authAxios.post('/verifyPassword?key=' + process.env.FIREBASE_API_KEY, {
+			// 	email: payload.email,
+			// 	password: payload.password
+			// }).then(res => {
+			// 	// console.log(res)
+				
+			// 	const newUser = {
+			// 		token: res.data.idToken,
+			// 		userId: res.data.localId
+			// 	}
+			// 	commit('authUser', newUser);
+			// 	dispatch('getUserProfile', newUser)
+
+			// }).catch(error => console.log(error))
 		},
-		createUserProfile({commit, dispatch}, payload) {
+		signOut({commit}) {
+			console.log('signout')
+			firebase.auth().signOut();
+			sessionStorage.removeItem('artistCenter')
+			commit('clearAuthData')
+			// router.replace('/')
+		},
+		tryAutoSignIn({commit, dispatch}) {
+			if (!sessionStorage.getItem('artistCenter')) {
+				return
+			}
+			const sessionData = JSON.parse(sessionStorage.getItem('artistCenter'))
+			const token = sessionData.idToken
+			// console.log('token session', token)
+			if(!token) {
+				return
+			}
+			const expirationDate = sessionData.expires
+			// console.log('session expires', expirationDate)
+			const now = new Date()
+			if(now >= expirationDate) {
+				return
+			}
+			const userId = sessionData.userId
+			// console.log('session ID', userId)
+			const userEmail = sessionData.userEmail
+			// console.log('session Email', userEmail)
+			commit('authUser', {
+				token: token,
+				userId: userId,
+				userEmail: userEmail,
+				expires: expirationDate
+			})
+			dispatch('getUserProfile', {'userId': userId})
+		},
+		createUser({commit, dispatch, state}, payload) {
+			if(!state.idToken) {
+				return
+			}
 			// console.log(payload)
-			firebase.database().ref('profiles/' + payload.userId).set(payload.data)
-				.then(
-					function() {
-						// console.log(data)
-						dispatch('getProfile', {id: payload.userId})
-					}
-				).catch(
-					error => {
-						console.log(error)
-					}
-				)
+			let user = {
+				['profiles' + '/' + payload.userId]: { id: payload.id, email: payload.email },
+				['users' + '/' + payload.userId]: { id: payload.id, email: payload.email },
+			}
+			firebaseAxios.patch( '.json' +'?auth=' + state.idToken, user)
+				.then(res => {
+					console.log(res)
+					dispatch('getUserProfile', {userId: payload.userId})
+				}).catch(error => {console.log(error)})
 		},
-		updateUserProfile({commit, dispatch}, payload) {
+		updateUserProfile({commit, dispatch, state}, payload) {
+			if(!state.idToken) {
+				return
+			}
+			// console.log(payload)
+			// format {userId: 'id', data: {'data'}}
+			let dataKey = Object.keys(payload.data)[0]
+
+			switch (dataKey) {
+				case 'type':
+					var data = {
+							['profiles' + '/' + payload.userId + '/' + dataKey]: payload.data[dataKey],
+							['users' + '/' + payload.userId + '/' + dataKey]:  payload.data[dataKey],
+					}
+					break;
+				case 'details':
+					var data = {
+						['profiles' + '/' + payload.userId + '/' + dataKey]: payload.data[dataKey],
+						['users' + '/' + payload.userId + '/name']: payload.data.details.name,
+						['users' + '/' + payload.userId + '/city']: payload.data.details.city,
+						['users' + '/' + payload.userId + '/country']: payload.data.details.country,
+						['users' + '/' + payload.userId + '/roleType']: payload.data.details.companyType !== null && payload.data.details.companyType !== undefined ? payload.data.details.companyType : payload.data.details.voiceType
+					}
+					break;
+				default: 
+					var data = {['profiles' + '/' + payload.userId + '/' + dataKey]: payload.data[dataKey]}
+			}
+			firebaseAxios.patch('.json' + '?auth=' + state.idToken, data)
+				.then(res => {
+					console.log(res)
+					dispatch('getUserProfile', {userId: payload.userId})
+					commit('setMessage', {
+						message: 'Updated Successfully',
+						messageType: 'success'
+					});
+				}).catch(error => {console.log(error)})
 			// console.log(payload.data)
-			firebase.database().ref('profiles/' + payload.userId).update(payload.data)
-				.then(
-					function(data) {
-						// console.log(data)
-						dispatch('getProfile', {id: payload.userId})
-					}
-				).catch(
-					error => 
-					console.log(error)
-				)
+			// firebase.database().ref('profiles/' + payload.userId).update(payload.data)
+			// 	.then(
+			// 		function(data) {
+			// 			// console.log(data)
+			// 			dispatch('getUserProfile', {id: payload.userId})
+			// 		}
+			// 	).catch(
+			// 		error => 
+			// 		console.log(error)
+			// 	)
 		},
-		getProfile({commit}, payload) {
-			firebase.database().ref('profiles/' + payload.id).once('value')
-				.then(function(snapshot) {
-					// console.log(snapshot.val());
-					commit('setCurrentUserProfile', snapshot.val())
+		getUserProfile({commit, dispatch, state}, payload) {
+			firebaseAxios.get("/profiles/" + payload.userId + ".json")
+				.then(res => {
+					// console.log('getUserProfile', res)
+					commit('setCurrentUserProfile', res.data)
+					dispatch('setSessionStorage');
 				}).catch(error => {
 					console.log(error)
 				})
 		},
-		saveProfileImages({commit}, payload) {
+		saveProfileImages({commit, state}, payload) {
 			// console.log(payload.data)
 			const filename = Object.keys(payload.data)[0]
 			// console.log(filename)
-			let imageURL
-			let key = payload.userId
+
 			const ext = filename.slice(filename.lastIndexOf('.'))
-			firebase.storage().ref('profileImages').child(key + '/' + key + filename + '.' + ext).put(payload.data[filename])
+
+			payload.data['auth'] = state.idToken
+
+			firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + '.' + ext).put(payload.data[filename])
 				.then( fileData => {
-					imageURL = fileData.metadata.downloadURLs[0]
-					let dataURL = {}
-					dataURL[filename + 'URL'] = imageURL
+					let imageURL = fileData.metadata.downloadURLs[0]
+					
+					if(filename === 'avatar') {
+						var userImage = {
+							['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL,
+							['users' + '/' + payload.userId + '/' + filename + 'URL']: imageURL,
+						}
+					} else {
+						var userImage = { ['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL }
+					}
+					
 					// console.log(dataURL)
-					return firebase.database().ref('profiles').child(key).update(dataURL)		
+					firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
+						.then(res => {
+								console.log('imageURL', res)
+								dispatch('getUserProfile', {'userId': state.id})
+							}
+						).catch(error => {
+							console.log(error)
+						})
 				}).catch(error => {
 					console.log(error)
 					}
 				)
 		},
-		createUserTools({commit}, payload) {
-			firebase.database().ref('tools/' + payload.userId).set(payload.data)
-				.then(
-					function() {
-						// console.log(data)
-						dispatch('getTools', {id: payload.userId})
-					}
-				).catch(
-					error => {
-						console.log(error)
-					}
-				)
+		createUserTools({commit, dispatch, state}, payload) {
+			if(!state.idToken) {
+				return
+			}
+			// console.log(payload)
+			firebaseAxios.put('/tools/' + payload.userId + '.json' + '?auth=' + state.idToken, payload.data)
+				.then(res => {
+					console.log('create toos', res)
+					dispatch('getTools', {id: payload.userId})
+				}).catch(error => {console.log(error)})
 		},
 		updateUserTools({commit, dispatch}, payload) {
-			firebase.database().ref('tools/' + payload.userId).child(payload.toolName).update(payload.data)
-				.then(
-					function(data) {
-						// console.log(data)
-						dispatch('getTools', {id: payload.userId})
-					}
-				).catch(
-					error => 
-					console.log(error)
-				)
-		}
-		,
-		getTools({commit}, payload) {
-			firebase.database().ref('tools/' + payload.id).once('value')
-				.then((snapshot) => {
-					console.log(snapshot.val());
-					commit('setUserTools', snapshot.val())
+			if(!state.idToken) {
+				return
+			}
+			// console.log(payload)
+			// format (userId: 'id', "toolName: 'settings': {}, 'calendar': [], 'portfolio': {}," 'media': [])
+			firebaseAxios.put('/tools/' + payload.userId + '/' + payload.toolName + '.json' + '?auth=' + state.idToken, payload.data)
+				.then(res => {
+					console.log('updated toos', res)
+					commit('setMessage', {
+						message: 'Updated Successfully',
+						messageType: 'success'
+					});
+					dispatch('getTools', {id: payload.userId})
+				}).catch(error => {console.log(error)})
+
+			// firebase.database().ref('tools/' + payload.userId).child(payload.toolName).update(payload.data)
+			// 	.then(
+			// 		function(data) {
+			// 			// console.log(data)
+			// 			dispatch('getTools', {id: payload.userId})
+			// 		}
+			// 	).catch(
+			// 		error => 
+			// 		console.log(error)
+			// 	)
+		},
+		getTools({commit, state}, payload) {
+			firebaseAxios.get("/tools/" + payload.userId + ".json" + '?auth=' + state.idToken)
+				.then(res => {
+					// console.log('tools', res)
+					commit('setUserTools', res.data)
 				}).catch(error => {
 					console.log(error)
 				})
+
+			// firebase.database().ref('tools/' + payload.id).once('value')
+			// 	.then((snapshot) => {
+			// 		console.log(snapshot.val());
+			// 		commit('setUserTools', snapshot.val())
+			// 	}).catch(error => {
+			// 		console.log(error)
+			// 	})
 		},
 	},
 	getters: {
-		user(state) {
-			return state.user;
+		currentUser(state) {
+			return { idToken: state.idToken, id: state.userId }
 		},
 		profile(state) {
 			return state.currentUserProfile;
 		},
 		userTools(state) {
 			return state.currentUserTools
+		},
+		isSignedIn(state) {
+			return state.idToken !== null
+		},
+		stateMessage(state) {
+			return {message: state.message, messageType: state.messageType}
 		}
 	},
 	state: {
-		user: null,
+		message: null,
+		messageType: null,
+		idToken: null,
+		userId: null,
+		userEmail: null,
+		expires: null,
 		currentUserProfile: {},
 		currentUserTools: {},
 		staticPages: {

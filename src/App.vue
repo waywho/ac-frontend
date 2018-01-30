@@ -68,6 +68,7 @@ export default {
   },
   created() {
     document.body.addEventListener('scroll', this.handleScroll);
+    this.$store.dispatch('tryAutoSignIn');
   },
   destroyed() {
     document.body.removeEventListener('scroll', this.handleScroll);

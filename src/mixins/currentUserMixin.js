@@ -1,11 +1,17 @@
 export default {
   computed: {
+  	signedIn() {
+  		return this.$store.getters.isSignedIn
+  	},
     currentUser() {
-      return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+      	return this.$store.getters.currentUser
     },
     authorizedUser() {
+    	if (!this.signedIn) {
+    		return
+    	} 
 		if (this.currentUser) {
-			return this.id === this.$store.getters.user.id
+			return this.profileId === this.$store.getters.currentUser.id
 		} else {
 			false
 		}
