@@ -28,12 +28,14 @@ export default {
     'calendar-form': calendarForm
   },
   props: {
-    calendar: Array
+    calendar: {
+      type: Array,
+      required: false
+    }
   },
   data () {
     return {
       component: 'vue-event-calendar',
-      currentEvents: this.calendar,
       include: ''
     }
   },
@@ -62,7 +64,34 @@ export default {
     }
   },
   computed: {
-
+    currentEvents: function() {
+      if(this.calendar !== null && this.calendar !== undefined) {
+        return this.calendar
+      } else {
+        var now = new Date()
+        var dd = now.getDate()
+        var mm = now.getMonth() + 1
+        var yyyy = now.getFullYear()
+        if(dd<10) {
+          dd = '0'+ dd
+        }
+        if(mm<10) {
+          mm = '0'+ mm
+        }
+        let today = yyyy + '/' + mm + '/' + dd
+        console.log(now)
+        console.log(today)
+        return [
+          { date: today,
+            start: '',
+            end: '',
+            title:  "you have no events yet",
+            location: '',
+            desc: 'longlonglong description',
+            type: 'production'}
+          ]
+      }
+    }
   },
   created() {
     this.include = 'calendar-form'

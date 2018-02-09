@@ -39,7 +39,7 @@ export default {
   methods:{
     profileToolsSetup: function(type) {
       let toolSuite = {}
-        toolSuite['settings'] = {notification_settings: [{  
+        toolSuite['settings'] = {notifications: [{  
             title: "Notifications on",
             desc: "Lorum ipsum deus domine allorum deus ipsum. Ave Maria lorum ipsum",
             isChecked: true
@@ -47,32 +47,44 @@ export default {
             title: "Notifications sound",
             desc: "Lorum ipsum deus domine allorum deus ipsum. Ave Maria lorum ipsum",
             isChecked: true
-        }]}
-        toolSuite['calendar'] = [{
-          date: 'enter a datae',
-          start: 'enter a start time',
-          end: 'enter an end time',
-          title: 'enter event title',
-          location: 'enter local',
-          desc: 'enter description',
-          type: 'please select event type'
-        }]
-        toolSuite['media'] = [{
-          id: 'myopera5325',
-          type: "video",
-          source: 'enter host address',
-          host: "enter host source"}]
-
-      if(this.type === 'artist') {
-        toolSuite['portfolio'] = { biography:
-          'please create your portfolio'
+        }],
+        languages: {
+          preferred: ["English"]
         }
-      } else if (this.type === 'company') {
-        toolSuite['budget'] = 'budget data'
       }
-      // console.log(toolSuite)
+      //   toolSuite['calendar'] = [{
+      //     date: 'enter a datae',
+      //     start: 'enter a start time',
+      //     end: 'enter an end time',
+      //     title: 'enter event title',
+      //     location: 'enter local',
+      //     desc: 'enter description',
+      //     type: 'please select event type'
+      //   }]
+      //   toolSuite['media'] = [{
+      //     id: 'myopera5325',
+      //     type: "video",
+      //     source: 'enter host address',
+      //     host: "enter host source"}]
+
+      // if(this.type === 'artist') {
+      //   toolSuite['portfolio'] = { biography:
+      //     'please create your portfolio'
+      //   }
+      // } else if (this.type === 'company') {
+      //   toolSuite['budget'] = 'budget data'
+      // }
+
+      // don't update more than one tool at a time
+
+      console.log(toolSuite)
+      var tool = Object.keys(toolSuite)[0]
       this.updateData(1, {'type': this.type})
-      this.$store.dispatch('createUserTools', {userId: this.$store.getters.currentUser.id, data: toolSuite})
+      this.$store.dispatch('updateUserTools', {
+        userId: this.$store.getters.currentUser.id, 
+        toolName: tool,  
+        data: toolSuite[tool]
+      })
     }
   },
   mixins: [stepMixin]

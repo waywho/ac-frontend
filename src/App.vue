@@ -62,9 +62,9 @@ export default {
     }
   },
   computed: {
-    userIsAuthenticated() {
-      return this.$store.getters.user !== null && this.$store.getters.user !== undefined
-    }
+    // userIsAuthenticated() {
+    //   return this.$store.getters.currentUser !== null && this.$store.getters.currentUser !== undefined
+    // }
   },
   created() {
     document.body.addEventListener('scroll', this.handleScroll);

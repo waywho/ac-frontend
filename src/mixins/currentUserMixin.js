@@ -9,12 +9,20 @@ export default {
     authorizedUser() {
     	if (!this.signedIn) {
     		return
-    	} 
-		if (this.currentUser) {
-			return this.profileId === this.$store.getters.currentUser.id
-		} else {
-			false
-		}
-	}
+    	};
+			return this.profileId === this.$store.getters.currentUser.id;
+  	},
+    currentUserAvatar() {
+      if(this.signedIn) {
+        var avatarURL = !this.$store.getters.profile ? null : this.$store.getters.profile.avatarURL
+        if (avatarURL !== null && avatarURL !== undefined) {
+          return avatarURL
+        } else {
+          return require("../assets/images/avatar-holder.png")
+        }
+      } else {
+        return require("../assets/images/avatar-holder.png")
+      }
+    }
   }
 }

@@ -29,12 +29,13 @@
 export default {
   name: 'settingsNotifications',
   props: {
-    profileId: String
+    profileId: String,
+    notificationSettings: Array
   },
   computed: {
-  	notificationSettings: function() {
-  		return this.$store.state.profiles.companyXYZ.notification_settings;
-  	}
+  	// notificationSettings: function() {
+  	// 	return this.$store.state.profiles.companyXYZ.notification_settings;
+  	// }
   }
 }
 </script>

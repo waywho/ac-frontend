@@ -17,15 +17,13 @@ export default {
   computed: {
   	messageState () {
   		if(this.messaging !== null && this.messaging !== undefined) {
-  			return {
-  				'message': this.messaging.message, 
-  				'messageType': this.messaging.messageType
-  			}
+  			return this.messaging
   		} else {
   			return this.$store.getters.stateMessage
   		}
   	}
   }
+
 }
 </script>
 

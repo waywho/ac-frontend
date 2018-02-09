@@ -32,14 +32,14 @@ export default new Router({
     { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
     { path: '/about/:page', name: 'terms', component: pageStatic},
     { path: '/profiles/:id', name: 'profiles', component: showProfile, props: true},
-    { path: '/signup', name: 'signUp', component: signUp, 
+    { path: '/signup', name: 'signUp', component: signUp,
     	beforeEnter:(to, from, next) => {
     		console.log('checking');
     		if(store.state.idToken) {
-    			store.dispatch('signOut');
-    		}
-    		
-    		next();
+    			next('/profiles/' + store.state.userId)
+    		} else {
+                next();
+            }
     	} 
 	},
     { path: '/search', name: 'searchResults', component: searchResults},

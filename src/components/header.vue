@@ -64,18 +64,7 @@ export default {
     }    
   },
   computed: {
-    currentUserAvatar() {
-      if(this.signedIn) {
-        var avatarURL = !this.$store.getters.profile ? null : this.$store.getters.profile.avatarURL
-        if (avatarURL !== null && avatarURL !== undefined) {
-          return avatarURL
-        } else {
-          return require("../assets/images/avatar-holder.png")
-        }
-      } else {
-        return require("../assets/images/avatar-holder.png")
-      }
-    }
+
   }
 }
 </script>

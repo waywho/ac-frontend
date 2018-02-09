@@ -1,12 +1,12 @@
 <template>
   <div class="portfolio">
 
-    <button @click="showPortfolioForm = true" class="portfolio-edit">Edit Portfolio</button>
+    <button @click="showPortfolioForm = true" class="portfolio-edit">{{portfolioPresent ? 'Edit' : 'Create'}} Portfolio</button>
     <keep-alive>
       <portfolio-form v-if="showPortfolioForm" v-bind:portfolio="currentPortfolio" @close="showPortfolioForm = false" @updatePortfolio="portfolioUpdate($event)"></portfolio-form>
     </keep-alive>
   	
-    <div v-if="currentPortfolio === null || currentPortfolio === undefined || Object.keys(currentPortfolio).length === 0">Please enter your portfolio</div>
+    <div v-if="!portfolioPresent">Please create your portfolio</div>
 
       <h5 v-if="currentPortfolio.biography" class="is-golden">Biography</h5>
       <div class="row">
@@ -75,32 +75,44 @@ export default {
   },
   data () {
     return {
-      currentPortfolio: {},
+      currentPortfolio: null,
       showPortfolioForm: false
     }
   },
   computed: {
-    scenesCovers: function() {
-      var roles = this.portfolio.operaRoles.filter((role) => {
-        return role.scenesOrCovers
-      })
-
-      if (roles !== null && roles !== undefined) {
-        return roles
-      } else {
+    portfolioPresent: function() {
+      if (this.currentPortfolio === null || this.currentPortfolio === undefined || Object.keys(this.currentPortfolio).length === 0) {
         return false
+      } else {
+        return true
+      }
+    },
+    scenesCovers: function() {
+      if (this.currentPortfolio.operaRoles !== null && this.currentPortfolio.operaRoles !== undefined) {
+        var roles = this.currentPortfolio.operaRoles.filter((role) => {
+          return role.scenesOrCovers
+        })
+
+        if (roles !== null && roles !== undefined) {
+          return roles
+        } else {
+          return false
+        }
       }
     },
     fullOperaRoles: function() {
-      var roles = this.portfolio.operaRoles.filter((role) => {
-        return !role.scenesOrCovers
-      })
+      if (this.currentPortfolio.operaRoles !== null && this.currentPortfolio.operaRoles !== undefined) {
+          var roles = this.currentPortfolio.operaRoles.filter((role) => {
+            return !role.scenesOrCovers
+          })
 
-      if (roles !== null && roles !== undefined) {
-        return roles
-      } else {
-        return false
+          if (roles !== null && roles !== undefined) {
+            return roles
+          } else {
+            return false
+          }
       }
+      
     }
   },
   methods: {

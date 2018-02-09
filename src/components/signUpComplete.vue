@@ -1,7 +1,7 @@
 <template>
   <div class="complete">
   		<h3>Complete</h3>
-  		<div class="icon-container icon-complete-container">
+  		<div class="icon-container-no-point icon-complete-container">
 			<i class="fa fa-chevron-right is-golden icon-complete" aria-hidden="true"></i>
 		</div>
 		<h4>Connecting you to the world of opera</h4>

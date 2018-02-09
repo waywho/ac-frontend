@@ -35,7 +35,7 @@
 </template>
 
 <script>
-
+import currentUserMixin from '../mixins/currentUserMixin'
 import message from './message';
 
 export default {
@@ -43,6 +43,7 @@ export default {
   components: {
   	'message': message,
   },
+  mixins: [currentUserMixin],
   data () {
     return {
       messages: [],
@@ -113,7 +114,7 @@ export default {
 	// border: 1px solid #dddcdc;
 	background-color: #fff;
 	height: 100%;
-	flex-basis: 41%;
+	flex-basis: 55%;
 }
 
 .message-header {
