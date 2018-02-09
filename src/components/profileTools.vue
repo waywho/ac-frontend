@@ -27,7 +27,7 @@ export default {
     'settings': settingsTool,
     'message': messageTool,
     'budget': budgetTool,
-    'media': mediaTool,
+    'medias': mediaTool,
     'ticket': ticketTool,
     'portfolio': portfolioTool
   },
@@ -45,7 +45,7 @@ export default {
         { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
-        { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
         { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' }
       ],
       companyAuthTools: [
@@ -53,14 +53,14 @@ export default {
         { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
         { name: 'Budget', component: 'budget', icon: 'fa-bar-chart' },
-        { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
         { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
       ],
       tools: {
         'calendar': { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         'media': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
         'portfolio': { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' },
-        'media': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        'medias': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
         'ticket': { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
       }
     }
@@ -102,6 +102,7 @@ export default {
         this.$store.dispatch('getProfileTools', {profileId: this.profileId})
               .then(res => {
                 this.profileToolData = res.data
+                console.log('profileTools', this.profileToolData)
                 if (this.profileToolData !== null && this.profileToolData !== undefined) {
                   this.show = true
                 } else {

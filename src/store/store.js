@@ -55,7 +55,7 @@ export const store = new Vuex.Store({
 				userEmail: state.userEmail, 
 				expires: state.expires, 
 				currentUserProfile: state.currentUserProfile,
-				curretUserTools: state.currentUserTools
+				currentUserTools: state.currentUserTools
 			}
 			sessionStorage.setItem('artistCenter', JSON.stringify(sessionData))
 		},
@@ -258,6 +258,7 @@ export const store = new Vuex.Store({
 				});
 
 			commit('setCurrentUserProfile', sessionData.currentUserProfile)
+			console.log('current user tools from session', sessionData.currentUserTools)
 			commit('setUserTools', sessionData.currentUserTools)
 			// testing: if I don't call reset, will it allow me to reset after token has expired?
 			// TODO: check
@@ -447,6 +448,13 @@ export const store = new Vuex.Store({
 						['toolsAuthorized/' + payload.userId + '/' + payload.toolName]: payload.data
 					}
 				break;
+				case 'medias':
+					// over-write complete calendar node
+					var toolData = {
+						['toolsPublic/' + payload.userId + '/' + payload.toolName]: payload.data,
+						['toolsAuthorized/' + payload.userId + '/' + payload.toolName]: payload.data
+					}
+				break;
 				default:
 					var toolData = {
 						['toolsPublic/' + payload.userId + '/' + payload.toolName + '/' + dataKey]: payload.data[dataKey],
@@ -481,7 +489,7 @@ export const store = new Vuex.Store({
 			// 		console.log(error)
 			// 	)
 		},
-		getUserTools({commit, state}, payload) {
+		getUserTools({commit, dispatch, state}, payload) {
 			// getUserTools public vs get Tools private
 			// console.log('state idToken getUserTools', state.idToken)
 			// console.log('disptaching getUserTools', state.idToken)
@@ -493,6 +501,7 @@ export const store = new Vuex.Store({
 				.then(res => {
 					// console.log('tools', res)
 					commit('setUserTools', res.data)
+					dispatch('setSessionStorage')
 				}).catch(error => {
 					reject(error)
 					console.log(error)

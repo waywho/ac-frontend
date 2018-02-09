@@ -81,6 +81,7 @@
 <script>
 import currentUserMixin from '../mixins/currentUserMixin'
 import profileImagesMixin from '../mixins/profileImagesMixin'
+import avatarMixin from '../mixins/avatarMixin'
 import _ from 'lodash';
 
 export default {
@@ -89,7 +90,7 @@ export default {
   	name: String,
     profileId: String
   },
-  mixins: [currentUserMixin, profileImagesMixin],
+  mixins: [currentUserMixin, profileImagesMixin, avatarMixin],
   data () {
     return {
    	  posts: null,
@@ -112,13 +113,6 @@ export default {
   	}
   },
   methods: {
-  	userAvatar: function(avatarURL) {
-  		if (avatarURL !== null && avatarURL !== undefined) {
-          return avatarURL
-        } else {
-          return require("../assets/images/avatar-holder.png")
-        }
-  	},
   	commentSubmit: function(postId, newComment) {
   		let commentObject = {'postId': postId, 
   			content: newComment, 

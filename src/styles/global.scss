@@ -219,11 +219,12 @@ button[disabled="disabled"] {
 	cursor: auto;
 }
 
-.item-input {
-	border: 2px solid $color-gold;
-	width: 57%;
-	height: 21px;
-}
+// making css class input gold border
+// .item-input {
+// 	border: 2px solid $color-gold;
+// 	width: 57%;
+// 	height: 21px;
+// }
 
 .date-num {
 	font-size: $font-size-smaller !important;
