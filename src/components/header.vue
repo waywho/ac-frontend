@@ -2,7 +2,7 @@
   <div id="header">
     <div class="header-inner">
     <div class="logo">
-      <router-link to="/"><img src='../assets/images/artistcenter-logo.png' alt="artistcenter logo" /></router-link>
+      <router-link to="/"><img src='../assets/images/artistcenter-logo.svg' alt="artistcenter logo" /></router-link>
     </div>
 
     <ul class="header-items">
