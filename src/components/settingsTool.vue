@@ -15,7 +15,6 @@
             <button v-on:click="updateSettings()">SAVE</button>
           </div>
       </div>
-      <div class="setting-title">Notify me when...</div>
       
       <ul class="non-list">
         <li v-for="setting in settingDetails" class="setting-detail-line small row between-sm between-xs middle-sm middle-xs">

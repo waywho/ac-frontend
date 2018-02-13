@@ -147,20 +147,21 @@ export default {
 		}
 	},
 	created () {
-		console.log('do i have data yet?', this.$store.getters.profile)
-		console.log(this.authorizedUser)
-		console.log(this.signedIn)
+		// console.log('do i have data yet?', this.$store.getters.profile)
+		// console.log(this.authorizedUser)
+		// console.log(this.signedIn)
 		if (this.signedIn && this.authorizedUser) {
 			console.log('I am signed in and authorized!', this.signedIn)
 
 			setTimeout(() => {
 
 				this.displayProfile = this.$store.getters.profile
-				if (this.displayProfile.avatarURL !== null && this.displayProfile.avatarURL !== undefined) {  
+				console.log('avatar', this.displayProfile.avatarURL)
+				if (this.displayProfile.avatarURL !== null && this.displayProfile.avatarURL !== undefined && this.displayProfile.avatarURL.length > 0) {  
 					this.avatarURL = this.displayProfile.avatarURL
 				}
 				
-				if (this.displayProfile.coverURL !== null && this.displayProfile.coverURL !== undefined) { 
+				if (this.displayProfile.coverURL !== null && this.displayProfile.coverURL !== undefined && this.displayProfile.coverURL.length > 0) { 
 					this.coverURL = this.displayProfile.coverURL
 				}
 

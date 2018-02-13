@@ -187,11 +187,13 @@ export const store = new Vuex.Store({
 								commit('authUser', newUser);
 								dispatch('getUserProfile', newUser);
 								dispatch('getUserTools', newUser);
-
+								dispatch('setRefreshTokenTimer', 3550)
+								dispatch('setSignoutTimer', 86400)
+								resolve(user)
 								// dispatch('setSessionStorage'); // being called at get User
 							})
-						dispatch('setRefreshTokenTimer', 3550)
-						dispatch('setSignoutTimer', 86400)
+
+						
 					})
 				.catch(
 					error => {
@@ -283,6 +285,7 @@ export const store = new Vuex.Store({
 					.then(res => {
 						console.log(res)
 						dispatch('getUserProfile', {userId: payload.userId})
+						resolve(res)
 					}).catch(error => {
 						console.log(error)
 						reject(error);
@@ -327,6 +330,7 @@ export const store = new Vuex.Store({
 							message: 'Updated Profile Successfully',
 							messageType: 'success'
 						});
+						resolve(res)
 					}).catch(error => {
 						console.log(error)
 						reject(error);
@@ -354,6 +358,7 @@ export const store = new Vuex.Store({
 						// console.log('getUserProfile', res)
 						commit('setCurrentUserProfile', res.data)
 						dispatch('setSessionStorage');
+						resolve(res)
 					}).catch(error => {
 						console.log(error);
 						reject(error);
@@ -413,6 +418,7 @@ export const store = new Vuex.Store({
 					.then(res => {
 						console.log('create tools', res)
 						dispatch('getUserTools', {userId: payload.userId})
+						resolve(res)
 					}).catch(error => {
 						reject(error)
 						console.log(error)})				
@@ -426,17 +432,15 @@ export const store = new Vuex.Store({
 			// console.log(payload)
 			// format (userId: 'id', "toolName: 'settings': {}, 'calendar': [], 'portfolio': {}," 'media': [], 'messages')
 			// tools private vs tools public
-			
+			var dataKey = Object.keys(payload.data)[0]
 
 			switch (payload.toolName) {
 				case 'settings':
-					var dataKey = Object.keys(payload.data)[0]
 					var toolData = {
 						['toolsAuthorized/' + payload.userId + '/' + payload.toolName + '/' + dataKey]: payload.data[dataKey]
 					}
 				break;
 				case 'messages':
-					var dataKey = Object.keys(payload.data)[0]
 					var toolData = {
 						['toolsAuthorized/' + payload.userId + '/' + payload.toolName + '/' + dataKey]: payload.data[dataKey]
 					}
@@ -472,6 +476,7 @@ export const store = new Vuex.Store({
 							messageType: 'success'
 						});
 						dispatch('getUserTools', {userId: payload.userId})
+						resolve(res)
 					}).catch(error => {
 						reject(error)
 						console.log(error)})				
@@ -502,6 +507,7 @@ export const store = new Vuex.Store({
 					// console.log('tools', res)
 					commit('setUserTools', res.data)
 					dispatch('setSessionStorage')
+					resolve(res)
 				}).catch(error => {
 					reject(error)
 					console.log(error)
@@ -558,6 +564,7 @@ export const store = new Vuex.Store({
 							message: 'Requests Sent',
 							messageType: 'success'
 						});
+						resolve(res)
 					}).catch(error => {
 						reject(error)
 						console.log(error)})				

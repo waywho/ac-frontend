@@ -53,7 +53,7 @@ export default {
   watch: {
   	user (value) {
   		if (value !== null && value !== undefined) {
-  			// console.log(value)
+  			console.log(value)
   			this.$router.push({name: 'profiles', params: { id: value.id }})
   			this.$emit('close')
   		}

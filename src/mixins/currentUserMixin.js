@@ -15,7 +15,7 @@ export default {
     currentUserAvatar() {
       if(this.signedIn) {
         var avatarURL = !this.$store.getters.profile ? null : this.$store.getters.profile.avatarURL
-        if (avatarURL !== null && avatarURL !== undefined) {
+        if (avatarURL !== null && avatarURL !== undefined && avatarURL.length > 0) {
           return avatarURL
         } else {
           return require("../assets/images/avatar-holder.png")

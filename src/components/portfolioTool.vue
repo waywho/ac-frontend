@@ -118,7 +118,7 @@ export default {
   methods: {
     portfolioUpdate(object) {
       let keysArray = Object.keys(object)
-      // console.log(this.currentPortfolio)
+      console.log('i should be triggered')
       keysArray.forEach((element) => {
         // console.log(element)
         // console.log({[element]: object[element]})
