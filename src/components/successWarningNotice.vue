@@ -1,16 +1,29 @@
 <template>
-  <div :class="['app-message', type]">
-  	<p><i class="fa fa-exclamation" aria-hidden="true"></i>  <span class="small">{{message}}</span></p>
+  <div :class="['app-message', messageState.messageType]">
+  	<p><i class="fa fa-exclamation" aria-hidden="true"></i>  <span class="small">{{messageState.message}}</span></p>
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'successWarningNotice',
   props: {
-  	message: null,
-    type: null
+  	messaging: {
+  		type: Object,
+  		required: false
+  	}
+  },
+  computed: {
+  	messageState () {
+  		if(this.messaging !== null && this.messaging !== undefined) {
+  			return this.messaging
+  		} else {
+  			return this.$store.getters.stateMessage
+  		}
+  	}
   }
+
 }
 </script>
 

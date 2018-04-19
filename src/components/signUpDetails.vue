@@ -2,10 +2,31 @@
   <div class="">
   	<h3>Profile Details</h3>
   	<div class="row">
-    	<div v-for="(detail, key, index) in details" class="col-xs-12 col-sm-6" :id="key">
-    		<label class="strong label-header">{{key | camel-to-space}}</label>
-    		<input v-if="key !== 'descriptions'" type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter your ' + key" v-model="details[key]" />
-    		<textarea v-if="key === 'descriptions'" type="text" class="signup-input" name="name" placeholder="Your description" v-model="details.descriptions" /></textarea>
+    	<div v-for="(detail, key, index) in details" :class="['col-xs-12', 'col-sm-6', newProfile.type === 'artist' && key === 'voiceType' ? 'companyType-hide' : 'voiceType-hide' ]" :id="key" :key="key">
+        <div v-if="key !== 'descriptions' && key !== 'voiceType' && key !== 'companyType'">
+      		<label class="strong label-header">{{key | camel-to-space}}</label>
+      		<input type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter your ' + key" v-model="details[key]" />
+        </div>
+    		<div v-if="key === 'descriptions'">
+          <textarea type="text" class="signup-input" name="name" placeholder="Your description" v-model="details[key]" /></textarea>
+        </div>
+        <div v-if="newProfile.type === 'artist' && key === 'voiceType'">
+          <label class="strong label-header">{{key | camel-to-space}}</label>
+          <select class="signup-input" v-model="details[key]">
+            <option disabled selected value>Select a Voice Type</option>
+            <option v-for="type in voiceTypes">{{type | capitalize}}</option>
+          </select>
+        </div>
+
+        <div v-if="newProfile.type === 'company' && key === 'companyType'">
+          <label  class="strong label-header">{{key | camel-to-space}}</label>
+          <select class="signup-input" v-model="details[key]">
+            <option disabled selected value>Select a Company Type</option>
+            <option v-for="type in companyTypes">{{type | capitalize}}</option>
+          </select>
+        </div>
+
+
     	</div>
   	</div>
 
@@ -22,16 +43,24 @@ export default {
   components: {
   	'next-last-step': nextLastStep
   },
+  props: {
+    newProfile: Object
+  },
   data () {
     return {
+      voiceTypes: ['soprano', 'mezzo soprano', 'tenor', 'baritone', 'bass'],
+      companyTypes: ['regional', 'national', 'touring'],
       details: {
-      	name: "",
-      	phoneNumber: "",
-      	address: "",
-      	city: "",
+        name: "",
+        voiceType: "",
+        companyType: "",
+        address: "",
+        city: "",
+        provinceOrState: "",
         postcode: "",
-      	country: "",
-      	descriptions: ""
+        country: "",
+        phoneNumber: "",
+        descriptions: ""
       }
     }
   },
@@ -42,6 +71,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @import '../styles/style-variables';
+
 .subheadline {
 	margin-bottom: 65px;
 }
@@ -58,6 +88,10 @@ export default {
 
 textarea.signup-input {
 	height: 250px;
+}
+
+.voiceType-hide#voiceType, .companytype-hide#companyType {
+  display: none;
 }
 
 .step-container {

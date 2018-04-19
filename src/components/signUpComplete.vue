@@ -1,7 +1,7 @@
 <template>
   <div class="complete">
   		<h3>Complete</h3>
-  		<div class="icon-container icon-complete-container">
+  		<div class="icon-container-no-point icon-complete-container">
 			<i class="fa fa-chevron-right is-golden icon-complete" aria-hidden="true"></i>
 		</div>
 		<h4>Connecting you to the world of opera</h4>
@@ -10,7 +10,7 @@
 		<br />
 		<div class="strong">Continue to Account</div class="strong">
   		<div class="icon-container last-step">
-			<router-link :to="{ name: 'profile', params: { id: user.id }}"><i class="fa fa-chevron-right is-golden icon" aria-hidden="true"></i></router-link>
+			<router-link :to="{ name: 'profiles', params: { 'id': currentUser.id }}"><i class="fa fa-chevron-right is-golden icon" aria-hidden="true"></i></router-link>
 		</div>
   </div>
 </template>
@@ -25,7 +25,7 @@ export default {
     }
   },
   computed: {
-  	...mapGetters(['user'])
+  	...mapGetters(['currentUser'])
   }
 }
 </script>

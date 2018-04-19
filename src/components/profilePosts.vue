@@ -1,62 +1,77 @@
 <template>
 	<div class="post-section">
-		<div class="post-box col-sm-offset-3 col-sm-9">
+		<div v-if="authorizedUser" class="post-box col-sm-offset-3 col-sm-9">
 			<div class="row">
 				<div class="col-xs-2">
 					<div class="row">
-			          <div class="avatar-border">
-			            <img src="../assets/images/myopera-logo.png" />
-			          </div>
+			          	<div class="avatar-border">
+            				<img :src="currentUserAvatar" class="user-avatar" />
+        				</div>
 			      </div>
 				</div>
 				<div class="col-xs-9">
-					<textarea ></textarea>
+					<textarea v-model="post.content"></textarea>
+					<div class="row">
+						<div v-if="imageURLs">
+			          		<div class="multi-image-container">
+			          			<div v-for="image in imageURLs" class="image-in-row thumbnail">
+			          				<img v-bind:src="image" />
+			          			</div>
+			          		</div>
+		          		</div>
+	          		</div>
 					<div class="row between-sm">
-						<div class="col-sm-8">
+						<div class="col-sm-8 add-image" v-on:click="onPickFile('postImage')">
 							<i class="fa fa-picture-o is-darkgray" aria-hidden="true"></i>
-							<span class="smaller is-darkgray">Add image</span>
+							<span class="smaller is-darkgray" >Add image</span>
+							<input v-if="authorizedUser" type="file" ref="postImage" style="display: none" accept="image/*" @change="onPostFilePicked($event, 'cover')" />
 						</div>
 						<div class="col-sm-4 end-sm col-xs-4 end-xs">
-							<button>POST</button>
+							<button v-on:click="addPost">POST</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div id="post-masonry" class="col-xs-12 col-sm-offset-3 col-sm-9 col-md-offset-3 col-md-8">
-			<div v-for="post in posts" class="post-tile">
+			<div v-for="(post, index) in displayPosts" class="post-tile" :key="index">
 				<div class="post-header">
-					<span class="name is-golden strong">{{name}}</span>
+					<span class="name is-golden strong">{{post.name}}</span>
 					<div class="status">
 						<span class="smaller">{{ post.timestamp | moment("from")}} </span><div class="comment-circle"></div><span class="smaller">posted a status</span>
 					</div>
 
 	          	</div>
 	          	<div class="post-text">{{post.content}}</div>
-	          	<div v-if="post.imgs.length > 1" class="multi-image-container">
-	          		<div v-for="image in post.imgs" class="image-in-row"><img v-bind:src="image" /></div>
+	          	<div v-if="post.imageURLs">
+	          		<div v-if="post.imageURLs.length > 1" class="multi-image-container">
+	          			<div v-for="image in post.imageURLs" class="image-in-row"><img v-bind:src="image" /></div>
+	          			</div>
+	          		<div v-else-if="post.imageURLs.length === 1" class="post-image"><img v-bind:src="post.imageURLs" /></div>
 	          	</div>
-	          	<div v-else-if="post.imgs.length === 1" class="post-image"><img v-bind:src="post.imgs" /></div>
-
 	          	<div class="post-icons">
 		          	<i class="fa fa-heart post-icon smaller" aria-hidden="true"></i><span class="icon-count smaller">{{post.likes}}</span>
-		          	<i class="fa fa-comment post-icon smaller" aria-hidden="true"></i><span class="icon-count smaller">{{post.comments.length}} comments</span>
+		          	<i class="fa fa-comment post-icon smaller" aria-hidden="true"></i><span class="icon-count smaller">{{post.commentCount}} comments</span>
 	          	</div>
 	          	<hr class="divider" />
-	          	<div v-for="comment in post.comments" class="comment-container">
-	          		<div class="avatar comment-avatar"><img :src="comment.user_img"></div>
-	          		<div class="comment-text">
-	          			<span class="small medium text-golden">{{comment.user}}</span>
-	          			<p class="smaller">{{comment.commentText}}</p>
+	          	<div v-for="(comment, index) in post.comments" class="comment-container">
+	          		<div class="comment-avatar">
+	          			<div class="avatar-small">
+	          				<img :src="userAvatar(comment.userAvatarURL)">
+	          			</div>
+	          		</div>
+	          		<div class="comment-content">
+	          			<span class="small medium text-golden">{{comment.user}}</span><br />
+	          			<span class="smaller comment-text">{{comment.content}}</span>
 	          		</div>
 	          	</div>
 	          	<div class="comment-input-container">
 	          		<div class="avatar-small-border">
-		            	<img src="../assets/images/myopera-logo.png" />
+		            	<img :src="currentUserAvatar" class="user-avatar" />
 		          	</div>
-		          	<div class="message-input-container">
-						<input type="text" class="message-input smaller" placeholder="write a comment" />
-					</div>
+		          	<form class="message-input-container" @submit.prevent="commentSubmit(post.id, post.newComment)">
+						<input type="text" class="smaller" name="comment" v-model="post.newComment" placeholder="write a comment" />
+					</form>
 				</div>
 			</div>
 		</div>
@@ -64,17 +79,106 @@
 </template>
 
 <script>
+import currentUserMixin from '../mixins/currentUserMixin'
+import profileImagesMixin from '../mixins/profileImagesMixin'
+import avatarMixin from '../mixins/avatarMixin'
+import _ from 'lodash';
+
 export default {
   name: 'profilePosts',
   props: {
   	name: String,
-  	posts: Array,
     profileId: String
   },
+  mixins: [currentUserMixin, profileImagesMixin, avatarMixin],
   data () {
     return {
-      
+   	  posts: null,
+      post: {
+      	id: null,
+      	name: this.name,
+      	content: null,
+      	timestamp: null,
+      	likes: 0,
+      	commentCount: 0
+      },
+      imageURLs: [],
+      imageFiles: [],
+      comment: null,
     }
+  },
+  computed: {
+  	displayPosts: function() {
+  		return _.orderBy(this.posts, ['timestamp'], ['desc'])
+  	}
+  },
+  methods: {
+  	commentSubmit: function(postId, newComment) {
+  		let commentObject = {'postId': postId, 
+  			content: newComment, 
+  			userId: this.currentUser.id, 
+  			user: this.$store.getters.profile.details.name,
+  			userAvatarURL: this.$store.getters.profile.avatarURL,
+  			timestamp: new Date()
+  		}
+
+		let	post = this.posts.find(post => {
+			return post.id === postId
+		})
+
+		// console.log(commentObject)
+
+  		if(post['comments'] === undefined) {
+  			post['comments'] = []
+  		}
+
+  		this.$store.dispatch('createPostComment', {userId: this.currentUser.id, data: commentObject})
+  			.then(res => {
+  				post['comments'].push(commentObject)
+  				post.newComment = null
+  			}, error => {
+  				console.log(error)
+  			})
+  		
+
+  		
+  	},
+  	addPost: function() {
+  		this.post['timestamp'] = new Date();
+  		this.$store.dispatch('createUserProfilePost', {userId: this.currentUser.id, data: this.post, images: this.imageFiles})
+  			.then(res => {
+  				console.log(res)
+  				this.post['imageURLs'] = res.data.imageURLs
+  				this.post['id'] = res.data.postId
+  				this.posts.unshift(this.post)
+  				this.post = {
+  					id: null,
+  					name: this.name,
+  					content: null,
+  					timestamp: null,
+  					likes: 0,
+  					commentCount: 0,
+  				}
+  				this.imageURLs = []
+  				this.imageFiles = []
+  			}, error => {
+  				console.log(error)
+  			})
+  	}
+  },
+  created() {
+		this.$store.dispatch('getProfilePosts', {profileId: this.profileId})
+			.then(res => {
+				var postsArray = [];
+				for (let key in res.data) {
+					res.data[key].id = key;
+					postsArray.push(res.data[key])
+				}
+				this.posts = postsArray
+				// console.log(this.posts)
+			}, error => {
+				console.log(error)
+			})
   }
 }
 </script>
@@ -129,7 +233,6 @@ export default {
 
 .post-image {
 	margin-bottom: 30px;
-	width: 100%;
 }
 
 .image-in-row {
@@ -181,12 +284,25 @@ export default {
 .comment-container {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: stretch;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .comment-avatar {
-	min-width: 41px;
 	margin-right: 24px;
+	width: 35px;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.comment-content {
+	flex-grow: 2;
+}
+
+.comment-text {
+	margin-top: 5px;
 }
 
 .icon-count {
@@ -196,10 +312,7 @@ export default {
 .message-input-container {
 	flex-grow: 2;
 	margin-left: 10px;
-}
-
-.message-input {
-	border: 2px solid #cd9d2b;
+	margin-bottom: 0px;
 }
 
 .divider {
@@ -207,6 +320,10 @@ export default {
 	border-color: #cd9d2b;
 	background-color: #cd9d2b;
 	color: #cd9d2b;
+}
+
+.add-image {
+	cursor: pointer;
 }
 
 

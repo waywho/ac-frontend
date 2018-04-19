@@ -8,15 +8,15 @@ export default{
 	methods: {
 		updateProfileTools: function(fields, toolName) {
 	  		let toolData = { [fields]: this[fields]}
-	  		let updateTool = 'update' + toolName
-
-	 		this.$store.dispatch('updateUserTools', {userId: this.$store.getters.user.id, toolName: toolName, data: toolData})
+	  		// console.log(toolData)
+	  		let updateTool = 'update' + toolName.charAt(0).toUpperCase() + toolName.slice(1);
+	  		// console.log(updateTool)
+	 		this.$store.dispatch('updateUserTools', {userId: this.$store.getters.currentUser.id, toolName: toolName, data: toolData})
 	 		  	.then((response) => {
-		        this.message = 'Updated Successfully',
-		        this.messageType = 'success',
-		        this.messageShow[fields] = true,
-		        this.$emit(updateTool, toolData);
-	    	});
+		        	this.messageShow[fields] = true,
+		        	this.$emit(updateTool, toolData);
+		        	// console.log(response)
+	    	}, error => console.log(error));
 		}
 	}
 }

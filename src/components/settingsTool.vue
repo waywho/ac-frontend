@@ -3,38 +3,68 @@
   	<h2>Settings</h2>
     <div class="settings-inner">
       <div class="selection setting-selections">
-        <span class="selection-text-vertical">Profile</span>
-        <span class="selection-text-vertical">Messaging</span>
-        <span class="selection-text-vertical">Notifications</span>
-        <span class="selection-text-vertical">Budget Planner</span>
-        <span class="selection-text-vertical">Language support</span>
-        <span class="selection-text-vertical">Preferences</span>
-        <span class="selection-text-vertical">Admin / Roles</span>
+        <span v-for="(setting, key) in settings" class="selection-text-vertical" v-on:click="selectSetting(key)">{{key | camel-to-space}}</span>
       </div>
 
-      <component :is="component" class="setting-details"></component>
+      <div class="setting-details">
+        <div class="row top-sm between-sm between-xs middle-sm">
+          <div class="col-sm col-xs">
+            <h3>{{settingSectionTitle | camel-to-space}}:</h3>
+          </div>
+          <div class="col-sm col-xs row end-sm end-xs">
+            <button v-on:click="updateSettings()">SAVE</button>
+          </div>
+      </div>
+      
+      <ul class="non-list">
+        <li v-for="setting in settingDetails" class="setting-detail-line small row between-sm between-xs middle-sm middle-xs">
+          <div class="col-sm-2 col-xs-2">{{setting.title}}</div>
+          <div class="col-sm-2 col-xs-2">
+            <label class="switch">
+              <input type="checkbox" v-model="setting.isChecked"/>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-detail-desc smaller col-sm-6 col-xs-6">{{setting.desc}}</div>
+        </li>
+      </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import settingsNotifications from './settingsNotifications';
-
 export default {
   name: 'settingsTool',
-	components: {
-		'notification-settings': settingsNotifications
-	},
-  	data () {
+  props: {
+    settings: Object
+  },
+  data () {
 	    return {
-	      component: 'notification-settings'
+        settingDetails: this.settings.notifications,
+        settingSectionTitle: "notifications"
 	    }
+  },
+  methods: {
+    selectSetting: function(key) {
+      this.settingSectionTitle = key
+      this.settingDetails = this.settings[key]
+    },
+    updateSettings: function() {
+      let newData = {[this.settingSectionTitle]: this.settingDetails}
+      this.$store.dispatch('updateUserTools', {userId: this.$store.getters.currentUser.id, toolName: 'settings', data: newData})
+          .then((response) => {
+            // this.messageShow[fields] = true,
+            // this.$emit(updateTool, toolData);
+        });
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
+@import '../styles/style-variables.scss';
   .settings {
     height: 100%;
     padding-left: 100px;
@@ -55,7 +85,25 @@ export default {
   }
 
   .setting-details {
+    border: 1.5px solid $color-gold;
+    padding: 26px 22px 26px 28px;
+    width: 75%;
     flex-basis: 75%;
     height: 100%;
+  }
+
+  .setting-title {
+    margin-bottom: 25px;
+  }
+
+  .setting-detail-line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+
+  .setting-detail-desc {
+    display: inline-block;
+    margin-left: 10px;
   }
 </style>

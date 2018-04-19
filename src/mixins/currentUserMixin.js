@@ -1,14 +1,28 @@
 export default {
   computed: {
+  	signedIn() {
+  		return this.$store.getters.isSignedIn
+  	},
     currentUser() {
-      return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+      	return this.$store.getters.currentUser
     },
     authorizedUser() {
-		if (this.currentUser) {
-			return this.id === this.$store.getters.user.id
-		} else {
-			false
-		}
-	}
+    	if (!this.signedIn) {
+    		return
+    	};
+			return this.profileId === this.$store.getters.currentUser.id;
+  	},
+    currentUserAvatar() {
+      if(this.signedIn) {
+        var avatarURL = !this.$store.getters.profile ? null : this.$store.getters.profile.avatarURL
+        if (avatarURL !== null && avatarURL !== undefined && avatarURL.length > 0) {
+          return avatarURL
+        } else {
+          return require("../assets/images/avatar-holder.png")
+        }
+      } else {
+        return require("../assets/images/avatar-holder.png")
+      }
+    }
   }
 }

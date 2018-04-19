@@ -19,7 +19,10 @@ Vue.use(VueCharts);
 Vue.use(vueEventCalendar, { locale: 'en'});
 Vue.use(require('vue-moment'));
 
+
 Vue.config.productionTip = false
+
+
 
 Vue.filter('to-uppercase', function(value) {
 	if (value !== null && value !== undefined) {

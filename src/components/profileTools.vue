@@ -1,9 +1,9 @@
 <template>
-  <div class="profile-tools">
+  <div class="profile-tools" v-if="show">
     <keep-alive>
-      <component :is="component" :profile-id="profileId" class="tool-panel" v-bind="toolData"></component>
+      <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="profileToolData"></component>
     </keep-alive>
-    <div class="toolbox">
+    <div :class="[authorizedUser ? 'toolbox-auth' : 'toolbox-public']">
       <div v-for="tool in profileTools" @click="component = tool.component" class="toolbox-tile is-lightgray"><i :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i><br />{{tool.name}}</div>
      </div>
   </div>
@@ -16,8 +16,9 @@ import messageTool from './messageTool';
 import budgetTool from './budgetTool';
 import mediaTool from './mediaTool';
 import ticketTool from './ticektTool';
-import portfolioTool from './portfolioTool'
-import currentUser from '../mixins/currentUserMixin'
+import portfolioTool from './portfolioTool';
+import currentUser from '../mixins/currentUserMixin';
+import firebaseAxios from '../axios-firebase.js';
 
 export default {
   name: 'tools',
@@ -26,7 +27,7 @@ export default {
     'settings': settingsTool,
     'message': messageTool,
     'budget': budgetTool,
-    'media': mediaTool,
+    'medias': mediaTool,
     'ticket': ticketTool,
     'portfolio': portfolioTool
   },
@@ -37,42 +38,83 @@ export default {
   mixins: [currentUser],
   data () { 
     return {
-      id: this.$route.params.id,
-      profileToolData: {},
+      profileToolData: null,
+      show: true,
       component: 'calendar',
-      artistTools: [
+      artistAuthTools: [
         { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
-        { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
         { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' }
       ],
-      companyTools: [
+      companyAuthTools: [
         { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
         { name: 'Budget', component: 'budget', icon: 'fa-bar-chart' },
-        { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
         { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
-      ]
+      ],
+      tools: {
+        'calendar': { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
+        'media': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        'portfolio': { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' },
+        'medias': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        'ticket': { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
+      }
     }
   },
   computed: {
     profileTools() {
-        if (this.profileType === 'artist') {
-          return this.artistTools
-        } else if (this.profileType === 'company') {
-          return this.companyTools
+      // console.log('auth', this.authorizedUser, this.profileId)
+
+      if(this.authorizedUser) {
+        return this[this.profileType + 'AuthTools']
+      } else {
+        if(this.profileToolData !== null && this.profileToolData !== undefined) {
+          let ToolNames = Object.keys(this.profileToolData)
+          let toolSet = []
+          ToolNames.forEach(toolName => {
+            toolSet.push(this.tools[toolName])
+          })
+          return toolSet
+        } else {
+          return null
         }
+       
+      }
+      
+      
     },
     toolData() {
+      if(this.profileToolData === null && this.profileToolData === undefined) {
+        return
+      }
       return {[this.component]: this.profileToolData[this.component]}
     }
   },
   created() {
       if(this.authorizedUser) {
-        return this.profileToolData = this.$store.getters.userTools
+        this.profileToolData = this.$store.getters.currentUserTools 
+        
+      } else {
+        this.$store.dispatch('getProfileTools', {profileId: this.profileId})
+              .then(res => {
+                this.profileToolData = res.data
+                console.log('profileTools', this.profileToolData)
+                if (this.profileToolData !== null && this.profileToolData !== undefined) {
+                  this.show = true
+                } else {
+                  this.show = false
+                }
+              }, error => {
+                console.log(error)
+        })
+        
       }
+      
+    
   }
 }
 </script>
@@ -89,7 +131,15 @@ export default {
   max-height: 582px;
 }
 
-.tool-panel {
+.tool-panel-public {
+  display: inline-block;
+  flex-basis: 81%;
+  min-height: 100%;
+  background-color: #fff;
+  float: left;
+}
+
+.tool-panel-auth {
   display: inline-block;
   flex-basis: 69%;
   min-height: 100%;
@@ -97,7 +147,19 @@ export default {
   float: left;
 }
 
-.toolbox {
+.toolbox-public {
+  display: inline-grid;
+  flex-basis: 18%;
+  background: $color-body;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto;
+  grid-gap: 15px 15px;
+  padding-left: 15px;
+  height: 100%;
+  float: right;
+}
+
+.toolbox-auth {
   display: inline-grid;
   flex-basis: 30%;
   background: $color-body;

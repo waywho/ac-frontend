@@ -2,7 +2,7 @@
   <div class="connections row">
   	<p>Search or enter below the name of any connections you wish to add to the company register</p>
   	<div class="col-xs-12 col-sm-12 row search-artist">
-  		<div class="col-sm-4 col-xs-12 large strong">Search {{type | capitalize}}</div><div class="col-sm-8 col-xs-12"><input type="search" /></div>
+  		<div class="col-sm-4 col-xs-12 large strong">Search {{typeFilter | capitalize}}</div><div class="col-sm-8 col-xs-12"><input type="search" /></div>
   	</div>
   	<div class='form-checkboxes artist-checkboxes'>
         <div v-for="(v, index) in filters" class="inline-checkbox">
@@ -18,28 +18,28 @@
      
 
     <div class="strong col-xs-12 col-sm-12"><span>Suggested for you</span>
-     	<span v-if="type === 'artist'" v-on:click="type = 'company'" class="toggle-company small strong">List Companies</span>
-     	<span v-if="type === 'company'" v-on:click="type = 'artist'" class="toggle-company small strong">List Artists</span>
+     	<span v-if="typeFilter === 'artist'" v-on:click="typeFilter = 'company'" class="toggle-company small strong">List Companies</span>
+     	<span v-if="typeFilter === 'company'" v-on:click="typeFilter = 'artist'" class="toggle-company small strong">List Artists</span>
     </div>
 
-    <label v-for="(connection, index) in filteredConnections" :for="connection.name" class="connection-tile tile-container col-xs col-xm">
+    <label v-for="(connection, index) in filteredProfiles" :for="connection.id" class="connection-tile tile-container col-xs col-xm">
 
-        <input :id="connection.name" type='checkbox' :value="connection.id" v-model="connectionRequests" />
+        <input :id="connection.id" type='checkbox' :value="connection" v-model="connectionRequests" />
             <label><span></span></label>
 
         <div class="avatar-medium connection-avatar">
-          <img v-bind:src="connection.img" :alt="connection.firstName + connection.lastName + ' photo'" />
+          <img v-bind:src="connection.avatarURL" :alt="connection.name + ' photo'" />
         </div>
         <div class="name strong small">{{ connection.name }}</div>
         <div class="place tiny">{{connection.city}} {{connection.province}}</div>
-        <div v-if="connection.type === 'artist'" class="role smaller">{{ connection.role }}</div>
+        <div class="role smaller">{{ connection.roleType }}<span v-if="connection.type === 'company'"> company</span> </div>
       <span class="small">CONNECT</span>
     </label>
 
-<!--   		<connection-tile v-for="(connection, index) in filteredConnections" :connection="connection" :key="index" v-model="connectionRequests" class="col-xs col-sm"></connection-tile> -->
+<!--   		<connection-tile v-for="(connection, index) in filteredProfiles" :connection="connection" :key="index" v-model="connectionRequests" class="col-xs col-sm"></connection-tile> -->
 
   	
-  	<next-last-step v-on:click.native="updateData(1, {'connectionRequests': connectionRequests})" :step="'next'" class="step-container"></next-last-step>
+  	<next-last-step v-on:click.native="requestConnects()" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 
@@ -47,6 +47,7 @@
 import connectionTile from './connectionTile'
 import nextLastStep from './nextLastStep'
 import stepMixin from '../mixins/stepMixin'
+import firebaseAxios from '../axios-firebase.js'
 
 export default {
   name: 'signUpArtistconnections',
@@ -57,8 +58,9 @@ export default {
   data () {
     return {
       connectionRequests: [],
-    	connections: [],
-    	type: "artist",
+    	profilesArray: [],
+      profilesObjects: null,
+    	typeFilter: "artist",
     	filterValue: "",
     	voiceTypes: ['Soprano', 'Mezzo Soprano', 'Tenor', 'Baritone', 'Bass', 'Counter Tenor'],
     	companyCities: ['Ontario', 'British Columbia', 'Quebec', 'Alberta', 'Manitoba']
@@ -66,39 +68,59 @@ export default {
   },
   mixins: [stepMixin],
   computed: {
-  	filteredConnections: function() {
-  		return this.connections.filter((connection) => {
-  			return connection.profileType.match(this.type)
+  	filteredProfiles: function() {
+  		return this.profilesArray.filter((profile) => {
+  			return profile.type.match(this.typeFilter)
   		})
-      .filter((connection) => {
-        return connection.role.match(this.filterValue)
+      .filter((profile) => {
+        return profile.id !== this.$store.getters.currentUser.id
       })
-      .filter((connection) => {
-        return connection.city.match(this.filterValue)
+      .filter((profile) => {
+        return profile.roleType.match(this.filterValue)
+      })
+      .filter((profile) => {
+        return profile.city.match(this.filterValue)
       });
   	},
   	filters: function() {
-  		if(this.type === "artist") {
+  		if(this.typeFilter === "artist") {
   			return this.voiceTypes
-  		} else if (this.type === "company") {
+  		} else if (this.typeFilter === "company") {
   			return this.companyCities
   		}
   	}
   },
   methods: {
     addConnection: function(id) {
-      console.log(id);
+      // console.log(id);
+      // function not in use
       this.connectionRequests.push(id);
+    },
+    requestConnects: function() {
+      this.$store.dispatch('requestConnections', {userId: this.$store.getters.currentUser.id, data: this.connectionRequests})
+        .then(() => {
+          this.takeStep(1, {"connectionRequests": this.connectionRequests})
+        },
+          error => {
+            this.messageShow = true
+          })
     }
   },
   created() {
   	var usersArray = [];
-  	this.connections = this.$store.state.users;
-  	for (let key in this.connections) {
-  		this.connections[key].id = key;
-  		usersArray.push(this.connections[key]);
-  	}
-  	this.connections = usersArray;
+
+    firebaseAxios.get("/users.json" + '?auth=' + this.$store.getters.currentUser.idToken)
+        .then(res => {
+          console.log(res)
+
+          this.profilesArray = Object.values(res.data)
+          this.profilesObjects = res.data
+          console.log('profiles', this.profilesArray);
+        })
+        // TODO: add message if data is not found somwehere
+        .catch(error => console.log(error))
+
+    
   }
 }
 </script>
