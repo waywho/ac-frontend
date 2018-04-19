@@ -13,9 +13,9 @@
 			<div class="row">
 				<div class="col-md-2 col-lg-2 opportunity-icon smaller"><i class="fa fa-globe" aria-hidden="true"></i> {{opp.region}}</div> 
 	  			<div class="col-md-2 col-lg-2 opportunity-icon smaller"><i class="fa fa-flag-o" aria-hidden="true"></i> {{opp.country}}</div>
-	  			<div class="col-md-3 col-lg-3 opportunity-icon smaller"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{opp.opportunity_type_list.toString() | capitalize}}</div>
+	  			<div class="col-md-3 col-lg-3 opportunity-icon smaller"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{opp.opportunity_type | capitalize}}</div>
 	  			<div class="col-md-3 col-lg-3 opportunity-icon smaller"><i class="fa fa-bookmark" aria-hidden="true"></i> {{opp.category_list.toString() | capitalize}}</div>
-	  			<div class="col-md-2 col-lg-2 opportunity-icon smaller"><i class="fa fa-check-square" aria-hidden="true"></i> {{opp.payment_type_list.toString() | capitalize}}</div>
+	  			<div class="col-md-2 col-lg-2 opportunity-icon smaller"><i class="fa fa-check-square" aria-hidden="true"></i> {{opp.payment_type | capitalize}}</div>
 			</div>
 			<h5>Age Limit</h5>
 			<p>{{opp.min_age}}-{{opp.max_age}}</p>
