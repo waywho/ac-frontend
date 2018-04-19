@@ -52,9 +52,7 @@ export default {
         { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
-        { name: 'Budget', component: 'budget', icon: 'fa-bar-chart' },
-        { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
-        { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
+        { name: 'Media', component: 'medias', icon: 'fa-play-circle' }
       ],
       tools: {
         'calendar': { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },

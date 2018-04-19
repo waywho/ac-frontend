@@ -8,7 +8,7 @@
 		  	<span v-if="signedIn" class="col-sm col-xs large" v-on:click="signOut();"><router-link to="/">Sign Out</router-link></span>
 		</div>
 		<ul class="menu-list non-list">
-			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/auditions">Auditions</router-link></li>
+			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/opportunities">Opportunities</router-link></li>
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/about/center">About</router-link></li>
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/memberships">Memberships</router-link></li>
 		</ul>

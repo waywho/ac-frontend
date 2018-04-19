@@ -81,6 +81,7 @@ export default {
   width: 100%;
   height: $header-height;
   transition: top 0.2s ease-in-out, left 1s ease-in-out;
+  -webkit-transition: top 0.2s ease-in-out, left 1s ease-in-out;
 }
 
 .header-inner {

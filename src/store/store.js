@@ -690,315 +690,76 @@ export const store = new Vuex.Store({
 				contentFR: ""
 			}
 		},
-		conversations: {
-			"AlyssaID": {	created: Date.now(),
-				sender: 'Alyssa',
-				lastMessage: 'How are you?'
-			}, 
-			"JohnID": {	
-				created: Date.now(),
-				sender: 'John',
-				lastMessage: 'I just had the best news.'
-			}, 
-			"JamesID": {	
-				created: Date.now(),
-				sender: 'James',
-				lastMessage: 'Grand.'
-			}, 
-			"JaneID": {	
-				created: Date.now(),
-				sender: 'Jane',
-				lastMessage: 'And then?'
-			},
-			"EdwardID": {	
-				created: Date.now(),
-				sender: 'Edward',
-				lastMessage: 'And then?'
-			},
-			"GrantID": {	
-				created: Date.now(),
-				sender: 'Grant',
-				lastMessage: 'And then?'
-			}
-		},
-		users: {
-			"AlyssaID": {
-				name: "Allysia Johnson",
-				role: "Artistic Director",
-				img: require("../assets/images/Caitlin-McCaughey.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			}, 
-			"JohnID": {
-				name: "John Brian",
-				role: "Baritone",
-				img: require("../assets/images/Daevyd-Pepper.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			}, 
-			"JamesID": {
-				name: "James Dean",
-				role: "Conductor",
-				img: require("../assets/images/Brenden-Friesen.png"),
-				city: "Montreal",
-				province: "QC",
-				profileType: "artist"
-			}, 
-			"JaneID": {
-				name: "Jane Great",
-				role: "Project Coordinator",
-				img: require("../assets/images/Julie-Adams.png"),
-				city: "Winnipeg",
-				province: "MB",
-				profileType: "artist"
-			},
-			"EdwardId": {
-				name: "Edward Great",
-				role: "Project Coordinator",
-				img: require("../assets/images/Matthew-Dalen.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			},
-			"GrantID": {
-				name: "Grant Ferries",
-				role: "Project Coordinator",
-				img: require("../assets/images/Leanne-Kaufman.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			},
-			"JoelID": { 
-				name: "Joel Allison",
-				role: "Baritone",
-				img: require("../assets/images/Joel-Allison.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			},
-			"GeorgiaID": { 
-				name: "Georgia Burashko",
-				role: "Mezzo Soprano",
-				img: require("../assets/images/Georgia-Burashko.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			}, 
-			"DanielID": { name: "Daniel Thielman",
-				role: "Tenor",
-				img: require("../assets/images/Daniel-Thielman.png"),
-				city: "Edmonton",
-				province: "AB",
-				profileType: "artist"
-			}, //asdfasdfsad
-			"MyOperaID": {
-				name: "MyOpera",
-				role: "Artistic Director",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			}, 
-			"YourOperaID": {
-				name: "YourOpera",
-				role: "Baritone",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			}, 
-			"GreatOperaID": {
-				name: "Great Opera",
-				role: "Conductor",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Montreal",
-				province: "QC",
-				profileType: "company"
-			}, 
-			"MontrealOperaID": {
-				name: "Montreal Opera",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Winnipeg",
-				province: "MB",
-				profileType: "company"
-			},
-			"OperaInCupID": {
-				name: "Opera In a Cup",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			},
-			"OperaWorldID": {
-				name: "Opera World",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			},
-			"TopOperaID": { 
-				name: "Top Opera",
-				role: "Baritone",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			},
-			"GOOperaID": { 
-				name: "Go Opera",
-				role: "Mezzo Soprano",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			}, 
-			"BritOperaID": { name: "Brit Opera",
-				role: "Tenor",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Edmonton",
-				province: "AB",
-				profileType: "company"
-			}
-		},
-		messages: {
-			"AlyssaID": {
-				"m1": {
-					sender: "Alyssa",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I have a job for you.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Alyssa",
-					text: "Wonderful When?",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JohnID": {
-				"m1": {
-					sender: "John",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "Thanks for your ,application",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "John",
-					text: "Welcome. When is the audition?",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JamesID": {
-				"m1": {
-					sender: "James",
-					text: "Okay. Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I need more info about you.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "James",
-					text: "Ok, I can send it over.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Can you send today please?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JaneID": {
-				"m1": {
-					sender: "Jane",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I am sorry but we need more.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Jane",
-					text: "I can definitely do that.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"EdwardID": {
-				"m1": {
-					sender: "Edward",
-					text: "I would like to audition",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "When would you like to come in?",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Edward",
-					text: "What about tomorrow",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"GrantID": {
-				"m1": {
-					sender: "Grant",
-					text: "I am wonderful! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "That is great news.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Grant",
-					text: "I can definitely do that.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, when can you get here?",
-					timestamp: 1459361875360,
-				}
-			}
-		}
+		opportunityTypes: [
+			'competitions', 
+			'general auditions', 
+			'young artist programms', 
+			'chorus', 
+			'orchestra', 
+			'training programms', 
+			'collaborations', 
+			'job offers'
+		],
+    	categorySubcategories: {
+    		'singers/actors': [
+    			'soprano',
+    			'mezzo-soprano',
+    			'alto & contralto',
+    			'countertenor',
+    			'tenor',
+    			'baritone',
+    			'bass & bass-baritone',
+				'backing vocals',
+				'chorus',
+				'actors',
+				'extras & silent roles',
+				'other'
+    		],
+    		'instruments': [
+				'piano',
+				'harpsichord',
+				'organ',
+				'other keyboards',
+				'strings',
+				'violin',
+				'viola ',
+				'cello',
+				'double bass',
+				'harp',
+				'guitar',
+				'bass',
+				'other strings',
+				'flute',
+				'oboe',
+				'clarinet',
+				'bassoon',
+				'trumpet',
+				'trombone',
+				'french horn',
+				'bass trombone',
+				'tuba',
+				'saxophone',
+				'drums',
+				'timpani',
+				'other percussions',
+				'other instruments'
+	   		],
+    		'administration, production & other': [
+    			'agent',
+				'teacher',
+				'conductor',
+				'musicologist',
+				'production',
+				'administration',
+				'other'
+    		]
+    	},
+    	paymentTypes: [
+    		'paid',
+    		'unpaid',
+    		'pay to play or sing',
+    		'prize money'
+    	]
 
 	}
 })

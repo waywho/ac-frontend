@@ -76,6 +76,7 @@ export default {
 	margin: 25px auto 25px auto;
 	text-align: center;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .form-field-bottom-margin {

@@ -19,8 +19,7 @@ html, body {
   	background-color: #f9f9f9;
   	line-height: $base-line;
   	overflow-x: hidden;
-  	position: fixed;
-  	transition: left 0.8s ease-in-out;
+  	-webkit-overflow-scrolling: touch;
   	left: 0px;
 }
 

@@ -217,6 +217,7 @@ export default {
 
 .media-window {
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   height: 420px;
 }
 

@@ -45,9 +45,8 @@
 				<profile-details v-if="profile" v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details" :connection-level="connectionLevel"></profile-details>
 			</div>
 
+			<profile-seasons v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></profile-seasons>
 			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
-
-			<profile-connections class="profile-section" :connections="profile.connections" v-bind:profile-id="profile.id"></profile-connections>
 
 			<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions>
 				
@@ -62,6 +61,7 @@ import profileDetails from './profileDetails';
 import auditions from './auditions';
 import profilePosts from './profilePosts';
 import profileConnections from './profileConnections';
+import profileSeasons from './profileSeasons'
 import { mapGetters } from 'vuex';
 import * as firebase from 'firebase';
 import profileImagesMixin from '../mixins/profileImagesMixin';
@@ -75,7 +75,8 @@ export default {
 		'profile-tools': () => import('./profileTools'),
 		'company-auditions': auditions,
 		'profile-posts': profilePosts,
-		'profile-connections': profileConnections
+		'profile-connections': profileConnections,
+		'profile-seasons': profileSeasons
 	},
   	mixins: [profileImagesMixin, currentUser],
   	props: {

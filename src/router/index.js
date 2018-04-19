@@ -6,6 +6,7 @@ import landing from '@/components/landing'
 import membershipDetails from '@/components/membershipDetails'
 import pageStatic from '@/components/pageStatic'
 import { store } from '@/store/store/'
+import opportunitiesList from '@/components/opportunitiesList'
 
 Vue.use(Router)
 
@@ -32,6 +33,7 @@ export default new Router({
     { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
     { path: '/about/:page', name: 'terms', component: pageStatic},
     { path: '/profiles/:id', name: 'profiles', component: showProfile, props: true},
+    { path: '/opportunities', name: 'opportunitiesList', component: opportunitiesList},
     { path: '/signup', name: 'signUp', component: signUp,
     	beforeEnter:(to, from, next) => {
     		console.log('checking');

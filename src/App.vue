@@ -1,5 +1,5 @@
 <template>
-  <div class="main-app">
+  <div :class="[{'push-left': isActive }]" id="main-app">
     <app-menu :class="['app-menu', {'menu-open': isActive}]" v-on:toggleMenu="menuToggle($event)"></app-menu>
     <div id="app">
       <app-signIn v-if="showSignInModal" @close="showSignInModal = false"></app-signIn>
@@ -49,7 +49,10 @@ export default {
   methods: {
     handleScroll: function(e) {
        var currentScrollPosition = e.srcElement.scrollTop;
+       // console.log(e)
+       // console.log('where am i', currentScrollPosition)
        if (currentScrollPosition > this.scrollPosition && currentScrollPosition > 100) {
+         // console.log('scrolling')
          this.navPosition = 'nav-up';
        } else {
          this.navPosition = '';
@@ -58,7 +61,7 @@ export default {
     },
     menuToggle: function(msg) {
       this.isActive = !this.isActive;
-      document.body.classList.toggle('push-left')
+      // document.body.classList.toggle('push-left')
     }
   },
   computed: {
@@ -68,6 +71,7 @@ export default {
   },
   created() {
     document.body.addEventListener('scroll', this.handleScroll);
+    // document.body.addEventListener('scroll', console.log('listenToScroll'));
     this.$store.dispatch('tryAutoSignIn');
   },
   destroyed() {
@@ -100,6 +104,12 @@ export default {
   z-index: 1;
 }
 
+#main-app {
+
+  transition: left 0.8s ease-in-out;
+  -webkit-transition: left 0.8s ease-in-out;
+}
+
 .main-body {
   grid-area: main;
 }
@@ -109,7 +119,7 @@ export default {
 }
 
 .push-left {
-  left: -503px;
+  left: -923px;
 }
 
 .app-menu {
@@ -121,6 +131,7 @@ export default {
   color: white;
   z-index: 999;
   transition: right 0.8s ease-in-out;
+  -webkit-transition: right 0.8s ease-in-out;
   padding: 0px 23px;
 }
 

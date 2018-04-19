@@ -114,6 +114,7 @@ export default {
 <style scoped>
 .audition-window {
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   height: 295px;
 }
 
@@ -227,6 +228,7 @@ export default {
   border: 2px solid #706d6c;
   height: 90%;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .timeslot {

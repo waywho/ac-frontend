@@ -69,18 +69,19 @@ export default {
   height: 100%;
   background-color: rgba(203, 157, 43, .5);
   transition: opacity .3s ease;
+  -webkit-transition: opacity .3s ease;
 }
 
 .modal-wrapper {
   position: fixed;
 	z-index: 9999;
-	max-width: 603px;
+	max-width: 750px;
 	width: 90%;
 	height: 751px;
 }
 
 .modal-container {
-  max-width: 603px;
+  max-width: 750px;
   width: 100%;
   height: 100%;
   margin: 0px auto;
@@ -89,8 +90,10 @@ export default {
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
+  -webkit-transition: all .3s ease;
   font-family: Helvetica, Arial, sans-serif;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {

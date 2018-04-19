@@ -148,6 +148,7 @@ export default {
   padding-bottom: 40px;
 	height: 476px;
 	overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .year-inner {

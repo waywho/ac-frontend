@@ -133,6 +133,7 @@ export default {
 .messages {
 	height: 65%;
 	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
 	padding: 14px 24px;
 }
 
