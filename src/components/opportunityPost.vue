@@ -17,16 +17,17 @@
 	  			<div class="col-md-3 col-lg-3 opportunity-icon smaller"><i class="fa fa-bookmark" aria-hidden="true"></i> {{opp.category_list.toString() | capitalize}}</div>
 	  			<div class="col-md-2 col-lg-2 opportunity-icon smaller"><i class="fa fa-check-square" aria-hidden="true"></i> {{opp.payment_type | capitalize}}</div>
 			</div>
-			<h5>Age Limit</h5>
-			<p>{{opp.min_age}}-{{opp.max_age}}</p>
+			<h5 v-if="opp.min_age !== null || opp.max_age !== null">Age Limit</h5>
+			<p v-if="opp.min_age !== null || opp.max_age !== null">{{opp.min_age}}-{{opp.max_age}}</p>
 			<h5>Application Deadline</h5>
-			<p>{{opp.deadline | moment("MMMM DD, YYYY")}}</p>
-			<h5>Audition Dates & Locations</h5>
-			<ul v-for="audition in opp.audition_dates">
+			<p v-if="opp.deadline !== null">{{opp.deadline | moment("MMMM DD, YYYY")}}</p>
+			<p v-else>Unspecified</p>
+			<h5 v-if="opp.audition_dates.length > 1">Audition Dates & Locations</h5>
+			<ul v-if="opp.audition_dates.length > 1" v-for="audition in opp.audition_dates">
 				<li>{{audition.location}} - {{audition.from | moment("MMMM DD, YYYY")}}</li>
 			</ul>
-			<h5>Materials Required</h5>
-			<p>{{opp.materials_required}}</p>
+			<h5 v-if="opp.materials_required !== null">Materials Required</h5>
+			<p v-if="opp.materials_required !== null">{{opp.materials_required}}</p>
 			<h5>Opportunity Description</h5>
 			<p>{{opp.description}}</p>
 			<h5>Payment</h5>
