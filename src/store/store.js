@@ -1,175 +1,681 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import * as firebase from 'firebase';
-import createPersistedState from 'vuex-persistedstate';
+// import authAxios from '../axios-auth.js';
+import firebaseAxios from '../axios-firebase.js';
+import router from '../router';
+import cryptoRandomstring from 'crypto-random-string';
+const cryptoRandomString = require('crypto-random-string');
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
-	plugins: [createPersistedState({
-		key: "artistCenter",
-		storage: window.sessionStorage
-	})],
 	strict: false,
 	mutations: {
-		setUser (state, payload) {
-			state.user = payload;
+		authUser (state, userData) {
+			state.idToken = userData.idToken
+			state.userId = userData.userId
+			state.userEmail = userData.userEmail
+			state.expires = userData.expires
 		},
 		setCurrentUserProfile (state, payload) {
-			// console.log(payload)
+			// console.log('setCurrentUserProfile state', payload)
 			state.currentUserProfile = payload;
 		},
-		resetState (state, payload) {
-			state.user = null;
-			state.profile = {};
-			localStorage.removeItem('artistCenter')
+		clearAuthData (state) {
+			state.idToken = null;
+			state.userId = null;
+			state.currentUserProfile = {};
+			state.userEmail = null;
+			state.expires = null;
+		},
+		setToken (state, payload) {
+			state.idToken = payload.idToken
 		},
 		setUserTools (state, payload) {
 			state.currentUserTools = payload;
+		},
+		setExpirationDate(state, date) {
+			state.expires = date
+		},
+		setMessage(state, payload) {
+			state.message = payload.message
+			state.messageType = payload.messageType
+		},
+		setUserPosts (state, payload) {
+			state.posts = payload
 		}
 	},
 	actions: {
-		signUserUp({commit, dispatch}, payload) {
-			firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-				.then(
-					user => {
-						console.log(user.idToken)
-						const newUser = {
-							id: user.uid
-						}
-					commit('setUser', newUser);
-					dispatch('getProfile', newUser);
+		setSessionStorage({state}) {
+			// console.log('setting Session')
+			let sessionData = {
+				idToken: state.idToken, 
+				userId: state.userId, 
+				userEmail: state.userEmail, 
+				expires: state.expires, 
+				currentUserProfile: state.currentUserProfile,
+				currentUserTools: state.currentUserTools
+			}
+			sessionStorage.setItem('artistCenter', JSON.stringify(sessionData))
+		},
+		// function not being used right now
+		setSignoutTimer({commit, dispatch}, expirationTime) {
+			setTimeout(() => {
+				commit('clearAuthData')
+				sessionStorage.removeItem('artistCenter')
+			}, expirationTime * 1000)
+		},
+		setRefreshTokenTimer({commit, disptach, state}, expirationTime) {
+			console.log('setRefreshTokenTimer', expirationTime)
+			setTimeout(() => {
+				console.log('resetToken dispatch')
+				store.dispatch('resetToken', state.idToken)
+			}, expirationTime * 1000)
+		},
+		resetToken({commit, dispatch, state}, idToken) {
+			return new Promise((resolve, reject) => {
+				const now = new Date()
+					if(now >= state.expires) {
+						// console.log('signOut by resetToken')
+						dispatch('signOut')
+						reject('signOut')
+						return 
 					}
-				)
-				.catch(
-					error => {
+
+				firebase.auth().onAuthStateChanged(function(user) {
+					user.getIdToken(true).then(idToken => {
+						// console.log('authstate', user)
+						commit('setToken', {'idToken': idToken})
+						dispatch('setSessionStorage')
+						resolve('got new token!')
+						dispatch('setRefreshTokenTimer', 3550)
+						// console.log('call refreshTimer from resetToken')
+						// console.log('state idToken from resetToken', state.idToken)
+					
+					}).catch(error => {
 						console.log(error)
-					}
-				)
+						reject(error)
+					})
+				})
+			})
+		},
+		signUserUp({commit, dispatch}, payload) {
+
+
+			return new Promise((resolve, reject) => {
+
+				firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+					.then(
+						user => {
+							// console.log('sign up', user)
+							user.getIdToken(true).then(idToken => {
+								// console.log('token', idToken)
+								// set token expiry at 24 hours from now
+								const now = new Date()
+								const expirationDate = new Date(now.getTime() + 86400 * 1000)
+
+								const newUser = {
+									userId: user.uid,
+									idToken: idToken,
+									userEmail: user.email,
+									expires: expirationDate
+									}
+
+									commit('authUser', newUser);
+									dispatch('createUser', {userId: user.uid, email: user.email});
+									dispatch('getUserProfile', newUser);
+									commit('setMessage', {
+										message: 'Signed Up Successfully',
+										messageType: 'success'
+									});
+									
+									// dispatch('setSessionStorage'); // being called at get User
+								})
+							dispatch('setRefreshTokenTimer', 3550)
+							dispatch('setSignoutTimer', 86400)
+						}
+					)
+					.catch(
+						error => {
+							// console.log(error)
+							commit('setMessage', {
+								message: error.message,
+								messageType: 'warning'
+							});
+							reject(error)
+						}
+					)				
+			}) 
+
+			// authAxios.post('/signupNewUser?key=' + process.env.FIREBASE_API_KEY, {
+			// 	email: payload.email,
+			// 	password: payload.password
+			// }).then(res => {
+			// 	// consoel.log(res)
+			// 	const newUser = {
+			// 		token: res.data.idToken,
+			// 		userId: res.data.localId
+			// 	}
+			// 	commit('authUser', newUser);
+			// 	dispatch('getUserProfile', newUser);
+
+			// }).catch(error => console.log(error))
+
 		},
 		signUserIn({commit, dispatch}, payload) {
-			firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
-				.then(
-					user => {
-						const newUser = {
-							id: user.uid
-						}
-						commit('setUser', newUser)
-						dispatch('getProfile', newUser)
-						dispatch('getTools', newUser)
+			return new Promise((resolve, reject) => {
+				firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+					.then(
+						user => {
+							// console.log('current user', firebase.auth().currentUser)
+							// console.log('sign in', user)
+							user.getIdToken(true).then(idToken => {
+								// console.log('signed in token', idToken)
+								// set token expiry at 24 hours from now
+								const now = new Date()
+								const expirationDate = new Date(now.getTime() + 86400 * 1000)
+
+								const newUser = {
+									idToken: idToken,
+									userId: user.uid,
+									userEmail: user.email,
+									expires: expirationDate
+								}
+								// set token expiry at 24 hours from now
+
+								commit('authUser', newUser);
+								dispatch('getUserProfile', newUser);
+								dispatch('getUserTools', newUser);
+								dispatch('setRefreshTokenTimer', 3550)
+								dispatch('setSignoutTimer', 86400)
+								resolve(user)
+								// dispatch('setSessionStorage'); // being called at get User
+							})
+
+						
 					})
 				.catch(
 					error => {
-						console.log(error)
+						// console.log(error)
+						commit('setMessage', {
+								message: error.message,
+								messageType: 'warning'
+						})
+						reject(error)
 					}
 				)
+				
+			}) 			
+
+			// authAxios.post('/verifyPassword?key=' + process.env.FIREBASE_API_KEY, {
+			// 	email: payload.email,
+			// 	password: payload.password
+			// }).then(res => {
+			// 	// console.log(res)
+				
+			// 	const newUser = {
+			// 		token: res.data.idToken,
+			// 		userId: res.data.localId
+			// 	}
+			// 	commit('authUser', newUser);
+			// 	dispatch('getUserProfile', newUser)
+
+			// }).catch(error => console.log(error))
 		},
-		createUserProfile({commit, dispatch}, payload) {
+		signOut({commit}) {
+			console.log('signout')
+			firebase.auth().signOut();
+			console.log('wiping sessionStorage at signOut')
+			sessionStorage.removeItem('artistCenter')
+			commit('clearAuthData')
+			// router.replace('/')
+		},
+		tryAutoSignIn({commit, dispatch}) {
+			if (!sessionStorage.getItem('artistCenter')) {
+				return
+			}
+			const sessionData = JSON.parse(sessionStorage.getItem('artistCenter'))
+			const token = sessionData.idToken
+			// console.log('token session at tryAutoSignIn', token)
+			if(!token) {
+				return
+			}
+			const expirationDate = sessionData.expires
+			// console.log('session expires', expirationDate)
+			const now = new Date()
+			if(now >= expirationDate) {
+				return
+			}
+			const userId = sessionData.userId
+			// console.log('session ID', userId)
+			const userEmail = sessionData.userEmail
+			// console.log('session Email', userEmail)
+
+			commit('authUser', {
+					userId: userId,
+					idToken: token,
+					userEmail: userEmail,
+					expires: expirationDate
+				});
+
+			commit('setCurrentUserProfile', sessionData.currentUserProfile)
+			console.log('current user tools from session', sessionData.currentUserTools)
+			commit('setUserTools', sessionData.currentUserTools)
+			// testing: if I don't call reset, will it allow me to reset after token has expired?
+			// TODO: check
+			dispatch('resetToken', token)
+			
+			// console.log('refreshToken on TryAutoSignIn')
+			// console.log('auth user at tryAutoSignIn', firebase.User)
+			
+		},
+		createUser({commit, dispatch, state}, payload) {
+			if(!state.idToken) {
+				return
+			}
 			// console.log(payload)
-			firebase.database().ref('profiles/' + payload.userId).set(payload.data)
-				.then(
-					function() {
-						// console.log(data)
-						dispatch('getProfile', {id: payload.userId})
-					}
-				).catch(
-					error => {
+			let user = {
+				['profiles/' + payload.userId]: { id: payload.userId, email: payload.email },
+				['users/' + payload.userId]: { id: payload.userId },
+			}
+
+			return new Promise((resolve, reject) => {
+				firebaseAxios.patch( '.json' +'?auth=' + state.idToken, user)
+					.then(res => {
+						console.log(res)
+						dispatch('getUserProfile', {userId: payload.userId})
+						resolve(res)
+					}).catch(error => {
 						console.log(error)
-					}
-				)
+						reject(error);
+					})				
+			})
+
 		},
-		updateUserProfile({commit, dispatch}, payload) {
+		updateUserProfile({commit, dispatch, state}, payload) {
+			if(!state.idToken) {
+				return
+			}
+			// console.log(payload)
+			// format {userId: 'id', data: {'data'}}
+			let dataKey = Object.keys(payload.data)[0]
+
+			switch (dataKey) {
+				case 'type':
+					var data = {
+							['profiles/' + payload.userId + '/' + dataKey]: payload.data[dataKey],
+							['users/' + payload.userId + '/' + dataKey]:  payload.data[dataKey],
+					}
+					break;
+				case 'details':
+					var data = {
+						['profiles/' + payload.userId + '/' + dataKey]: payload.data[dataKey],
+						['users/' + payload.userId + '/name']: payload.data.details.name,
+						['users/' + payload.userId + '/city']: payload.data.details.city,
+						['users/' + payload.userId + '/country']: payload.data.details.country,
+						['users/' + payload.userId + '/roleType']: payload.data.details.companyType !== null && payload.data.details.companyType !== undefined ? payload.data.details.companyType : payload.data.details.voiceType
+					}
+					break;
+				default: 
+					var data = {['profiles' + '/' + payload.userId + '/' + dataKey]: payload.data[dataKey]}
+			}
+
+			return new Promise((resolve, reject) => {
+				firebaseAxios.patch('.json' + '?auth=' + state.idToken, data)
+					.then(res => {
+						console.log(res)
+						dispatch('getUserProfile', {userId: payload.userId})
+						commit('setMessage', {
+							message: 'Updated Profile Successfully',
+							messageType: 'success'
+						});
+						resolve(res)
+					}).catch(error => {
+						console.log(error)
+						reject(error);
+					})
+			})
+
+
+
 			// console.log(payload.data)
-			firebase.database().ref('profiles/' + payload.userId).update(payload.data)
-				.then(
-					function(data) {
-						// console.log(data)
-						dispatch('getProfile', {id: payload.userId})
-					}
-				).catch(
-					error => 
-					console.log(error)
-				)
+			// firebase.database().ref('profiles/' + payload.userId).update(payload.data)
+			// 	.then(
+			// 		function(data) {
+			// 			// console.log(data)
+			// 			dispatch('getUserProfile', {id: payload.userId})
+			// 		}
+			// 	).catch(
+			// 		error => 
+			// 		console.log(error)
+			// 	)
 		},
-		getProfile({commit}, payload) {
-			firebase.database().ref('profiles/' + payload.id).once('value')
-				.then(function(snapshot) {
-					// console.log(snapshot.val());
-					commit('setCurrentUserProfile', snapshot.val())
-				}).catch(error => {
-					console.log(error)
-				})
+		getUserProfile({commit, dispatch, state}, payload) {
+			return new Promise((resolve, reject) => {
+				firebaseAxios.get("/profiles/" + payload.userId + ".json")
+					.then(res => {
+						// console.log('getUserProfile', res)
+						commit('setCurrentUserProfile', res.data)
+						dispatch('setSessionStorage');
+						resolve(res)
+					}).catch(error => {
+						console.log(error);
+						reject(error);
+					})				
+			})
+
 		},
-		saveProfileImages({commit}, payload) {
+		saveProfileImages({commit, dispatch, state}, payload) {
 			// console.log(payload.data)
 			const filename = Object.keys(payload.data)[0]
 			// console.log(filename)
-			let imageURL
-			let key = payload.userId
-			const ext = filename.slice(filename.lastIndexOf('.'))
-			firebase.storage().ref('profileImages').child(key + '/' + key + filename + '.' + ext).put(payload.data[filename])
-				.then( fileData => {
-					imageURL = fileData.metadata.downloadURLs[0]
-					let dataURL = {}
-					dataURL[filename + 'URL'] = imageURL
-					// console.log(dataURL)
-					return firebase.database().ref('profiles').child(key).update(dataURL)		
-				}).catch(error => {
-					console.log(error)
-					}
-				)
-		},
-		createUserTools({commit}, payload) {
-			firebase.database().ref('tools/' + payload.userId).set(payload.data)
-				.then(
-					function() {
-						// console.log(data)
-						dispatch('getTools', {id: payload.userId})
-					}
-				).catch(
-					error => {
+			const imageName = payload.data[filename].name
+			const ext = imageName.slice(imageName.lastIndexOf('.'))
+
+			// console.log(ext)
+
+			payload.data['auth'] = state.idToken
+
+			return new Promise((resolve, reject) => {
+				firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
+					.then( fileData => {
+						let imageURL = fileData.metadata.downloadURLs[0]
+						
+						if(filename === 'avatar') {
+							var userImage = {
+								['profiles/' + payload.userId + '/' + filename + 'URL']: imageURL,
+								['users/' + payload.userId + '/' + filename + 'URL']: imageURL,
+							}
+						} else {
+							var userImage = { ['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL }
+						}
+						
+						// console.log(dataURL)
+						firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
+							.then(res => {
+									console.log('imageURL', res)
+									dispatch('getUserProfile', {'userId': state.userId})
+								}
+							).catch(error => {
+								return reject(error)
+								console.log(error)
+							})
+					}).catch(error => {
+						reject(error)
 						console.log(error)
-					}
-				)
+						}
+					)
+			})
 		},
-		updateUserTools({commit, dispatch}, payload) {
-			firebase.database().ref('tools/' + payload.userId).child(payload.toolName).update(payload.data)
-				.then(
-					function(data) {
-						// console.log(data)
-						dispatch('getTools', {id: payload.userId})
+		createUserTools({commit, dispatch, state}, payload) {
+			if(!state.idToken) {
+				return
+			}
+			// console.log(payload)
+			return new Promise((resolve, reject) => {
+				firebaseAxios.put('/tools/' + payload.userId + '.json' + '?auth=' + state.idToken, payload.data)
+					.then(res => {
+						console.log('create tools', res)
+						dispatch('getUserTools', {userId: payload.userId})
+						resolve(res)
+					}).catch(error => {
+						reject(error)
+						console.log(error)})				
+			})
+
+		},
+		updateUserTools({commit, dispatch, state}, payload) {
+			if(!state.idToken) {
+				return
+			}
+			// console.log(payload)
+			// format (userId: 'id', "toolName: 'settings': {}, 'calendar': [], 'portfolio': {}," 'media': [], 'messages')
+			// tools private vs tools public
+			var dataKey = Object.keys(payload.data)[0]
+
+			switch (payload.toolName) {
+				case 'settings':
+					var toolData = {
+						['toolsAuthorized/' + payload.userId + '/' + payload.toolName + '/' + dataKey]: payload.data[dataKey]
 					}
-				).catch(
-					error => 
-					console.log(error)
-				)
-		}
-		,
-		getTools({commit}, payload) {
-			firebase.database().ref('tools/' + payload.id).once('value')
-				.then((snapshot) => {
-					console.log(snapshot.val());
-					commit('setUserTools', snapshot.val())
+				break;
+				case 'messages':
+					var toolData = {
+						['toolsAuthorized/' + payload.userId + '/' + payload.toolName + '/' + dataKey]: payload.data[dataKey]
+					}
+				break;
+				case 'calendar':
+					// over-write complete calendar node
+					var toolData = {
+						['toolsPublic/' + payload.userId + '/' + payload.toolName]: payload.data,
+						['toolsAuthorized/' + payload.userId + '/' + payload.toolName]: payload.data
+					}
+				break;
+				case 'medias':
+					// over-write complete calendar node
+					var toolData = {
+						['toolsPublic/' + payload.userId + '/' + payload.toolName]: payload.data,
+						['toolsAuthorized/' + payload.userId + '/' + payload.toolName]: payload.data
+					}
+				break;
+				default:
+					var toolData = {
+						['toolsPublic/' + payload.userId + '/' + payload.toolName + '/' + dataKey]: payload.data[dataKey],
+						['toolsAuthorized/' + payload.userId + '/' + payload.toolName + '/' + dataKey]: payload.data[dataKey]
+					}
+			}
+			
+
+			return new Promise((resolve, reject) => {
+				firebaseAxios.patch('.json' + '?auth=' + state.idToken, toolData)
+					.then(res => {
+						console.log('updated tools', res)
+						commit('setMessage', {
+							message: 'Updated Tools Successfully',
+							messageType: 'success'
+						});
+						dispatch('getUserTools', {userId: payload.userId})
+						resolve(res)
+					}).catch(error => {
+						reject(error)
+						console.log(error)})				
+			})
+
+
+			// firebase.database().ref('tools/' + payload.userId).child(payload.toolName).update(payload.data)
+			// 	.then(
+			// 		function(data) {
+			// 			// console.log(data)
+			// 			dispatch('getUserTools', {id: payload.userId})
+			// 		}
+			// 	).catch(
+			// 		error => 
+			// 		console.log(error)
+			// 	)
+		},
+		getUserTools({commit, dispatch, state}, payload) {
+			// getUserTools public vs get Tools private
+			// console.log('state idToken getUserTools', state.idToken)
+			// console.log('disptaching getUserTools', state.idToken)
+			// let token = state.idToken
+			// console.log(token)
+
+			return new Promise((resolve, reject) => {
+				firebaseAxios.get("/toolsAuthorized/" + payload.userId + ".json" + '?auth=' + state.idToken)
+				.then(res => {
+					// console.log('tools', res)
+					commit('setUserTools', res.data)
+					dispatch('setSessionStorage')
+					resolve(res)
 				}).catch(error => {
+					reject(error)
 					console.log(error)
 				})
+			})
+			
+
+			// firebase.database().ref('tools/' + payload.id).once('value')
+			// 	.then((snapshot) => {
+			// 		console.log(snapshot.val());
+			// 		commit('setUserTools', snapshot.val())
+			// 	}).catch(error => {
+			// 		console.log(error)
+			// 	})
 		},
+		getProfileTools({commit, state}, payload) {
+			// console.log('disptaching getProfileTools')
+			return new Promise((resolve, reject) => {
+				firebaseAxios.get("/toolsPublic/" + payload.profileId + ".json")
+					.then(res => {
+						// console.log('tools', res)
+						resolve(res)
+					}).catch(error => {
+						reject(error)
+						console.log(error)
+					})				
+			})
+
+		},
+		requestConnections({commit, state}, payload) {
+			// user1 makes request to user2 to connect
+			// connecitonRequests/id2/requestFrom = array {id, name, role, city, country, avatar}
+			// connectionREquests/id1/requestTo = array
+			let requests = {}
+			let requester = { id: state.userId, 
+				name: state.currentUserProfile.details.name, 
+				city: state.currentUserProfile.details.city, 
+				country: state.currentUserProfile.details.country, 
+				roleType: state.currentUserProfile.details.companyType !== null && state.currentUserProfile.details.companyType !== undefined ? state.currentUserProfile.details.companyType : state.currentUserProfile.details.voiceType,
+				avatarURL: state.currentUserProfile.avatarURL }
+
+			payload.data.forEach(profile => {
+				requests[profile.id + '/' + 'requestsFrom' + '/' + requester.id] = requester
+				requests[state.userId + '/' + 'requestsTo' + '/' + profile.id ] = profile
+			})
+
+			// console.log(requests)
+
+			return new Promise((resolve, reject) => {
+				firebaseAxios.patch('/connectionRequests/' + payload.userId + '.json' + '?auth=' + state.idToken, requests)
+					.then(res => {
+						console.log('reqests', res)
+						commit('setMessage', {
+							message: 'Requests Sent',
+							messageType: 'success'
+						});
+						resolve(res)
+					}).catch(error => {
+						reject(error)
+						console.log(error)})				
+			})
+
+	
+		},
+		createUserProfilePost({commit, state}, payload) {
+			// console.log(payload.userId)
+
+			return new Promise((resolve, reject) => {
+				firebaseAxios.post('/posts/' + payload.userId + '.json' + '?auth=' + state.idToken, payload.data)
+					.then(res => {
+						// console.log('posts', res)
+						
+						if (payload.images.length !== null) {
+
+							var userStorage = firebase.storage().ref('users');
+							var imagePromises = []
+							
+							payload.images.forEach(imageFile => {
+								
+								var filename = cryptoRandomString(30)
+								var imageName = imageFile.name
+								var ext = imageName.slice(imageName.lastIndexOf('.'))
+
+								var imageRef = userStorage.child(payload.userId + /posts/ + res.data.name + '-' + filename + ext)
+
+								imagePromises.push(
+									imageRef.put(imageFile).then(fileData => {
+										// console.log(fileData)
+										return fileData.metadata.downloadURLs[0]
+									})
+								)
+								
+							})
+
+							// console.log(imagePromises)
+
+							Promise.all(imagePromises).then(data => {
+								// console.log('resp', data)
+								
+								firebaseAxios.patch('/posts/' + payload.userId + '/' + res.data.name + '.json' + '?auth=' + state.idToken, {'imageURLs': data })
+								.then(imageURLData => {
+									imageURLData.data['postId'] = res.data.name
+									resolve(imageURLData)
+								}).catch(error => console.log(error))
+
+							})				
+						}
+					}).catch(error => {
+						reject(error)
+						console.log(error)})					
+			})
+
+		},
+		createPostComment({commit, state}, payload) {
+			return new Promise((resolve, reject) => {
+				firebaseAxios.post('/posts/' + payload.userId + '/' + payload.data.postId + '/comments.json' + '?auth=' + state.idToken, payload.data)
+					.then(res => {
+						console.log(res)
+						resolve(res)
+					}).catch(error => {
+						console.log(error)
+					})
+				})
+		},
+		getProfilePosts({commit, state}, payload) {
+			// console.log('disptaching getProfilePosts', state.idToken)
+			return new Promise((resolve, reject) => {
+				firebaseAxios.get("/posts/" + payload.profileId + ".json" + '?auth=' + state.idToken)
+					.then(res => {
+						// console.log('posts', res)
+						resolve(res)
+					}).catch(error => {
+						reject(error)
+						console.log(error)
+					})
+			})
+		}
 	},
 	getters: {
-		user(state) {
-			return state.user;
+		currentUser(state) {
+			return { idToken: state.idToken, id: state.userId}
 		},
 		profile(state) {
 			return state.currentUserProfile;
 		},
-		userTools(state) {
+		currentUserTools(state) {
 			return state.currentUserTools
+		},
+		isSignedIn(state) {
+			return state.idToken !== null
+		},
+		stateMessage(state) {
+			return {message: state.message, messageType: state.messageType}
+		},
+		posts(state) {
+			return state.posts
 		}
 	},
 	state: {
-		user: null,
+		message: null,
+		messageType: null,
+		idToken: null,
+		userId: null,
+		userEmail: null,
+		expires: null,
 		currentUserProfile: {},
 		currentUserTools: {},
+		userPosts: null,
 		staticPages: {
 			"center": {
 				title: "About",
@@ -492,706 +998,6 @@ export const store = new Vuex.Store({
 					timestamp: 1459361875360,
 				}
 			}
-		},
-		profiles:{
-			'companyXYZ': {
-				id: 'companyXYZ',
-				type: 'company',
-				username: 'MyOpera',
-				name: "MY OPERA",
-				image: require("../assets/images/myopera-logo.png"),
-				coverImage: require("../assets/images/myoperacover.jpg"),
-				details: {
-					city: "Toronto",
-					province: "Ontario",
-					connectionStrength: 75,
-					connectionLevel: "connected allstar",
-					companyType: "Regional",
-					country: "Canada",
-					memberships: ["Indie Opera TO"],
-				},
-				notification_settings: [{	
-						title: "Notifications on",
-						desc: "Lorum ipsum deus domine allorum deus ipsum. Ave Maria lorum ipsum",
-						isChecked: true
-					}, {
-						title: "Notifications sound",
-						desc: "Lorum ipsum deus domine allorum deus ipsum. Ave Maria lorum ipsum",
-						isChecked: true
-					}],
-				connections: [{
-					firstName: "Alyssa",
-					lastName: "Durnie",
-					role: "Artistic Director",
-					img: require("../assets/images/Alyssa-Durnie.png"),
-					type: "staff"
-					}, { 
-					firstName: "Brittany",
-					lastName: "Cann",
-					role: "Coordinator",
-					img: require("../assets/images/Brittany-Cann.png"),
-					type: "staff"
-					},
-					{ firstName: "Camille",
-					lastName: "Rogers",
-					role: "Stage Director",
-					img: require("../assets/images/Camille-Rogers.png"),
-					type: "staff"
-					},
-					{ firstName: "Dalen",
-					lastName: "Roberts",
-					role: "Conductor",
-					img: require("../assets/images/Dalen-trimmed.png"),
-					type: "staff"
-					},
-					{
-					firstName: "Caitlin",
-					lastName: "McCaughe",
-					role: "Soprano",
-					img: require("../assets/images/Caitlin-McCaughey.png"),
-					type: "connector"
-					},
-					{ firstName: "Daevyd",
-					lastName: "Pepper",
-					role: "Baritone",
-					img: require("../assets/images/Daevyd-Pepper.png"),
-					type: "connector"
-					},
-					{ firstName: "Brenden",
-					lastName: "Friesen",
-					role: "Tenor",
-					img: require("../assets/images/Brenden-Friesen.png"),
-					type: "connector"
-					},
-					{ firstName: "Julie",
-					lastName: "Adams",
-					role: "Mezzo Soprano",
-					img: require("../assets/images/Julie-Adams.png"),
-					type: "connector"
-					}],
-				auditions: [{
-		    		title: "General Audition",
-		    		address: "2351 Audition Street",
-		    		city: "Toronto",
-		    		applicationDeadline: 1512892800,
-		    		date: 1514188800,
-		    		starts: 1514188800,
-		    		ends: 1514217600,
-		    		type: "general",
-		    		voiceTypes: ['soprano', 'mezzo soprano', 'tenor'],
-		    		pianist: true,
-		    		oppType: "paid",
-		    		description: "Amazing opportunity for emerging singers",
-		    		invitedCandidates: [{
-						firstName: "Caitlin",
-						lastName: "McCaughey",
-						voice_type: "Soprano",
-						img: require("../assets/images/Caitlin-McCaughey.png"),
-						city: "Vancouver",
-						province: "BC",
-						selected: true
-						},
-						{ firstName: "Daevyd",
-						lastName: "Pepper",
-						voice_type: "Baritone",
-						img: require("../assets/images/Daevyd-Pepper.png"),
-						city: "Calgary",
-						province: "AB",
-						selected: false
-						},
-						{ firstName: "Brenden",
-						lastName: "Friesen",
-						voice_type: "Tenor",
-						img: require("../assets/images/Brenden-Friesen.png"),
-						city: "Montreal",
-						province: "QC",
-						selected: true
-						},
-						{ firstName: "Julie",
-						lastName: "Adams",
-						voice_type: "Mezzo Soprano",
-						img: require("../assets/images/Julie-Adams.png"),
-						city: "Winnipeg",
-						province: "MB",
-						selected: true
-						},
-						{ firstName: "Matthew",
-						lastName: "Dalen",
-						voice_type: "Bass",
-						img: require("../assets/images/Matthew-Dalen.png"),
-						city: "Toronto",
-						province: "ON",
-						selected: false
-						},
-						{ firstName: "Leanne",
-						lastName: "Kaufman",
-						voice_type: "Soprano",
-						img: require("../assets/images/Leanne-Kaufman.png"),
-						city: "Vancouver",
-						province: "BC",
-						selected: true
-						},
-						{ firstName: "Joel",
-						lastName: "Allison",
-						voice_type: "Baritone",
-						img: require("../assets/images/Joel-Allison.png"),
-						city: "Toronto",
-						province: "ON",
-						selected: false
-						}],
-					schedule: [{
-						time: 1513584000,
-						candidate: "Joel Allison"
-					}, { time: 1513584900,
-						candidate: "Leanne Kaufman"
-						}]
-					}, {
-		    		title: "Specific Audition",
-		    		address: "2351 Audition Street",
-		    		city: "Vancouver",
-		    		applicationDeadline: 1512892800,
-		    		date: 1514188800,
-		    		starts: 1514188800,
-		    		ends: 1514217600,
-		    		type: "general",
-		    		voiceTypes: ['soprano', 'mezzo soprano', 'tenor'],
-		    		pianist: true,
-		    		oppType: "paid",
-		    		description: "Amazing opportunity for emerging singers",
-		    		invitedCandidates: [{
-						firstName: "Caitlin",
-						lastName: "McCaughey",
-						voice_type: "Soprano",
-						img: require("../assets/images/Caitlin-McCaughey.png"),
-						city: "Vancouver",
-						province: "BC",
-						selected: true
-						},
-						{ firstName: "Daevyd",
-						lastName: "Pepper",
-						voice_type: "Baritone",
-						img: require("../assets/images/Daevyd-Pepper.png"),
-						city: "Calgary",
-						province: "AB",
-						selected: false
-						},
-						{ firstName: "Brenden",
-						lastName: "Friesen",
-						voice_type: "Tenor",
-						img: require("../assets/images/Brenden-Friesen.png"),
-						city: "Montreal",
-						province: "QC",
-						selected: true
-						},
-						{ firstName: "Julie",
-						lastName: "Adams",
-						voice_type: "Mezzo Soprano",
-						img: require("../assets/images/Julie-Adams.png"),
-						city: "Winnipeg",
-						province: "MB",
-						selected: true
-						},
-						{ firstName: "Matthew",
-						lastName: "Dalen",
-						voice_type: "Bass",
-						img: require("../assets/images/Matthew-Dalen.png"),
-						city: "Toronto",
-						province: "ON",
-						selected: false
-						},
-						{ firstName: "Leanne",
-						lastName: "Kaufman",
-						voice_type: "Soprano",
-						img: require("../assets/images/Leanne-Kaufman.png"),
-						city: "Vancouver",
-						province: "BC",
-						selected: true
-						},
-						{ firstName: "Joel",
-						lastName: "Allison",
-						voice_type: "Baritone",
-						img: require("../assets/images/Joel-Allison.png"),
-						city: "Toronto",
-						province: "ON",
-						selected: false
-						}],
-					schedule: [{
-						time: 1513584000,
-						candidate: "Joel Allison"
-					}, { time: 1513584900,
-						candidate: "Leanne Kaufman"
-						}]
-					}, {
-		    		title: "Specific Audition",
-		    		address: "2351 Audition Street",
-		    		city: "Vancouver",
-		    		applicationDeadline: 1512892800,
-		    		date: 1514188800,
-		    		starts: 1514188800,
-		    		ends: 1514217600,
-		    		type: "general",
-		    		voiceTypes: ['soprano', 'mezzo soprano', 'tenor'],
-		    		pianist: true,
-		    		oppType: "paid",
-		    		description: "Amazing opportunity for emerging singers",
-		    		invitedCandidates: [{
-						firstName: "Caitlin",
-						lastName: "McCaughey",
-						voice_type: "Soprano",
-						img: require("../assets/images/Caitlin-McCaughey.png"),
-						city: "Vancouver",
-						province: "BC",
-						selected: true
-						},
-						{ firstName: "Daevyd",
-						lastName: "Pepper",
-						voice_type: "Baritone",
-						img: require("../assets/images/Daevyd-Pepper.png"),
-						city: "Calgary",
-						province: "AB",
-						selected: false
-						},
-						{ firstName: "Brenden",
-						lastName: "Friesen",
-						voice_type: "Tenor",
-						img: require("../assets/images/Brenden-Friesen.png"),
-						city: "Montreal",
-						province: "QC",
-						selected: true
-						},
-						{ firstName: "Julie",
-						lastName: "Adams",
-						voice_type: "Mezzo Soprano",
-						img: require("../assets/images/Julie-Adams.png"),
-						city: "Winnipeg",
-						province: "MB",
-						selected: true
-						},
-						{ firstName: "Matthew",
-						lastName: "Dalen",
-						voice_type: "Bass",
-						img: require("../assets/images/Matthew-Dalen.png"),
-						city: "Toronto",
-						province: "ON",
-						selected: false
-						},
-						{ firstName: "Leanne",
-						lastName: "Kaufman",
-						voice_type: "Soprano",
-						img: require("../assets/images/Leanne-Kaufman.png"),
-						city: "Vancouver",
-						province: "BC",
-						selected: true
-						},
-						{ firstName: "Joel",
-						lastName: "Allison",
-						voice_type: "Baritone",
-						img: require("../assets/images/Joel-Allison.png"),
-						city: "Toronto",
-						province: "ON",
-						selected: false
-						}],
-					schedule: [{
-						time: 1513584000,
-						candidate: "Joel Allison"
-					}, { time: 1513584900,
-						candidate: "Leanne Kaufman"
-						}]
-					}
-				],
-				auditionCandidates: [{
-					firstName: "Caitlin",
-					lastName: "McCaughey",
-					voice_type: "Soprano",
-					img: require("../assets/images/Caitlin-McCaughey.png"),
-					city: "Vancouver",
-					province: "BC",
-					selected: true
-					},
-					{ firstName: "Daevyd",
-					lastName: "Pepper",
-					voice_type: "Baritone",
-					img: require("../assets/images/Daevyd-Pepper.png"),
-					city: "Calgary",
-					province: "AB",
-					selected: false
-					},
-					{ firstName: "Brenden",
-					lastName: "Friesen",
-					voice_type: "Tenor",
-					img: require("../assets/images/Brenden-Friesen.png"),
-					city: "Montreal",
-					province: "QC",
-					selected: true
-					},
-					{ firstName: "Julie",
-					lastName: "Adams",
-					voice_type: "Mezzo Soprano",
-					img: require("../assets/images/Julie-Adams.png"),
-					city: "Winnipeg",
-					province: "MB",
-					selected: true
-					},
-					{ firstName: "Matthew",
-					lastName: "Dalen",
-					voice_type: "Bass",
-					img: require("../assets/images/Matthew-Dalen.png"),
-					city: "Toronto",
-					province: "ON",
-					selected: false
-					},
-					{ firstName: "Leanne",
-					lastName: "Kaufman",
-					voice_type: "Soprano",
-					img: require("../assets/images/Leanne-Kaufman.png"),
-					city: "Vancouver",
-					province: "BC",
-					selected: true
-					},
-					{ firstName: "Joel",
-					lastName: "Allison",
-					voice_type: "Baritone",
-					img: require("../assets/images/Joel-Allison.png"),
-					city: "Toronto",
-					province: "ON",
-					selected: false
-					},
-					{ firstName: "Georgia",
-					lastName: "Burashko",
-					voice_type: "Mezzo Soprano",
-					img: require("../assets/images/Georgia-Burashko.png"),
-					city: "Toronto",
-					province: "ON",
-					selected: true
-					}, 
-					{ firstName: "Daniel",
-					lastName: "Thielman",
-					voice_type: "Tenor",
-					img: require("../assets/images/Daniel-Thielman.png"),
-					city: "Edmonton",
-					province: "AB",
-					selected: true
-					}
-				],
-				events: [{
-					date: '2017/12/15',
-					start: '',
-					end: '',
-					title: 'Foo',
-					location: '',
-					desc: 'longlonglong description',
-					type: 'production'
-				}, { 
-					date: '2017/11/15',
-					start: '',
-					end: '',
-					title: 'Wonderful Event',
-					location: '',
-					desc: "bar",
-					type: 'rehearsal'
-				}],
-				posts: [
-					{
-					content: 'Veniam tofu raw denim id. Waistcoat culpa consequat DIY, aliqua try-hard fugiat taxidermy succulents. Enim helvetica viral heirloom raclette. Veniam duis salvia taiyaki poke thundercats before they sold out meh hella dolore skateboard. Swag fam glossier ut.',
-					imgs: "",
-					timestamp: 	1508518037,
-					likes: 24,
-					comments: [{
-							user: 'Ed Remi',
-							user_img: require("../assets/images/Brenden-Friesen.png"),
-							commentText: 'Pounce on unsuspecting person eat prawns daintily with a claw then lick paws clean wash down prawns with a lap.',
-							timestamp: 	1508521637
-						}, {
-							user: 'Jane Smith',
-							user_img: require("../assets/images/Camille-Rogers.png"),
-							commentText: 'The short, stubby, 11.2-ounce Duvel-style bottle releases a dark, leathery-brown brew, with a tan-colored, super-tight, creamy, fluffy lacing.',
-							timestamp: 	1508521637
-						}]
-					}, {
-					content: 'Doggo ipsum floofs the neighborhood pupper bork. Stop it fren pupper heckin good boys and girls long bois the neighborhood pupper shooberino, boofers clouds heckin angery woofer very jealous pupper.',
-					imgs: [require("../assets/images/greathall.jpg"), require("../assets/images/stagetub.jpg")],
-					timestamp: 	1508518037,
-					likes: 24,
-					comments: [{
-							user: 'Ed Remi',
-							user_img: require("../assets/images/Dalen-trimmed.png"),
-							commentText: 'Cake bear claw cheesecake oat cake candy canes chocolate.',
-							timestamp: 	1508521637
-						}, {
-							user: 'Jane Smith',
-							user_img: require("../assets/images/Caitlin-McCaughey.png"),
-							commentText: 'The short, stubby, 11.2-ounce Duvel-style bottle releases a dark, leathery-brown brew, with a tan-colored, super-tight, creamy, fluffy lacing.',
-							timestamp: 	1508521637
-						}]
-					},{
-					content: 'Boof you are doing me a frighten he made many woofs stop it fren, sub woofer very jealous pupper. Boofers puggorino shoober long water shoob what a nice floof boof, dat tungg tho shoob floofs.',
-					imgs: "",
-					timestamp: 	1508518037,
-					likes: 24,
-					comments: [{
-							user: 'Edward Great',
-							user_img: require("../assets/images/Daniel-Thielman.png"),
-							commentText: 'Pounce on unsuspecting person eat prawns daintily with a claw then lick paws clean wash down prawns with a lap.',
-							timestamp: 	1508521637
-						}, {
-							user: 'Jane Smith',
-							user_img: require("../assets/images/Leanne-Kaufman.png"),
-							commentText: 'Marshmallow topping sweet jujubes bonbon cupcake I love sweet roll I love.',
-							timestamp: 	1508521637
-						}]
-					},{
-					content: 'Zombie ipsum reversus ab viral inferno, nam rick grimes malum cerebro. De carne lumbering animata corpora quaeritis. Summus brains sit​​, morbo vel maleficia?',
-					imgs: [require("../assets/images/backstage.gif")],
-					timestamp: 	1508518037,
-					likes: 24,
-					comments: [{
-							user: 'Maggie Gyllenhall',
-							user_img: require("../assets/images/Georgia-Burashko.png"),
-							commentText: 'Dessert apple pie wafer jelly cupcake. Sweet donut brownie bear claw.',
-							timestamp: 	1508521637
-						}, {
-							user: 'Tom Price',
-							user_img: require("../assets/images/Julie-Adams.png"),
-							commentText: 'Gingerbread gummi bears bonbon cheesecake wafer tiramisu. ',
-							timestamp: 	1508521637
-						}]
-					}
-
-				]
-			},
-			'artistXYZ': {
-				id: 'artistXYZ',
-				type: 'artist',
-				username: 'johnsmith',
-				name: "John Smith",
-				image: require("../assets/images/Dalen-trimmed.png"),
-				coverImage: require("../assets/images/baritoneCover.jpg"),
-				details: {
-					city: "Vancouver",
-					province: "British Columbia",
-					connectionStrength: 80,
-					connectionLevel: "connected allstar",
-					voiceType: "tenor",
-					country: "Canada",
-					memberships: ["Indie Opera TO", "Tapestry Opera", "L'Opera de Montreal"],
-				},
-				notification_settings: [{	
-						title: "Notifications on",
-						desc: "Lorum ipsum deus domine allorum deus ipsum. Ave Maria lorum ipsum",
-						isChecked: true
-					}, {
-						title: "Notifications sound",
-						desc: "Lorum ipsum deus domine allorum deus ipsum. Ave Maria lorum ipsum",
-						isChecked: true
-				}],
-				cv: {
-					education: [{
-						from: 2002 ,
-						to: 2006,
-						institution: "University of British Columbia",
-						accomplishment: "Bachelor of Music",
-						major: "Vocal Performance"
-					}, {
-						from: 2006 ,
-						to: 2008,
-						institution: "Manhattan School of Music",
-						accomplishment: "Master of Music",
-						major: "Opera Performance"
-					}],
-					awards: [{
-						year: 2011,
-						accomplishment: "Finalist",
-						competition: "Liederkranz Foundation"
-					},{
-						year: 2010,
-						accomplishment: "Finalist",
-						competition: "Bel Canto Foundation Grants"
-					},{
-						year: 2010,
-						accomplishment: "",
-						competition: "Career Bridges Encouragement Grants"
-					},{
-						year: 2010,
-						accomplishment: "Semi-Finalist",
-						competition: "Competizione dell'Opera"
-					}],
-					opera_roles:[{
-						role: "Marcello",
-						opera: "La Boheme",
-						composer: "Puccini",
-						company: "Des Moines Metro Opera",
-						year: 2017
-					},{
-						role: "Dr. Falke",
-						opera: "Die Fledermaus",
-						composer: "Strass",
-						company: "Opera Company of Brooklyn",
-						year: 2010
-					},{
-						role: "Marcello",
-						opera: "La Boheme",
-						composer: "Puccini",
-						company: "Opera Memphis",
-						year: 2010
-					},{
-						role: "Don Giovanni",
-						opera: "Don Giovanni",
-						composer: "Mozart",
-						company: "American Lyric Theatre",
-						year: 2007
-					},{
-						role: "Guglielmo",
-						opera: "Cosi fan tutte",
-						composer: "Mozart",
-						company: "Project Opera Manhattan",
-						year: 2007
-					},{
-						role: "Milford",
-						opera: "L'Italiana in Londre",
-						composer: "Cimarosa",
-						company: "Manhattan School of Music",
-						year: 2007
-					}],
-					instructors: ['John Baker', 'Anthony Strong', 'Mark Oswald', 'Carlos Serrano'],
-					coaches: ['Liz Marcus', 'John Paul', 'Ken Merrill'],
-					directors: ['John Ramster', 'Matthew Lata', 'Sam Helfrich', 'Nelson Sheeley'],
-					conductors: ['Michael Change', 'Victor DeRenzi', 'Curt Tucker', 'Steven Mostleer']
-				},
-				connections: [
-					{ firstName: "Camille",
-					lastName: "Rogers",
-					role: "Stage Director",
-					img: require("../assets/images/Camille-Rogers.png"),
-					type: "staff"
-					},{ firstName: "Dalen",
-					lastName: "Roberts",
-					role: "Conductor",
-					img: require("../assets/images/Dalen-trimmed.png"),
-					type: "staff"
-					}, {
-					firstName: "Alyssa",
-					lastName: "Durnie",
-					role: "Artistic Director",
-					img: require("../assets/images/Alyssa-Durnie.png"),
-					type: "staff"
-					}, { 
-					firstName: "Brittany",
-					lastName: "Cann",
-					role: "Coordinator",
-					img: require("../assets/images/Brittany-Cann.png"),
-					type: "staff"
-					}, {
-					firstName: "Caitlin",
-					lastName: "McCaughe",
-					role: "Soprano",
-					img: require("../assets/images/Caitlin-McCaughey.png"),
-					type: "connector"
-					},
-					{ firstName: "Daevyd",
-					lastName: "Pepper",
-					role: "Baritone",
-					img: require("../assets/images/Daevyd-Pepper.png"),
-					type: "connector"
-					},
-					{ firstName: "Brenden",
-					lastName: "Friesen",
-					role: "Tenor",
-					img: require("../assets/images/Brenden-Friesen.png"),
-					type: "connector"
-					},
-					{ firstName: "Julie",
-					lastName: "Adams",
-					role: "Mezzo Soprano",
-					img: require("../assets/images/Julie-Adams.png"),
-					type: "connector"
-					}
-				],
-				events: [{
-					date: '2017/12/15',
-					start: '',
-					end: '',
-					title: 'Foo',
-					location: '',
-					desc: 'longlonglong description',
-					type: 'production'
-				}, { 
-					date: '2017/11/15',
-					start: '',
-					end: '',
-					title: 'Wonderful Event',
-					location: '',
-					desc: "bar",
-					type: 'rehearsal'
-				}],
-				posts: [
-					{
-					content: 'Veniam tofu raw denim id. Waistcoat culpa consequat DIY, aliqua try-hard fugiat taxidermy succulents. Enim helvetica viral heirloom raclette. Veniam duis salvia taiyaki poke thundercats before they sold out meh hella dolore skateboard. Swag fam glossier ut.',
-					imgs: "",
-					timestamp: 	1508518037,
-					likes: 24,
-					comments: [{
-							user: 'Ed Remi',
-							user_img: require("../assets/images/Brenden-Friesen.png"),
-							commentText: 'Pounce on unsuspecting person eat prawns daintily with a claw then lick paws clean wash down prawns with a lap.',
-							timestamp: 	1508521637
-						}, {
-							user: 'Jane Smith',
-							user_img: require("../assets/images/Camille-Rogers.png"),
-							commentText: 'The short, stubby, 11.2-ounce Duvel-style bottle releases a dark, leathery-brown brew, with a tan-colored, super-tight, creamy, fluffy lacing.',
-							timestamp: 	1508521637
-						}]
-					}, {
-					content: 'Doggo ipsum floofs the neighborhood pupper bork. Stop it fren pupper heckin good boys and girls long bois the neighborhood pupper shooberino, boofers clouds heckin angery woofer very jealous pupper.',
-					imgs: [require("../assets/images/greathall.jpg"), require("../assets/images/stagetub.jpg")],
-					timestamp: 	1508518037,
-					likes: 24,
-					comments: [{
-							user: 'Ed Remi',
-							user_img: require("../assets/images/Dalen-trimmed.png"),
-							commentText: 'Cake bear claw cheesecake oat cake candy canes chocolate.',
-							timestamp: 	1508521637
-						}, {
-							user: 'Jane Smith',
-							user_img: require("../assets/images/Caitlin-McCaughey.png"),
-							commentText: 'The short, stubby, 11.2-ounce Duvel-style bottle releases a dark, leathery-brown brew, with a tan-colored, super-tight, creamy, fluffy lacing.',
-							timestamp: 	1508521637
-						}]
-					},{
-					content: 'Boof you are doing me a frighten he made many woofs stop it fren, sub woofer very jealous pupper. Boofers puggorino shoober long water shoob what a nice floof boof, dat tungg tho shoob floofs.',
-					imgs: "",
-					timestamp: 	1508518037,
-					likes: 24,
-					comments: [{
-							user: 'Edward Great',
-							user_img: require("../assets/images/Daniel-Thielman.png"),
-							commentText: 'Pounce on unsuspecting person eat prawns daintily with a claw then lick paws clean wash down prawns with a lap.',
-							timestamp: 	1508521637
-						}, {
-							user: 'Jane Smith',
-							user_img: require("../assets/images/Leanne-Kaufman.png"),
-							commentText: 'Marshmallow topping sweet jujubes bonbon cupcake I love sweet roll I love.',
-							timestamp: 	1508521637
-						}]
-					},{
-					content: 'Zombie ipsum reversus ab viral inferno, nam rick grimes malum cerebro. De carne lumbering animata corpora quaeritis. Summus brains sit​​, morbo vel maleficia?',
-					imgs: [require("../assets/images/backstage.gif")],
-					timestamp: 	1508518037,
-					likes: 24,
-					comments: [{
-							user: 'Maggie Gyllenhall',
-							user_img: require("../assets/images/Georgia-Burashko.png"),
-							commentText: 'Dessert apple pie wafer jelly cupcake. Sweet donut brownie bear claw.',
-							timestamp: 	1508521637
-						}, {
-							user: 'Tom Price',
-							user_img: require("../assets/images/Julie-Adams.png"),
-							commentText: 'Gingerbread gummi bears bonbon cheesecake wafer tiramisu. ',
-							timestamp: 	1508521637
-						}]
-					}
-
-				]
-			},
 		}
 
 	}

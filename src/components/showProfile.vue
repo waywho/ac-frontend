@@ -3,10 +3,10 @@
 		<div v-if="loading">
 			<div class="profile-banner">
 				<div class="profile-banner-assets">
-					<div class="profile-cover" :style="{'background-image': 'url('+ coverHolder +')'}">
+					<div class="profile-cover" :style="{'background-image': 'url('+ coverURL +')'}">
 					</div>
 					<div class="profile-avatar-wrap" >
-						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarHolder +')'}">
+						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarURL +')'}">
 						</div>
 					</div>
 				</div>
@@ -16,7 +16,7 @@
 			<div class="profile-banner">
 				<div class="profile-banner-assets">
 
-					<div class="profile-cover" :style="{'background-image': 'url('+ profileCover +')'}">
+					<div class="profile-cover" :style="{'background-image': 'url('+ coverURL +')'}">
 						<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
 					 		<i class="fa fa-camera" aria-hidden="true"></i>Update Cover Photo
 						</div>
@@ -24,7 +24,7 @@
 					</div>
 
 					<div class="profile-avatar-wrap" >
-						<div class="profile-avatar" :style="{'background-image': 'url('+ profileImage +')'}">
+						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarURL +')'}">
 
 							<svg height="100%" width="100%">
 								<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
@@ -40,25 +40,25 @@
 
 				</div>
 				
-				<div class="profile-name"><h1>{{ profile.name }}</h1></div>
+				<div class="profile-name"><h1>{{ profile.details.name }}</h1></div>
 
 				<profile-details v-if="profile" v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details" :connection-level="connectionLevel"></profile-details>
 			</div>
 
-			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" v-bind:profile-tool-data="profile.tools" class="section-margins"></profile-tools>
+			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
 
 			<profile-connections class="profile-section" :connections="profile.connections" v-bind:profile-id="profile.id"></profile-connections>
 
 			<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions>
 				
-			<profile-posts :name="profile.name" :posts="profile.posts" v-bind:profile-id="profile.id"></profile-posts>
+			<profile-posts :profileId="profileId" :name="profile.details.name"></profile-posts>
 		</div>
 	</div>
 </template>
 
 <script>
 import profileDetails from './profileDetails';
-import profileTools from './profileTools';
+// import profileTools from './profileTools';
 import auditions from './auditions';
 import profilePosts from './profilePosts';
 import profileConnections from './profileConnections';
@@ -66,71 +66,59 @@ import { mapGetters } from 'vuex';
 import * as firebase from 'firebase';
 import profileImagesMixin from '../mixins/profileImagesMixin';
 import currentUser from '../mixins/currentUserMixin';
+import firebaseAxios from '../axios-firebase.js';
 
 export default {
 	name: 'profile',
 	components: {
 		'profile-details': profileDetails,
-		'profile-tools': profileTools,
+		'profile-tools': () => import('./profileTools'),
 		'company-auditions': auditions,
 		'profile-posts': profilePosts,
 		'profile-connections': profileConnections
 	},
   	mixins: [profileImagesMixin, currentUser],
+  	props: {
+  		id: String
+  	},
 	data() {
 		return {
-			id: this.$route.params.id,
-			profile: null,
-			avatarURL: null,
-			coverURL: null,
+			profileId: this.id,
+			displayProfile: null,
+			avatarURL: require("../assets/images/avatar-holder.png"),
+			coverURL: require("../assets/images/cover-holder.jpg"),
 			avatar: null,
 			cover: null,
-			loading: false,
-			error: null,
-			avatarHolder: require("../assets/images/avatar-holder.png"),
-			coverHolder: require("../assets/images/cover-holder.jpg")
+			loading: true,
+			error: null
 		}
 	},
 	methods: {
 		getProfile: function() {
-			this.error = this.post = null;
-			this.loading = true;
-			firebase.database().ref('profiles/' + this.id).once('value')
-				.then(snapshot => {
-					// console.log(snapshot.val());
-					return snapshot.val();
-				}).then(data => {
-					
-					this.profile = data;
-					if (this.profile !== null && this.profile !== undefined) {
-						this.loading = false;
-					} else {
-						this.loading = true;
-					}
-				})
+			firebaseAxios.get("/profiles/" + this.id + ".json")
+			.then(res => {
+				this.loading = false
+				console.log('got the profile', res)
+				this.displayProfile = res.data
+			})
+			// TODO: add message if data is not found somwehere
+			.catch(error => {
+				this.error = error.message
+				console.log('cant get the profile', error)
+			})
 		}
 	},
 	watch: {
 		'$route': 'getProfile'
 	},
 	computed: {
-		profileImage () {
-			if (this.profile.avatarURL !== null && this.profile.avatarURL !== undefined) {
-				return this.profile.avatarURL
-			} else if (this.avatarURL !== null && this.avatarURL !== undefined) {
-				return this.avatarURL
-			} else {
-				return require("../assets/images/avatar-holder.png")
-			}
-		},
-		profileCover () {
-			if (this.profile.coverURL !== null && this.profile.coverURL !== undefined) {
-				return this.profile.coverURL
-			} else if (this.coverURL !== null && this.coverURL !== undefined) {
-				return this.coverURL
-			} else {
-				return require("../assets/images/cover-holder.jpg")
-			}
+		profile: function() {
+
+			return this.displayProfile
+
+			
+			// console.log(currentProfile)
+			// return currentProfile
 		},
 		connectionLevel () {
 			let connectionLevels = [
@@ -159,16 +147,30 @@ export default {
 		}
 	},
 	created () {
-		this.getProfile();
+		// console.log('do i have data yet?', this.$store.getters.profile)
+		// console.log(this.authorizedUser)
+		// console.log(this.signedIn)
+		if (this.signedIn && this.authorizedUser) {
+			console.log('I am signed in and authorized!', this.signedIn)
 
-		// console.log(this.id)
-		// console.log(this.profile)
-		// find out all voice types
-		// const voices = []
-		// for (var i=0; 1< this.profile.auditionCandidates.length; i++) {
-		// 		voices.push(this.profile.auditionCandidates[i].voice_type);
-		// 		console.log(voices);
-		// };
+			setTimeout(() => {
+
+				this.displayProfile = this.$store.getters.profile
+				console.log('avatar', this.displayProfile.avatarURL)
+				if (this.displayProfile.avatarURL !== null && this.displayProfile.avatarURL !== undefined && this.displayProfile.avatarURL.length > 0) {  
+					this.avatarURL = this.displayProfile.avatarURL
+				}
+				
+				if (this.displayProfile.coverURL !== null && this.displayProfile.coverURL !== undefined && this.displayProfile.coverURL.length > 0) { 
+					this.coverURL = this.displayProfile.coverURL
+				}
+
+				this.loading = false;
+			}, 1000)
+
+		} else {
+				this.getProfile();
+		}
 	}
 }
 </script>

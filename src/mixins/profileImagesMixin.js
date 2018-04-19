@@ -6,7 +6,7 @@ export default{
 		onFilePicked (event, imageType) {
 			const file = event.target.files[0]
 			let filename = file.name
-			console.log(filename)
+			// console.log(filename)
 			if (filename.lastIndexOf('.') <= 0) {
 				return alert('Please add a file with valid extension')
 			}
@@ -20,7 +20,26 @@ export default{
 			let newData = {}
 			newData[imageType] = this[imageType]
 
-			this.$store.dispatch('saveProfileImages', {userId: this.$store.getters.user.id, data: newData} )
+			// console.log('imagefile', newData)
+
+			this.$store.dispatch('saveProfileImages', {userId: this.$store.getters.currentUser.id, data: newData} )
+		},
+		onPostFilePicked(event, imageType) {
+			const file = event.target.files[0]
+			let filename = file.name
+			// console.log(filename)
+			if (filename.lastIndexOf('.') <= 0) {
+				return alert('Please add a file with valid extension')
+			}
+			const fileReader = new FileReader()
+			fileReader.addEventListener('load', () => {
+				this.imageURLs.push(fileReader.result)
+			})
+			fileReader.readAsDataURL(file)
+
+			this.imageFiles.push(file)
+
+			// this.$store.dispatch('savePostImages', {userId: this.$store.getters.currentUser.id, data: newData} )
 		}
 	}
 }

@@ -10,7 +10,7 @@
         <div class='col-xs-2 col-sm-2'>
           <button @click="updateProfileTools('biography', 'portfolio')" class="form-button">save</button>
         </div>
-        <success-warning-notice  v-if="messageShow['biography']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+        <success-warning-notice  v-if="messageShow['biography']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
 
 			
@@ -31,7 +31,7 @@
         <div class='col-xs-2 col-sm-2'>
 			     <button @click="updateProfileTools('operaRoles', 'portfolio')" class="form-button">save</button>
           </div>
-        <success-warning-notice  v-if="messageShow['operaRoles']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+        <success-warning-notice  v-if="messageShow['operaRoles']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
 
 			<label class="strong label-header second-header">Concert and Oratorio</label>
@@ -47,7 +47,7 @@
         <div class='col-xs-2 col-sm-2'>
 			     <button @click="updateProfileTools('concertAndOratorios', 'portfolio')" class="form-button">save</button>
            </div>
-        <success-warning-notice  v-if="messageShow['concertAndOratorios']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+        <success-warning-notice  v-if="messageShow['concertAndOratorios']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
 
 			<label class="strong label-header second-header">Training and Education</label>
@@ -63,7 +63,7 @@
         <div class='col-xs-2 col-sm-2'>
           <button @click="updateProfileTools('trainingAndEducations', 'portfolio')" class="form-button">save</button>
         </div>
-        <success-warning-notice  v-if="messageShow['trainingAndEducations']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+        <success-warning-notice  v-if="messageShow['trainingAndEducations']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
 
 			<label class="strong label-header second-header">Competitions, Awards and Scholarships</label>
@@ -79,7 +79,7 @@
         <div class='col-xs-2 col-sm-2'>
           <button @click="updateProfileTools('competitionAwardScholarships', 'portfolio')" class="form-button">save</button>
         </div>
-        <success-warning-notice  v-if="messageShow['competitionAwardScholarships']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+        <success-warning-notice  v-if="messageShow['competitionAwardScholarships']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
 
 
@@ -89,7 +89,7 @@
         <div class='col-xs-2 col-sm-2'>
 			    <button @click="updateProfileTools('skills')" class="form-button">save</button>
         </div>
-        <success-warning-notice  v-if="messageShow['skills']" :message="message" :type="messageType" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+        <success-warning-notice  v-if="messageShow['skills']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
       </div>
 		</div>
 

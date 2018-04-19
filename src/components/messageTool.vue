@@ -8,7 +8,7 @@
 		  		<div v-for="(chat, key) in chats" :class="{ sender, isActive: chat.isActive }" v-on:click="getMessages(key)">
 		  			<div class="avatar-box">
 			  			<div class="avatar">
-					      	<img src="../assets/images/myopera-logo.png" />
+					      	<img :src="userAvatar(sender.avatarURL)" />
 					    </div>
 					</div>
 				    <div class="sender-name">
@@ -35,7 +35,8 @@
 </template>
 
 <script>
-
+import currentUserMixin from '../mixins/currentUserMixin'
+import avatarMixin from '../mixins/avatarMixin'
 import message from './message';
 
 export default {
@@ -43,6 +44,7 @@ export default {
   components: {
   	'message': message,
   },
+  mixins: [currentUserMixin, avatarMixin],
   data () {
     return {
       messages: [],
@@ -55,6 +57,13 @@ export default {
   computed: {
   	chats() {
   		return this.$store.state.conversations;
+  	},
+  	senderAvatar: function() {
+  		if (this.sender.avatarURL !== null && this.sender.avatarURL !== undefined) {
+  			return this.sender.avatarURL
+  		} else {
+
+  		}
   	}
   },
   methods: {
@@ -113,7 +122,7 @@ export default {
 	// border: 1px solid #dddcdc;
 	background-color: #fff;
 	height: 100%;
-	flex-basis: 41%;
+	flex-basis: 55%;
 }
 
 .message-header {

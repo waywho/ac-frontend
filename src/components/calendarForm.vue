@@ -14,10 +14,10 @@
 	  		<input type="time" class="input-addon-field" v-model="newEvent.end"/>
 	  	</div>
   	</div>
-  	<input type="text" placeholder="Event Title" class="form-field" v-model="newEvent.title"/>
-  	<input type="text" placeholder="Event Location" class="form-field" v-model="newEvent.location"/>
-  	<textarea placeholder="Event Description" class="form-field" v-model="newEvent.desc"/>
-  	<select class="form-field" v-model="newEvent.type">
+  	<input type="text" placeholder="Event Title" class="form-field-bottom-margin" v-model="newEvent.title"/>
+  	<input type="text" placeholder="Event Location" class="form-field-bottom-margin" v-model="newEvent.location"/>
+  	<textarea placeholder="Event Description" class="form-field-bottom-margin" v-model="newEvent.desc"/>
+  	<select class="form-field-bottom-margin" v-model="newEvent.type">
   		<option disabled selected value>Select an Event Type</option>
   		<option v-for="type in types">{{type}}</option>
   	</select>
@@ -78,7 +78,7 @@ export default {
   overflow-y: scroll;
 }
 
-.form-field {
+.form-field-bottom-margin {
 	margin-bottom: 20px;
 }
 
