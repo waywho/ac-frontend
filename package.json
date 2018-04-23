@@ -20,6 +20,7 @@
     "flexboxgrid-sass": "^8.0.5",
     "hchs-vue-charts": "^1.2.8",
     "lodash": "^4.17.5",
+    "velocity-animate": "^1.5.1",
     "vue": "^2.5.2",
     "vue-clickaway": "^2.1.0",
     "vue-event-calendar": "git+https://github.com/waywho/vue-event-calendar.git",

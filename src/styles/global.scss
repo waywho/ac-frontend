@@ -566,8 +566,23 @@ input:checked + .slider:before {
 	margin-top: 0px;
 }
 
+.loading-spinner {
+	margin-top: 25px;
+	color: $color-gold;
+	visibility: visible;
+	font-size:90px;
+}
 
-@media screen and (max-width: 46rem) {
+.fade-enter-active, .fade-leave-active {
+	transition: opacity 0.8s;
+}
+
+.fade-enter, .fade-leave-to {
+	opacity: 0;
+}
+
+
+@media screen and (max-width: 48rem) {
 	ul {
 		-webkit-padding-start: 0px;
 		-webkit-margin-before: 0px;

@@ -105,13 +105,13 @@ export default {
 }
 
 #main-app {
-
   transition: left 0.8s ease-in-out;
   -webkit-transition: left 0.8s ease-in-out;
 }
 
 .main-body {
   grid-area: main;
+  -webkit-overflow-scrolling: touch;
 }
 
 .nav-up {
