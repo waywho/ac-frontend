@@ -6,6 +6,8 @@ import firebaseAxios from '../axios-firebase.js';
 import router from '../router';
 import cryptoRandomstring from 'crypto-random-string';
 const cryptoRandomString = require('crypto-random-string');
+import oppAxios from '../axios-opportunities.js';
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -643,6 +645,18 @@ export const store = new Vuex.Store({
 						reject(error)
 						console.log(error)
 					})
+			})
+		},
+		postOpportunity({commit, state}, payload) {
+			return new Promise((resolve, reject) => {
+				oppAxios.post("/opportunities.json", 
+					payload)
+        		.then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+					console.log(error)
+				})
 			})
 		}
 	},

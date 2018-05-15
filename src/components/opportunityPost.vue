@@ -27,13 +27,13 @@
 				<li>{{audition.location}} - {{audition.from | moment("MMMM DD, YYYY")}}</li>
 			</ul>
 			<h5 v-if="opp.materials_required !== null">Materials Required</h5>
-			<p v-if="opp.materials_required !== null">{{opp.materials_required}}</p>
+			<p v-if="opp.materials_required !== null" class="post-text">{{opp.materials_required}}</p>
 			<h5>Opportunity Description</h5>
-			<p>{{opp.description}}</p>
+			<p class="post-text">{{opp.description}}</p>
 			<h5>Payment</h5>
-			<p>{{opp.payment_details}}</p>
+			<p class="post-text">{{opp.payment_details}}</p>
 			<h5>Contact Information</h5>
-			<p>{{opp.contact_information}}</p>
+			<p class="post-text">{{opp.contact_information}}</p>
 		</div>
 		<div slot="footer" class="post-footer">
 			<button><i class="fa fa-chevron-right" aria-hidden="true"></i>Apply for this Opportunity</button>
@@ -93,6 +93,8 @@ export default {
 	cursor: pointer;
 	color: $color-gold;
 }
+
+
 
 </style>
 

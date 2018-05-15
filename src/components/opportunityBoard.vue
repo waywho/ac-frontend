@@ -6,7 +6,7 @@
   	</div>
 
   	<keep-alive>
-  		<component :is="component" class="opportunity-section" :continents="continents" :countries="countries" :opportunity-types="opportunityTypes" :categories="categories" :subcategories="subcategories" :payment-types="paymentTypes" :selected-sort="selectedSort" :loading="loading" :opportunities="opportunities" @subcategory-change="changeSubcategories" @country-change="changeCountries" @apply-filter="filterApply" @apply-sort="sortApply" @filter-component="component = $event"></component>
+  		<component :is="component" class="opportunity-section col-xs-12 col-md-10 col-lg-10" :continents="continents" :countries="countries" :opportunity-types="opportunityTypes" :categories="categories" :subcategories="subcategories" :payment-types="paymentTypes" :selected-sort="selectedSort" :loading="loading" :opportunities="opportunities" @subcategory-change="changeSubcategories" @country-change="changeCountries" @apply-filter="filterApply" @apply-sort="sortApply" @filter-component="component = $event"></component>
   	</keep-alive>
   		
 
@@ -68,18 +68,16 @@ export default {
 	 		this.opportunities = null
 	 		this.loading = true
 	 		this.selectedFilters = filters
+	 		let filterParams = {}
+	 		filterParams['idToken'] = this.$store.getters.currentUser.idToken
+	 		filterParams['page'] = 1
+	 		filterParams['sort'] = this.selectedSort
+
+	 		Object.assign(filterParams, filters)
+	 		console.log(filterParams)
+
 	 		oppAxios.get('opportunities.json', {
-	 			params: {
-	  				idToken: this.$store.getters.currentUser.idToken,
-	  				page: 1,
-	  				region: countriesList.continents[filters.selectedContinent],
-	  				country: filters.countrySelected,
-	  				opportunity_type: filters.selectedOpportunityType,
-	  				payment_type: filters.selectedPaymentType,
-	  				category: filters.selectedCategory,
-	  				subcategory: filters.subcategorySelected,
-	  				sort: this.selectedSort
-	 			}
+	 			params: filterParams
 	 		}).then(res => {
 	 			console.log(res)
 	 			this.opportunities = res.data
@@ -98,12 +96,12 @@ export default {
 	 			params: {
 	  				idToken: this.$store.getters.currentUser.idToken,
 	  				page: 1,
-	  				region: countriesList.continents[this.selectedFilters.selectedContinent],
-	  				country: this.selectedFilters.countrySelected,
-	  				opportunity_type: this.selectedFilters.selectedOpportunityType,
-	  				payment_type: this.selectedFilters.selectedPaymentType,
-	  				category: this.selectedFilters.selectedCategory,
-	  				subcategory: this.selectedFilters.subcategorySelected,
+	  				region: this.selectedFilters.region,
+	  				country: this.selectedFilters.country,
+	  				opportunity_type: this.selectedFilters.opportunity_type,
+	  				payment_type: this.selectedFilters.payment_type,
+	  				category_list: this.selectedFilters.category_list,
+	  				subcategory_list: this.selectedFilters.subcategory_list,
 	  				sort: selectedSort
 	 			}
 	 		}).then(res => {

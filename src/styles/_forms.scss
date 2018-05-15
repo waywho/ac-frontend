@@ -299,7 +299,8 @@ form,
 .form-inline {
     & input,
     & textarea,
-    & select {
+    & select,
+    & label {
         display: inline-block;
         width: auto;
     }

@@ -6,7 +6,7 @@
   		<input  type="text" placeholder="email" class='form-element' v-model="email" />
 	  	<div class="checkbox form-element">
 	          <input id='remember' type='radio' :value='remember' v-model='remember' />
-	          <label for='remember'><span></span>Remeber me</label>
+	          <label for='remember'><span></span>Remember me</label>
 	    </div>
 	  	<input slot='body' type="password" placeholder="password" class='form-element' v-model="password" />
       <success-warning-notice v-if="messageShow" class="form-element"></success-warning-notice>

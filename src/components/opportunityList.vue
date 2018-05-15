@@ -15,7 +15,7 @@
     	</div>
   		
   		<i v-if="loading" class="fa fa-circle-o-notch fa-spin loading-spinner"></i>
-	  	<transition-group tag="div" name="opportunities" class="opportunity-list row center-md center-lg top-md top-lg" v-on:before-enter="beforeListEnter" v-on:enter="listEnter" v-bind:css="false">
+	  	<transition-group tag="div" class="opportunity-list row center-md center-lg top-md top-lg" v-on:before-enter="beforeListEnter" v-on:enter="listEnter" v-bind:css="false">
 	  				
 	  		<div class="opportunity-post col-md-12 col-lg-12 row" v-for="(op, index) in opportunities" :key="op.id"  v-bind:data-index="index" v-on:click="showOp(op)">	
 	  			
@@ -52,7 +52,7 @@
 	  			
 	  		</div>
 	  	</transition-group>
-	  	<transition name="fade">
+	  	<transition name="fade-long" mode="out-in">
 			<opportunity-post v-if="showOpportunity === true" v-bind:opp="currentOpportunity" @close="showOpportunity = false"></opportunity-post>
 		</transition>
   </div>

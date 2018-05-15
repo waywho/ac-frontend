@@ -46,9 +46,10 @@
 			</div>
 
 			<profile-seasons v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></profile-seasons>
+			
 			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
 
-			<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions>
+<!-- 			<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions> -->
 				
 			<profile-posts :profileId="profileId" :name="profile.details.name"></profile-posts>
 		</div>
@@ -157,7 +158,7 @@ export default {
 			setTimeout(() => {
 
 				this.displayProfile = this.$store.getters.profile
-				console.log('avatar', this.displayProfile.avatarURL)
+				// console.log('avatar', this.displayProfile.avatarURL)
 				if (this.displayProfile.avatarURL !== null && this.displayProfile.avatarURL !== undefined && this.displayProfile.avatarURL.length > 0) {  
 					this.avatarURL = this.displayProfile.avatarURL
 				}

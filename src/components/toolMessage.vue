@@ -2,7 +2,7 @@
   <div class="message-panel">
 	  	<div class="message-sidepanel">
 	  		<h2>Messages</h2>
-	  		<input type="text" id="sender-search" class="small" placeholder="search" />
+	  		<!-- <input type="text" id="sender-search" class="small" placeholder="search" /> -->
 	  		<div class="senders-window">
 		  		
 		  		<div v-for="(chat, key) in chats" :class="{ sender, isActive: chat.isActive }" v-on:click="getMessages(key)">
@@ -28,16 +28,17 @@
 			  	</message>
 		  	</div>
 			<div class="message-input-container">
-				<textarea type="text" id="message-input" placeholder="message"></textarea>
+				<textarea type="text" id="message-input" placeholder="message" @keydown.enter="sendMessage($event)"></textarea>
 			</div>
 		</div>
   </div>
 </template>
 
 <script>
-import currentUserMixin from '../mixins/currentUserMixin'
-import avatarMixin from '../mixins/avatarMixin'
+import currentUserMixin from '../mixins/currentUserMixin';
+import avatarMixin from '../mixins/avatarMixin';
 import message from './message';
+import firebaseAxios from '../axios-firebase.js';
 
 export default {
   name: 'messageTool',
@@ -48,7 +49,9 @@ export default {
   data () {
     return {
       messages: [],
-      sender: {}
+      sender: {},
+      loading: true,
+      error: ''
     }
   },
   props: {
@@ -74,12 +77,28 @@ export default {
   		this.sender = this.$store.state.users[id];
   		// this.$store.state.conversations[id].isActive = !this.$store.state.conversations[id].isActive;
   		console.log(this.sender);
+  	},
+  	sendMessage: function(event) {
+  		console.log(event.target.value)
+
   	}
   },
   created() {
+
+  	firebaseAxios.get("/porfile/" + this.profileId + "/chats" + ".json")
+		.then(res => {
+			this.loading = false
+			console.log('got the messages', res)
+			this.messages = res.data
+		})
+		// TODO: add message if data is not found somwehere
+		.catch(error => {
+			this.error = error.message
+			console.log('cant get the messages', error)
+		})
   	// console.log(this.$store.state.conversations);
-  	this.messages = this.$store.state.messages['AlyssaID']; //this.profileID
-  	this.sender = this.$store.state.users['AlyssaID'];
+  	// this.messages = this.$store.state.messages['AlyssaID']; //this.profileID
+  	// this.sender = this.$store.state.users['AlyssaID'];
   	// this.$store.state.conversations['AlyssaID'].isActive = !this.$store.state.conversations['AlyssaID'].isActive;
   }
 }
@@ -148,8 +167,7 @@ export default {
 
 #message-input {
 	max-width: 80%;
-	height: 100%;
-	border: 2px solid #ecddba;
+	height: 100%; 
 }
 
 #sender-search {

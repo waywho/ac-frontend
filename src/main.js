@@ -40,6 +40,15 @@ Vue.filter('capitalize', function (value) {
 
 Vue.filter('camel-to-space', function (value) {
   if (value !== null && value !== undefined) {
+    value = value.split("-").join(" ");
+    return value.charAt(0).toUpperCase() + value.slice(1)
+  } else {
+    return ''
+  }
+})
+
+Vue.filter('kabab-to-space', function (value) {
+  if (value !== null && value !== undefined) {
     value = value.replace(/([A-Z])/g, " $1");
     return value.charAt(0).toUpperCase() + value.slice(1)
   } else {

@@ -1,5 +1,5 @@
 <template>
-  <div id="calendar" class="tool-panel-paddings">
+  <div id="tool-panel-flow" class="tool-panel-paddings">
   	  <div class="calendar-title row">
         <h2 class="col-xs-10 col-sm-10">Schedule</h2>
         <i class="fa fa-plus is-darkgray button-fa col-xs col-sm text-right" v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'vue-event-calendar'"></i>
@@ -101,7 +101,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#calendar {
+#tool-panel-flow {
   padding-left: 100px;
   overflow-y: auto;
 }
@@ -117,6 +117,10 @@ export default {
 @media screen and (max-width: 46rem) {
   .calendar-title {
     padding-right: 0px;
+  }
+
+  #tool-panel-flow {
+    padding-left: 0px;
   }
 }
 </style>
