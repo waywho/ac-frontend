@@ -314,6 +314,8 @@ export const store = new Vuex.Store({
 					var data = {
 						['profiles/' + payload.userId + '/' + dataKey]: payload.data[dataKey],
 						['users/' + payload.userId + '/name']: payload.data.details.name,
+						['users/' + payload.userId + '/firstName']: payload.data.details.name.slice(0, payload.data.details.name.lastIndexOf(" ")),
+						['users/' + payload.userId + '/lastName']: payload.data.details.name.split(" ").pop,
 						['users/' + payload.userId + '/city']: payload.data.details.city,
 						['users/' + payload.userId + '/country']: payload.data.details.country,
 						['users/' + payload.userId + '/roleType']: payload.data.details.companyType !== null && payload.data.details.companyType !== undefined ? payload.data.details.companyType : payload.data.details.voiceType

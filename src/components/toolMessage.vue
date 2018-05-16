@@ -2,17 +2,22 @@
   <div class="message-panel">
 	  	<div class="message-sidepanel">
 	  		<h2>Messages</h2>
-	  		<!-- <input type="text" id="sender-search" class="small" placeholder="search" /> -->
+	  		<input type="text" id="sender-search" class="small" placeholder="search profiles" v-on:keydown.space="getUsers" v-on:keydown.enter="getUsers" v-model="userSearch" />
 	  		<div class="senders-window">
-		  		
-		  		<div v-for="(chat, key) in chats" :class="{ sender, isActive: chat.isActive }" v-on:click="getMessages(key)">
-		  			<div class="avatar-box">
-			  			<div class="avatar">
-					      	<img :src="userAvatar(sender.avatarURL)" />
-					    </div>
+	  			<div v-if="userSearch !== null"  v-for="(user, index) in users" class="sender" :key="index" v-on:click="startMessage(user.id)">
+	  				<div class="avatar-box">
+				      	<img :src="userAvatar(user.avatarURL)" class="avatar-small" />
 					</div>
 				    <div class="sender-name">
-				    	<b>{{ chat.sender }}</b><br />
+				    	<b>{{ user.name}}</b><br />
+				    </div>
+	  			</div>
+	  			<div v-else v-for="(chat, key, index) in chats" :class="{ sender, isActive: chat.isActive }" :key="index" v-on:click="getMessages(key)">
+		  			<div class="avatar-box">
+				      	<img :src="userAvatar(chat.avatarURL)" class="avatar-small" />
+					</div>
+				    <div class="sender-name">
+				    	<b>{{ chat.sender || chat.name}}</b><br />
 				    	<span class="smaller is-silver medium">{{chat.lastMessage}}</span>
 				    </div>
 		  		</div>
@@ -24,7 +29,7 @@
 				<span class="smaller">{{ sender.role }}</span>
 			</div>
 		  	<div class="messages">
-			  	<message v-for="message in messages" :message="message" :key="message.created">
+			  	<message v-for="message in chats" :message="message" :key="message.created">
 			  	</message>
 		  	</div>
 			<div class="message-input-container">
@@ -48,19 +53,18 @@ export default {
   mixins: [currentUserMixin, avatarMixin],
   data () {
     return {
-      messages: [],
-      sender: {},
-      loading: true,
-      error: ''
+    	users: [],
+		chats: [],
+		sender: {},
+		loading: true,
+		error: '',
+		userSearch: null
     }
   },
   props: {
     profileId: String
   },
   computed: {
-  	chats() {
-  		return this.$store.state.conversations;
-  	},
   	senderAvatar: function() {
   		if (this.sender.avatarURL !== null && this.sender.avatarURL !== undefined) {
   			return this.sender.avatarURL
@@ -70,6 +74,9 @@ export default {
   	}
   },
   methods: {
+  	startMessage: function(id) {
+  		
+  	},
   	getMessages: function (id) {
   		// console.log(id);
   		console.log(this.$store.state.messages[id]);
@@ -81,20 +88,42 @@ export default {
   	sendMessage: function(event) {
   		console.log(event.target.value)
 
+  	},
+  	getUsers: function() {
+
+		firebaseAxios.get("/users.json?auth=" + this.$store.getters.currentUser.idToken + `&orderBy="firstName"&equalTo="${this.userSearch.trim()}"`)
+		.then(res => {
+			console.log(res)
+			this.users = Object.values(res.data)
+		}).catch(error => {
+			console.log(error.response)
+		})
+
+		firebaseAxios.get("/users.json?auth=" + this.$store.getters.currentUser.idToken + `&orderBy="lastName"&equalTo="${this.userSearch.trim()}"`)
+		.then(res => {
+			console.log(res)
+			if(res.data.length > 0) {
+				this.users.concat(Object.values(res.data))
+			}
+		}).catch(error => {
+			console.log(error.response)
+		})
+  		
+  		
   	}
   },
   created() {
 
-  	firebaseAxios.get("/porfile/" + this.profileId + "/chats" + ".json")
+  	firebaseAxios.get("/chats/" + this.profileId + ".json?auth=" + this.$store.getters.currentUser.idToken)
 		.then(res => {
 			this.loading = false
 			console.log('got the messages', res)
-			this.messages = res.data
+			this.chats = res.data
 		})
 		// TODO: add message if data is not found somwehere
 		.catch(error => {
 			this.error = error.message
-			console.log('cant get the messages', error)
+			console.log('cant get the messages', error.response)
 		})
   	// console.log(this.$store.state.conversations);
   	// this.messages = this.$store.state.messages['AlyssaID']; //this.profileID

@@ -2,7 +2,7 @@
   <div id="tool-panel-flow" class="tool-panel-paddings">
   	  <div class="calendar-title row">
         <h2 class="col-xs-10 col-sm-10">Schedule</h2>
-        <i class="fa fa-plus is-darkgray button-fa col-xs col-sm text-right" v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'vue-event-calendar'"></i>
+        <button v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'vue-event-calendar'"><i class="fa fa-chevron-right" ></i> Add</button>
         <i class="fa fa-times is-darkgray button-fa col-xs col-sm text-right" v-on:click="keepFormAlive()" aria-hidden="true" v-if="component === 'calendar-form'"></i>
       </div>
       <div class="selection row" v-if="component === 'vue-event-calendar'">

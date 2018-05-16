@@ -63,6 +63,10 @@ div {
 	color: $color-darkgray;
 }
 
+.is-midgray {
+	color: $color-midgray;
+}
+
 .is-lightgray {
 	color: $color-lightgray;
 }
@@ -211,10 +215,10 @@ button,
 .button {
 	color: white;
 	background-color: $color-gold;
-	border-radius: 0px;
+	border-radius: 10px;
 	min-height: 30px;
 	min-width: 70px;
-	padding: 5px;
+	padding: 3px 10px;
 	font-weight: normal;
 	text-decoration: none;
 	cursor: pointer;
@@ -489,7 +493,7 @@ input:checked + .slider:before {
   overflow-y: auto;
 }
 
-.tool-panel-left-padding{
+.tool-panel-left-padding {
   padding-left: 100px;
 }
 

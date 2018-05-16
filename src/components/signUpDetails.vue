@@ -54,12 +54,9 @@ export default {
         name: "",
         voiceType: "",
         companyType: "",
-        address: "",
         city: "",
         provinceOrState: "",
-        postcode: "",
         country: "",
-        phoneNumber: "",
         descriptions: ""
       }
     }

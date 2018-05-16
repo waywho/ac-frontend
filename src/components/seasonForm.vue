@@ -29,7 +29,8 @@ export default {
   data () {
     return {
     	seasonName: null,
-  		productions: []
+  		productions: [],
+      seasons: []
     }
   }
 }
