@@ -4,9 +4,7 @@
 			<div class="row">
 				<div class="col-xs-2">
 					<div class="row">
-			          	<div class="avatar-border">
-            				<img :src="currentUserAvatar" class="user-avatar" />
-        				</div>
+			  			<img :src="currentUserAvatar" class="user-avatar avatar-border" />			
 			      </div>
 				</div>
 				<div class="col-xs-9">
