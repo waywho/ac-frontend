@@ -12,17 +12,16 @@ import VueMediaEmbed from 'vue-media-embed'
 import 'hchs-vue-charts'
 import Vuex from 'vuex'
 import * as firebase from 'firebase'
+import VueChatScroll from 'vue-chat-scroll';
 
-
-Vue.use(VueMediaEmbed, { store })
+Vue.use(VueMediaEmbed, { store });
 Vue.use(VueCharts);
 Vue.use(vueEventCalendar, { locale: 'en'});
 Vue.use(require('vue-moment'));
-
+Vue.use(firebase);
+Vue.use(VueChatScroll);
 
 Vue.config.productionTip = false
-
-
 
 Vue.filter('to-uppercase', function(value) {
 	if (value !== null && value !== undefined) {
