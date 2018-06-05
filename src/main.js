@@ -11,7 +11,10 @@ import 'chart.js'
 import VueMediaEmbed from 'vue-media-embed'
 import 'hchs-vue-charts'
 import Vuex from 'vuex'
-import * as firebase from 'firebase'
+import firebase from 'firebase'
+import 'firebase/database'
+import 'firebase/auth'
+import 'firebase/storage'
 import VueChatScroll from 'vue-chat-scroll';
 
 Vue.use(VueMediaEmbed, { store });
@@ -28,6 +31,18 @@ Vue.filter('to-uppercase', function(value) {
     return value.toUpperCase()
   } else {
     return ''
+  }
+})
+
+Vue.filter('imageProcess', function(value, type) {
+  let imageURLs = {
+    'avatar': require("./assets/images/avatar-holder.png"),
+    'season': require("./assets/images/seasonicon.png")
+  }
+  if (value !== null && value !== undefined) {
+    return value
+  } else {
+    return imageURLs[type]
   }
 })
 

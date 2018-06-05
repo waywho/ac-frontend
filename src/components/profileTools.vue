@@ -187,7 +187,7 @@ export default {
 }
 
 .toolbox-tile:hover, .toolbox-tile:hover .tool-icon, .tool-icon:hover, .active-tool  {
-  background-color: #ecddba;
+  background-color: $color-lightgold;
   color: white;
 }
 

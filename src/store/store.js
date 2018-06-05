@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/auth';
+import 'firebase/storage';
 // import authAxios from '../axios-auth.js';
 import firebaseAxios from '../axios-firebase.js';
 import router from '../router';
@@ -8,6 +11,7 @@ import cryptoRandomstring from 'crypto-random-string';
 const cryptoRandomString = require('crypto-random-string');
 import oppAxios from '../axios-opportunities.js';
 import axios from 'axios';
+import _ from 'lodash';
 
 Vue.use(Vuex);
 
@@ -154,7 +158,7 @@ export const store = new Vuex.Store({
 			// 	email: payload.email,
 			// 	password: payload.password
 			// }).then(res => {
-			// 	// consoel.log(res)
+			// 	// console.log(res)
 			// 	const newUser = {
 			// 		token: res.data.idToken,
 			// 		userId: res.data.localId
@@ -169,10 +173,11 @@ export const store = new Vuex.Store({
 			return new Promise((resolve, reject) => {
 				firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
 					.then(
-						user => {
+						cred => {
 							// console.log('current user', firebase.auth().currentUser)
-							// console.log('sign in', user)
-							user.getIdToken(true).then(idToken => {
+							console.log('sign in', cred.user)
+							console.log('sign in', cred.user.idToken)
+							cred.user.getIdToken(true).then(idToken => {
 								// console.log('signed in token', idToken)
 								// set token expiry at 24 hours from now
 								const now = new Date()
@@ -180,8 +185,8 @@ export const store = new Vuex.Store({
 
 								const newUser = {
 									idToken: idToken,
-									userId: user.uid,
-									userEmail: user.email,
+									userId: cred.user.uid,
+									userEmail: cred.user.email,
 									expires: expirationDate
 								}
 								// set token expiry at 24 hours from now
@@ -191,7 +196,7 @@ export const store = new Vuex.Store({
 								dispatch('getUserTools', newUser);
 								dispatch('setRefreshTokenTimer', 3550)
 								dispatch('setSignoutTimer', 86400)
-								resolve(user)
+								resolve(cred.user)
 								// dispatch('setSessionStorage'); // being called at get User
 							})
 
@@ -199,7 +204,7 @@ export const store = new Vuex.Store({
 					})
 				.catch(
 					error => {
-						// console.log(error)
+						console.log(error)
 						commit('setMessage', {
 								message: error.message,
 								messageType: 'warning'
@@ -370,8 +375,31 @@ export const store = new Vuex.Store({
 			})
 
 		},
+		saveProductionImage({commit, dispatch, state}, payload) {
+			console.log(payload.data)
+			
+			let imageName = payload.data.name
+			let ext = imageName.slice(imageName.lastIndexOf("."))
+
+			payload.data['auth'] = state.idToken
+			//add season name
+			return new Promise((resolve, reject) => {
+				firebase.storage().ref('users').child(state.userId + '/seasons/' + payload.seasonId + '/'+ payload.productionName + ext).put(payload.data)
+					.then(fileData => {
+						console.log(fileData)
+						fileData.ref.getDownloadURL().then(downloadURL => {
+							resolve({filepath: downloadURL})
+						})
+						
+					}).catch(error => {
+						console.log(error)
+						return reject(error)
+					})
+			})
+
+		},
 		saveProfileImages({commit, dispatch, state}, payload) {
-			// console.log(payload.data)
+			console.log(payload)
 			const filename = Object.keys(payload.data)[0]
 			// console.log(filename)
 			const imageName = payload.data[filename].name
@@ -379,37 +407,38 @@ export const store = new Vuex.Store({
 
 			// console.log(ext)
 
-			payload.data['auth'] = state.idToken
+			// payload.data['auth'] = state.idToken
 
 			return new Promise((resolve, reject) => {
-				firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
+				var uploadImageTask = firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
 					.then( fileData => {
-						let imageURL = fileData.metadata.downloadURLs[0]
-						
-						if(filename === 'avatar') {
-							var userImage = {
-								['profiles/' + payload.userId + '/' + filename + 'URL']: imageURL,
-								['users/' + payload.userId + '/' + filename + 'URL']: imageURL,
+						console.log(fileData)
+						fileData.ref.getDownloadURL().then(downloadURL => {
+							console.log(downloadURL)
+							let imageURL = downloadURL
+							var userImage
+							if(filename === 'avatar') {
+								userImage = {
+									['profiles/' + payload.userId + '/' + filename + 'URL']: imageURL,
+									['users/' + payload.userId + '/' + filename + 'URL']: imageURL,
+								}
+							} else {
+								userImage = { ['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL }
 							}
-						} else {
-							var userImage = { ['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL }
-						}
-						
-						// console.log(dataURL)
-						firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
-							.then(res => {
+
+							firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
+								.then(res => {
 									console.log('imageURL', res)
 									dispatch('getUserProfile', {'userId': state.userId})
-								}
-							).catch(error => {
-								return reject(error)
-								console.log(error)
-							})
+								}).catch(error => {
+									console.log(error)
+								 	return reject(error)
+								})
+						})
 					}).catch(error => {
 						reject(error)
-						console.log(error)
-						}
-					)
+						return console.log(error)
+					})
 			})
 		},
 		createUserTools({commit, dispatch, state}, payload) {
@@ -600,7 +629,10 @@ export const store = new Vuex.Store({
 								imagePromises.push(
 									imageRef.put(imageFile).then(fileData => {
 										// console.log(fileData)
-										return fileData.metadata.downloadURLs[0]
+										fileData.ref.getDownloadURL().then(downloadURL => {
+											return downloadURL
+										})
+										
 									})
 								)
 								
@@ -659,6 +691,155 @@ export const store = new Vuex.Store({
 					reject(error)
 					console.log(error)
 				})
+			})
+		},
+		createSeason({commit, dispatch, state}, payload) {
+			console.log(payload)
+			let seasonRef = firebase.database().ref("seasons").child(state.userId)
+			let seasonKey = seasonRef.push().key
+			let databaseRef = firebase.database().ref();
+
+			let seasonUpdates = {
+				['seasons/' + state.userId + '/' + seasonKey]: payload.season,
+				['profiles/' + state.userId + '/seasons/'+ seasonKey ]: payload.season
+			}
+
+			console.log(seasonUpdates)
+
+			return new Promise((resolve, reject) => {
+				let imagePromises = payload.productions.map(production => {
+		 		if(production.imageFile !== null && production.imageFile !== undefined) {
+			 			return dispatch('saveProductionImage', {seasonId: seasonKey, productionName: production.name, data: production.imageFile})
+			 				.then(res => {
+			 					console.log(res)
+			 					production.imageURL = res.filepath
+			 					delete production.imageFile
+			 					return production
+
+			 				}).catch(error => {
+			 					console.log(error)
+			 					return error
+			 				})
+			 		} else {
+			 				delete production.imageFile
+			 				return production
+			 		}
+			 		
+		 		})
+
+			 	Promise.all(imagePromises).then(res => {
+			 		console.log(res)
+			 		seasonUpdates['seasons/' + state.userId + '/' + seasonKey]['productions'] = res
+					seasonUpdates['profiles/' + state.userId + '/seasons/'+ seasonKey ]['productions'] = res
+			 		
+			 		let calendarEvents = res.map(production => {
+						return production.dates.map(productionDate => {
+							return { 
+								date: productionDate.date,
+					            start: productionDate.time,
+					            end: '',
+					            title:  production.name,
+					            location: '',
+					            desc: production.description,
+					            type: 'production'	
+        					}
+						})
+			 		})
+
+			 		calendarEvents = _.flatten(calendarEvents)
+
+			 		let calendarData = {
+						['toolsPublic/' + state.userId + '/calendar']: calendarEvents,
+						['toolsAuthorized/' + state.userId + '/calendar']: calendarEvents
+					}
+			 		
+					let fullData = Object.assign(seasonUpdates, calendarData)
+			 		console.log('events', calendarEvents)
+			 		console.log('calendar data', calendarData)
+			 		console.log('full data', fullData)
+			 		console.log('after production update', seasonUpdates)
+
+			 		databaseRef.update(fullData, error => {
+						if(error) {
+							console.log(error)
+							reject(error)
+						} else {
+							console.log(seasonUpdates)
+							resolve(seasonUpdates['seasons/' + state.userId + '/' + seasonKey])
+						}
+			 		})
+			 	})
+			})
+		 	
+	 		
+
+		},
+		getSeason({commit, state}, payload) {
+			return new Promise((resolve, reject) => {
+				firebaseAxios.get('seasons/' + state.userId + '.json')
+				 .then(res => {
+				 	resolve(res)
+				 }).catch(error => {
+				 	reject(error)
+				 	console.log(error)
+				 })
+			})
+		},
+		updateSeason({commit, state}, payload) {
+			let databaseRef = firebase.database().ref();
+			let seasonUpdates = {}
+
+			for(var key in payload.season) {
+				seasonUpdates['seasons/' + state.userId + '/' + payload.seasonId + '/' + key ] = payload.season[key]
+				seasonUpdates['profiles/' + state.userId + '/seasons/' + payload.seasonId + '/' + key] = payload.season[key]
+			}
+
+			console.log(seasonUpdates)
+
+			return new Promise((resolve, reject) => {
+				databaseRef.update(seasonUpdates).then(error => {
+					if(error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve()
+					}
+				})
+				
+			})
+		},
+		updateProduction({commit, dispatch, state}, payload) {
+			let databaseRef = firebase.database().ref();
+			let seasonUpdates = {
+				['seasons/' + state.userId + '/' + payload.seasonId  + '/productions/' + payload.productionIndex]: payload.production,
+				['profiles/' + state.userId + '/seasons/' + payload.seasonId + '/productions/' + payload.productionIndex]: payload.production
+			}
+
+			if (payload.production.imageFile) {
+				dispatch('saveProductionImage', {seasonId: payload.seasonId, productionName: payload.production.name, data: payload.production.imageFile})
+	 				.then(res => {
+	 					console.log(res)
+	 					for(var key in seasonUpdates) {
+	 						delete seasonUpdates[key].imageFile
+	 						seasonUpdates[key].imageURL = res.filepath
+	 					}
+
+	 				}).catch(error => {
+	 					console.log(error)
+	 					return error
+	 				})
+			}
+
+			return new Promise((resolve, reject) => {
+				databaseRef.update(seasonUpdates).then(error => {
+					if(error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve()
+					}
+				})
+				
 			})
 		}
 	},

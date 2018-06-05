@@ -203,6 +203,8 @@ div {
 }
 
 .text-button {
+	font-weight: 500;
+	font-size: 12px;
 	cursor: pointer;
 }
 
@@ -268,6 +270,7 @@ button[disabled="disabled"] {
 	min-width: 120px;
 	text-align: center;
 	cursor: pointer;
+	transition: font-size 0.1s ease-out;
 }
 
 .selection-text-vertical {
@@ -281,6 +284,7 @@ button[disabled="disabled"] {
   	width: -moz-fit-content;
   	width: fit-content;
   	white-space: nowrap;
+  	transition: font-size 0.1s ease-out;
 }
 
 .selection-icon-horizontal {
@@ -295,6 +299,7 @@ button[disabled="disabled"] {
 	width: -webkit-fit-content;
 	width: -moz-fit-content;
 	width: fit-content;
+	transition: font-size 0.1s ease-out;
 }
 
 .selection-text-vertical:hover {

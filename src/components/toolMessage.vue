@@ -234,7 +234,6 @@ export default {
   				if(error) {
   					console.log(error)
   				} else {
-
   					firebase.database().ref("threads").child(chatKey).push().update(newThread, error => {
   						if(error) {
   							console.log(error)

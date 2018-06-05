@@ -45,7 +45,7 @@
 				<profile-details v-if="profile" v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details" :connection-level="connectionLevel"></profile-details>
 			</div>
 
-			<profile-seasons v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></profile-seasons>
+			<profile-seasons v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id" :profile-seasons="profile.seasons"></profile-seasons>
 			
 			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
 
@@ -95,30 +95,12 @@ export default {
 			error: null
 		}
 	},
-	methods: {
-		getProfile: function() {
-			firebaseAxios.get("/profiles/" + this.id + ".json")
-			.then(res => {
-				this.loading = false
-				console.log('got the profile', res)
-				this.displayProfile = res.data
-			})
-			// TODO: add message if data is not found somwehere
-			.catch(error => {
-				this.error = error.message
-				console.log('cant get the profile', error)
-			})
-		}
-	},
-	watch: {
-		'$route': 'getProfile'
-	},
 	computed: {
+		showSeason: function() {
+
+		},
 		profile: function() {
-
 			return this.displayProfile
-
-			
 			// console.log(currentProfile)
 			// return currentProfile
 		},
@@ -147,6 +129,24 @@ export default {
 			}
 
 		}
+	},
+	methods: {
+		getProfile: function() {
+			firebaseAxios.get("/profiles/" + this.id + ".json")
+			.then(res => {
+				console.log('got the profile', res)
+				this.displayProfile = res.data
+				this.loading = false
+			})
+			// TODO: add message if data is not found somwehere
+			.catch(error => {
+				this.error = error.message
+				console.log('cant get the profile', error)
+			})
+		}
+	},
+	watch: {
+		'$route': 'getProfile'
 	},
 	created () {
 		// console.log('do i have data yet?', this.$store.getters.profile)
@@ -188,14 +188,15 @@ circle {
   fill: transparent;
   stroke: $color-gold;
   stroke-width: 16;
-  stroke-dasharray: 841.946;
-  stroke-dashoffset: 210.487;
-  animation: dash 2s linear reverse;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 3s linear forwards;
+  animation-delay: 1s;
 }
 
 @keyframes dash {
 	to {
-		stroke-dashoffset: 841.946;
+		stroke-dashoffset: 0;
 	}
 }
 
