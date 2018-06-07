@@ -84,108 +84,51 @@ div {
 }
 
 .avatar-border {
-  height: 45px;
-  width: 45px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
-}
-
-.avatar-large-border {
-  height: 119px;
-  width: 119px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-.avatar-medium-border {
-  height: 98px;
-  width: 98px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-.avatar-small-border {
-  height: 35px;
-  width: 35px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-.avatar-smaller-border {
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
+	border-radius: 50%;
+	border: solid 5px $color-gold;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
 }
 
 .avatar {
-  height: 45px;
-  width: 45px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
+}
+
+.avatar img, .avatar-border img {
+	border-radius: 50%;
+}
+
+
+.avatar-larger {
+	height: 119px;
+	width: 119px;
 }
 
 .avatar-large {
-  height: 119px;
-  width: 119px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
+	height: 98px;
+	width: 98px;
 }
 
 .avatar-medium {
-  height: 98px;
-  width: 98px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
+	height: 41px;
+	width: 41px;
 }
 
 .avatar-small {
-  height: 35px;
-  width: 35px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
+	height: 35px;
+	width: 35px;
 }
 
 
 .avatar-smaller {
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
+	height: 25px;
+	width: 25px;
 }
 
 .note-avatar {
@@ -221,7 +164,7 @@ button,
 	min-height: 30px;
 	min-width: 70px;
 	padding: 3px 10px;
-	font-weight: normal;
+	font-weight: 700;
 	text-decoration: none;
 	cursor: pointer;
 	display: inline-block;
@@ -647,7 +590,52 @@ input:checked + .slider:before {
 	white-space: pre-wrap;
 }
 
+//candidate tile
 
+.candidates-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.candidate-details {
+  flex-grow: 2;
+  margin-left: 15px;
+}
+
+.auditionee-details {
+  	text-align: center;
+}
+
+.candidate-tile {
+	background-color: #f7f4f4;
+	min-height: 70px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 7px;
+	margin-right: 8px;
+	flex-basis: 48%;
+	flex-grow: 1;
+	padding: 10px 15px 10px 10px;
+}
+
+.candidate-tile:hover {
+  background-color: #cd9d2b;
+  color: white;
+}
+
+.candidate-tile:hover a, .candidate-tile a:hover {
+	color: white;
+}
+
+.close-button {
+	cursor: pointer;
+	position: absolute;
+	top: 50px;
+	right: 50px;
+}
 
 @media screen and (max-width: 48rem) {
 	ul {

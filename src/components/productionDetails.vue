@@ -95,13 +95,6 @@ export default {
 	text-align: left;
 }
 
-.close-button {
-	cursor: pointer;
-	position: absolute;
-	top: 50px;
-	right: 50px;
-}
-
 .production-block {
 	display: flex;
 }

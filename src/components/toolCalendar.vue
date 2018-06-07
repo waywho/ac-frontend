@@ -2,7 +2,7 @@
   <div id="tool-panel-flow" class="tool-panel-paddings">
   	  <div class="calendar-title row">
         <h2 class="col-xs-10 col-sm-10">Schedule</h2>
-        <button v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'vue-event-calendar'"><i class="fa fa-chevron-right" ></i> Add</button>
+        <button v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'vue-event-calendar' && authorizedUser"><i class="fa fa-chevron-right" ></i> Add</button>
         <i class="fa fa-times is-darkgray button-fa col-xs col-sm text-right" v-on:click="keepFormAlive()" aria-hidden="true" v-if="component === 'calendar-form'"></i>
       </div>
       <div class="selection row" v-if="component === 'vue-event-calendar'">
@@ -21,6 +21,7 @@
 <script>
 import calendarForm from './calendarForm'
 import profileToolsMixin from '../mixins/profileToolsMixin'
+import currentUser from '../mixins/currentUserMixin';
 
 export default {
   name: 'calendar',
@@ -31,7 +32,8 @@ export default {
     calendar: {
       type: Array,
       required: false
-    }
+    },
+    profileId: String
   },
   data () {
     return {
@@ -39,7 +41,7 @@ export default {
       include: ''
     }
   },
-  mixins: [profileToolsMixin],
+  mixins: [profileToolsMixin, currentUser],
   methods: {
     calendarUpdate: function(object) {
       this.currentEvents.push(object.event)

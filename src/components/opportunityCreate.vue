@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-xs col-sm col-md col-lg tool-panel-left-padding">
       <h2>Opportunity</h2>
-      <span class="is-golden"><b>Manage or Create Your Opportunities</b></span>
+      <span class="is-golden"><b>Create Your Opportunities</b></span>
         <h3>{{stepHeading | capitalize}}</h3>
           <ul class="progress-bar" v-if="currentStep !== 3" >
             <li v-for="(step, index) in setupSteps" v-if="index !== 3" :class="[{active: currentStep === index}, 'small']"><span>{{index + 1}}</span></li>

@@ -53,17 +53,23 @@
 	  		</div>
 	  	</transition-group>
 	  	<transition name="fade-long" mode="out-in">
-			<opportunity-post v-if="showOpportunity === true" v-bind:opp="currentOpportunity" @close="showOpportunity = false"></opportunity-post>
+			<opportunity-post v-if="showOpportunity === true" v-bind:opp="currentOpportunity" @close="showOpportunity = false" @start-application="applicationStart($event)"></opportunity-post>
+		</transition>
+		<transition name="fade-long" mode="out-in">
+			<opportunity-application v-if="showApplication === true" v-bind:opp="currentOpportunity" @close="showApplication = false"></opportunity-application>
 		</transition>
   </div>
 </template>
 
 <script>
 import opportunityPost from './opportunityPost';
+import opportunityApplication from './opportunityApplication';
+
 export default {
   name: 'opportunityList',
   components: {
-  	'opportunity-post': opportunityPost
+  	'opportunity-post': opportunityPost,
+  	'opportunity-application': opportunityApplication
   },
   props: {
   	opportunities: Array,
@@ -73,8 +79,10 @@ export default {
   data () {
     return {
         showOpportunity: false,
+        showApplication: false,
        	sortOptions: [{label: 'posted Date', value: 'created_at DESC'}, {label: 'alphabetical', value: 'title ASC'}, {label: 'Application Deadline', value: 'deadline ASC'}],
-        sortyBy: this.selectedSort
+        sortyBy: this.selectedSort,
+        currentOpportunity: null
     }
   },
   computed: {
@@ -98,6 +106,11 @@ export default {
  	},
  	applySort: function() {
  		this.$emit('apply-sort', this.sortyBy)
+ 	},
+ 	applicationStart: function (opportunity) {
+ 		this.currentOpportunity = opportunity
+ 		this.showOpportunity = false
+ 		this.showApplication = true
  	}
   }
 }

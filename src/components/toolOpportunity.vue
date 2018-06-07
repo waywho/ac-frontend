@@ -20,7 +20,7 @@
 				<i class="fa fa-chevron-right"></i> <b>Arrange & Manage</b>
 			</div>
 		</div>
-		<component :is="component" class="opportunity-panel"></component>
+		<component :is="component" class=""></component>
   	</div>
 </template>
 

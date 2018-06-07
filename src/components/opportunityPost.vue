@@ -36,7 +36,7 @@
 			<p class="post-text">{{opp.contact_information}}</p>
 		</div>
 		<div slot="footer" class="post-footer">
-			<button><i class="fa fa-chevron-right" aria-hidden="true"></i>Apply for this Opportunity</button>
+			<button @click="$emit('start-application', opp)"><i class="fa fa-chevron-right" aria-hidden="true"></i>Apply for this Opportunity</button>
 		</div>
 	</modal>
 </template>

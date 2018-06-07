@@ -64,7 +64,7 @@ import profilePosts from './profilePosts';
 import profileConnections from './profileConnections';
 import profileSeasons from './profileSeasons'
 import { mapGetters } from 'vuex';
-import * as firebase from 'firebase';
+// import * as firebase from 'firebase';
 import profileImagesMixin from '../mixins/profileImagesMixin';
 import currentUser from '../mixins/currentUserMixin';
 import firebaseAxios from '../axios-firebase.js';

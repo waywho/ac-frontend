@@ -11,7 +11,7 @@
       </li>
       <li v-if="signedIn" class="header-avatar" v-on:click="notificationActive = !notificationActive">
         <app-notificationBubble v-if="!notificationActive" class="notification-bubble"></app-notificationBubble>
-        <div class="avatar avatar-small-border avatar-space" >
+        <div class="avatar-border avatar-small avatar-space" >
             <img :src="currentUserAvatar" class="user-avatar" />
         </div>
       </li>

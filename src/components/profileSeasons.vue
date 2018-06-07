@@ -1,17 +1,17 @@
 <template>
-  <div class="seasons row season-row">
+  <div class="seasons row">
       <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 title-row row">
         <ul v-for="(season, key) in profileSeasons" class="season-list">
-          <li><span class="selection selection-text-vertical">{{season.name}}</span> <span class="smaller text-button" @click="seasonEdit(season, key)">edit</span></li>
+          <li><span class="selection selection-text-vertical">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button" @click="seasonEdit(season, key)">edit</span></li>
         </ul>
         <div class="season-heading"> 
           <h2 class="inline-header">Company Seasons</h2>
-          <span class="smaller text-button" @click="seasonAdd">add</span>
+          <span v-if="authorizedUser" class="smaller text-button" @click="seasonAdd">add</span>
          
         </div>
       </div>
       
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 row bottom-xs production-row">
+      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 row bottom-xs slide">
         <div v-for="(production, index) in currentProductions" :key="index" class="col-xs-10 col-sm-8 col-md-5 col-lg-5 production-block" @click="viewProduction(production)">
           <div class="production-image">
             <img :src="production.imageURL | imageProcess('season')" />
@@ -23,7 +23,7 @@
         </div>
     </div>
         	 
-    <season-form v-if="showSeasonForm === true" @close="showSeasonForm = false" :season="editSeason" :season-id="editSeasonId" :step="editStep" :edit-productions="editProductions" :mode="mode"></season-form >
+    <season-form v-if="showSeasonForm === true && authorizedUser" @close="showSeasonForm = false" :season="editSeason" :season-id="editSeasonId" :step="editStep" :edit-productions="editProductions" :mode="mode"></season-form >
     <production-details v-if="showProduction === true"  :production="currentProduction" :season="currentSeason" @close="showProduction = false"></production-details >
 
   </div>
@@ -32,6 +32,7 @@
 <script>
 import seasonForm from './seasonForm'
 import productionDetails from './productionDetails'
+import currentUser from '../mixins/currentUserMixin';
 
 export default {
   name: 'seasons',
@@ -40,8 +41,10 @@ export default {
     'production-details': productionDetails
   },
   props: {
-    profileSeasons: Object
+    profileSeasons: Object,
+    profileId: String
   },
+  mixins: [currentUser],
   data () {
     return {
       showSeasonForm: false,
@@ -95,10 +98,6 @@ export default {
 
 .seasons {
 	min-height: 180px;
-}
-
-.season-row {
-  min-height: 100px;
 }
 
 .production-row {
@@ -186,10 +185,6 @@ export default {
 
   .season-list {
     order: 2;
-  }
-
-  .production-row {
-    flex-wrap: nowrap;
   }
 }
 </style>

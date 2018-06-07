@@ -40,7 +40,7 @@ export default {
     return {
       profileToolData: null,
       show: true,
-      component: 'opportunity',
+      component: 'calendar',
       artistAuthTools: [
         { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
@@ -59,7 +59,7 @@ export default {
         'calendar': { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         'media': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
         'portfolio': { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' },
-        'medias': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        'opportunity': { name: 'Opportunity', component: 'opportunity', icon: 'fa-play-circle' },
         'ticket': { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
       }
     }

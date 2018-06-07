@@ -26,7 +26,7 @@ import Velocity from 'velocity-animate';
 import 'velocity-animate/velocity.ui';
 
 export default {
-	name: 'opportunitiesList',
+	name: 'opportunitiesBoard',
   	components: {
   		'opportunity-list': opportunityList,
   		'opportunity-filter': opportunityFilter
