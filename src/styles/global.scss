@@ -646,7 +646,16 @@ input:checked + .slider:before {
 	right: 50px;
 }
 
-@media screen and (max-width: 48rem) {
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+	.slide {
+		overflow-x: auto;
+		flex-wrap: nowrap !important;
+		-webkit-overflow-scrolling: touch;
+	  	-ms-overflow-style: -ms-autohiding-scrollbar;
+	}
+}
+
+@media screen and (max-width: 812px) {
 	ul {
 		-webkit-padding-start: 0px;
 		-webkit-margin-before: 0px;

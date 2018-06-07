@@ -1,31 +1,34 @@
 <template>
   <div id="header">
     <div class="header-inner">
-    <div class="logo">
-      <router-link to="/"><img src='../assets/images/artistcenter-logo.svg' alt="artistcenter logo" /></router-link>
-    </div>
+      <ul class="non-list header-items">
+        <li class="logo">
+          <router-link to="/"><img src='../assets/images/artistcenter-logo.png' alt="artistcenter logo" /></router-link>
+        </li>
+        <li class="search header-item-space" id="search-element">
+          <input v-on:keyup.enter="searchResults($event.target.value)" type="search" id="search" class="small" placeholder="search profiles" />
+        </li>
+      </ul>
 
-    <ul class="header-items">
-      <li class="search" id="search-element">
-        <input v-on:keyup.enter="searchResults($event.target.value)" type="search" id="search" class="small" placeholder="search profiles" />
-      </li>
-      <li class="notification-icon" v-on:click="notificationActive = !notificationActive">
-        <app-notification-bubble v-if="!notificationActive" class="notification-bubble"></app-notification-bubble>
-        <i class="fa fa-bell-o" aria-hidden="true"></i>
-      </li>
-      <li v-if="signedIn" class="header-avatar">
-        <router-link :to="'/profiles/' + this.profileId">
-          <div class="avatar-border avatar-small avatar-space" >
-              <img :src="currentUserAvatar" alt="user avatar" />
-          </div>
-        </router-link>
-      </li>
-      <li v-if="!signedIn" class='avatar-space sign-in-item' id="show-modal" v-on:click="showSignIn()">Sign in</li>
+      <ul class="non-list header-items">
+        
+        <li v-if="signedIn" class="notification-icon" v-on:click="notificationActive = !notificationActive">
+          <app-notification-bubble v-if="!notificationActive" class="notification-bubble"></app-notification-bubble>
+          <i class="fa fa-bell-o" aria-hidden="true"></i>
+        </li>
+        <li v-if="signedIn" class="header-avatar">
+          <router-link :to="'/profiles/' + this.profileId">
+            <div class="avatar-border avatar-small header-item-space" >
+                <img :src="currentUserAvatar" alt="user avatar" />
+            </div>
+          </router-link>
+        </li>
+        <li v-if="!signedIn" class='header-item-space sign-in-item' id="show-modal" v-on:click="showSignIn()">Sign in</li>
 
-      <li :class="['menu-button', {open: isActive}]">
-          <i v-on:click="toggleMenu()" class="fa fa-bars fa-2x is-darkgray" aria-hidden="true"></i>
-      </li>
-    </ul>
+        <li :class="['menu-button', {open: isActive}]">
+            <i v-on:click="toggleMenu()" class="fa fa-bars fa-2x is-darkgray" aria-hidden="true"></i>
+        </li>
+      </ul>
     </div>
     <div class="xs-search">
         <input type="search" v-on:keyup.enter="searchResults($event.target.value)" id="xs-search" class="small" placeholder="search profiles" />
@@ -117,6 +120,10 @@ export default {
   align-items: center;
 }
 
+.search {
+  width: 250px;
+}
+
 .header-avatar {
   position: relative;
   cursor: pointer;
@@ -139,16 +146,15 @@ export default {
 .notification-bubble {
   position: absolute;
   z-index: 9990;
-  top: -10px;
-  right: -10px;
+  top: -8px;
+  right: -8px;
 }
 
 .logo img {
-  width: 100%;
-  max-height: 100%;
+  width: 100px;
 }
 
-.avatar-space {
+.header-item-space {
     margin: 0px 30px 0px 30px;
 }
 
@@ -215,6 +221,10 @@ export default {
     flex-basis: 65%;
   }
 
+  .logo img {
+    width: 75px;
+  }
+
   #header {
     height: $header-height-mobile;
   }
@@ -230,16 +240,15 @@ export default {
   .xs-search {
     display: block;
     width: 100%;
-    padding: 13px 52px;
-    height: 63px;
-    background-color: $color-gold;
+    padding: 0px 52px;
+    height: $header-search-height-mobile;
   }
 
   #search-element {
     display: none;
   }
 
-  .avatar-space {
+  .header-item-space {
     margin: 0px 20px 0px 20px;
   }
 

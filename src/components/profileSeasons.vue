@@ -12,7 +12,7 @@
       </div>
       
       <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 row bottom-xs slide">
-        <div v-for="(production, index) in currentProductions" :key="index" class="col-xs-10 col-sm-8 col-md-5 col-lg-5 production-block" @click="viewProduction(production)">
+        <div v-for="(production, index) in currentProductions" :key="index" class="col-xs-10 col-sm-5 col-md-5 col-lg-5 production-block" @click="viewProduction(production)">
           <div class="production-image">
             <img :src="production.imageURL | imageProcess('season')" />
           </div>

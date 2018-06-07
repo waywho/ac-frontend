@@ -1,6 +1,6 @@
 <template>
   <modal @close="$emit('close')">
-  	<img slot='header' src='../assets/images/artistcenter-logo.svg' alt="operaop logo" class="logo-image" />
+  	<img slot='header' src='../assets/images/artistcenter-logo2.svg' alt="operaop logo" class="logo-image" />
   	<h3 slot='header' class='signin-heading'>Sign in.</h3>
   	<form slot='body' class="signin-form" @submit.prevent="onSignIn">
   		<input  type="text" placeholder="email" class='form-element' v-model="email" />

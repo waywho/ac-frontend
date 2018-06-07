@@ -110,4 +110,5 @@ $input-border-radius: 10px !default;
 
 // header
 $header-height: 100px !default;
-$header-height-mobile: 163px !default;
+$header-search-height-mobile: 50px !default;
+$header-height-mobile: $header-height + $header-search-height-mobile !default;
