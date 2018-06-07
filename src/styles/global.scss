@@ -85,6 +85,15 @@ div {
 
 .avatar-border {
 	border-radius: 50%;
+	border: solid 3px $color-gold;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
+}
+
+.avatar-border-thicker {
+	border-radius: 50%;
 	border: solid 5px $color-gold;
 	display: inline-flex;
 	align-items: center;

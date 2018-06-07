@@ -3,7 +3,7 @@
     <app-menu :class="['app-menu', {'menu-open': isActive}]" v-on:toggleMenu="menuToggle($event)"></app-menu>
     <div id="app">
       <app-signIn v-if="showSignInModal" @close="showSignInModal = false"></app-signIn>
-      <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive"></app-header>
+      <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive" :profile-id="currentUser.id"></app-header>
       <router-view class="main-body" @scroll="handleScroll"/>
       <app-footer></app-footer>
     </div>
