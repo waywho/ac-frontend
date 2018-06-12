@@ -6,8 +6,8 @@
 	  			<img src='../assets/images/artistprofile-icon.png' alt="artist profile results icon" class="result-icon" /><span class="medium large">People</span>
   			</div>
   			<div v-for="profile in artistProfiles" class="result-item row middle-xs middle-sm between-xs between-sm">
-  				<div class="col-xs col-sm">
-  					<img :src="profile.img" class="avatar" :alt="profile.name + 'avatar'" />
+  				<div class="avatar avatar-medium">
+  					<img :src="profile.img" :alt="profile.name + 'avatar'" />
   				</div>
   				<div class="col-xs col-sm">
   					<div class="medium">{{profile.name}}</div>
@@ -20,7 +20,7 @@
 	  			<img src='../assets/images/companyprofile-icon.png' alt="artist profile results icon" class="result-icon" /><span class="medium large">Company</span>
   			</div>
   			<div v-for="profile in companyProfiles" class="result-item row middle-xs middle-sm between-xs between-sm">
-  				<div class="col-xs col-sm">
+  				<div class="avatar avatar-medium">
   					<div class="avatar">
   						<img :src="profile.img" :alt="profile.name + 'avatar'" />
   					</div>

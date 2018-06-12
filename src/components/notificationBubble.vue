@@ -19,8 +19,8 @@ export default {
 @import '../styles/style-variables';
 
 .bubble {
-	height: 25px;
-	width: 25px;
+	height: 20px;
+	width: 20px;
 	border-radius: 50%;
 	background-color: $color-darkred;
 }

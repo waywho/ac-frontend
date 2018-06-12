@@ -119,6 +119,7 @@ export default {
 	position: fixed;
 	top: 100px;
 	transition: top 0.2s ease-in-out;
+  -webkit-transition: top 0.2s ease-in-out;
 }
 
 .progress-stick {

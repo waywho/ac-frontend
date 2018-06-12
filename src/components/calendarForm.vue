@@ -22,7 +22,7 @@
   		<option v-for="type in types">{{type}}</option>
   	</select>
 
-    <success-warning-notice v-if="showMessage" :message="message" :type="messageType"></success-warning-notice>
+    <success-warning-notice v-if="showMessage" :messaging="messaging"></success-warning-notice>
 
   	<button @click="calendarAdd()" class="margin-top">Add Event</button>
   </div>
@@ -40,6 +40,10 @@ export default {
   },
   data () {
     return {
+      messaging: {
+        message: null,
+        messsageType: null
+      },
       showMessage: false,
       types: ['production', 'rehearsal', 'audition'],
       newEvent: {
@@ -59,8 +63,8 @@ export default {
       if(this.requiredField(this.newEvent.date)) {
         this.$emit('addToCalendar', {'event': this.newEvent})
       } else {
-        this.message = "Date is required"
-        this.messageType = 'warning'
+        this.messaging.message = "Date is required"
+        this.messaging.messageType = 'warning'
         this.showMessage = true
       }
     }
@@ -76,6 +80,7 @@ export default {
 	margin: 25px auto 25px auto;
 	text-align: center;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .form-field-bottom-margin {

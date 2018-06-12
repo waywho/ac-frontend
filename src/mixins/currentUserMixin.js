@@ -8,7 +8,7 @@ export default {
     },
     authorizedUser() {
     	if (!this.signedIn) {
-    		return
+    		return false
     	};
 			return this.profileId === this.$store.getters.currentUser.id;
   	},

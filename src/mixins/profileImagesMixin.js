@@ -40,6 +40,21 @@ export default{
 			this.imageFiles.push(file)
 
 			// this.$store.dispatch('savePostImages', {userId: this.$store.getters.currentUser.id, data: newData} )
+		},
+		onOneFilePicked(event, imageField) {
+			const file = event.target.files[0]
+			let filename = file.name
+			// console.log(filename)
+			if (filename.lastIndexOf('.') <= 0) {
+				return alert('Please add a file with valid extension')
+			}
+			const fileReader = new FileReader()
+			fileReader.addEventListener('load', () => {
+				this[imageField].imageURL = fileReader.result
+			})
+			fileReader.readAsDataURL(file)
+
+			this[imageField].imageFile = file
 		}
 	}
 }

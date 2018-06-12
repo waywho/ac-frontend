@@ -7,43 +7,29 @@
 </template>
 
 <script>
+
 export default {
   name: 'notifications',
+  props: {
+    profileId: String,
+    notificationList: Array
+  },
   data () {
     return {
-      notifications: [
-      	{ profile: "Jane Smith",
-      	img: require("../assets/images/Julie-Adams.png"),
-      	actionNum: 0 },
-      	{ profile: "Bob Smith",
-      	img: require("../assets/images/Daevyd-Pepper.png"),
-      	actionNum: 1 },
-      	{ profile: "Allison Brant",
-      	img: require("../assets/images/Caitlin-McCaughey.png"),
-      	actionNum: 2 },
-      	{ profile: "Jane Smith",
-      	img: require("../assets/images/Julie-Adams.png"),
-      	actionNum: 0 },
-      	{ profile: "Ed Remi",
-      	img: require("../assets/images/Brenden-Friesen.png"),
-      	actionNum: 3 }
-      ],
-      actionNotes: [
-      	'commented on your post',
-      	'liked your post',
-      	'sent you an invite',
-      	'ask to connect'
-      ]
+      
     }
   },
   computed: {
   	notificationDetails: function() {
   		var notes = [];
-  		this.notifications.forEach((note) => {
-  			notes.push("<div class='col-xs-3 col-sm-3 avatar-small note-avatar'><img src='"+ note.img +"' /></div><div class='col-xs-9 col-sm-9'><span class='is-golden'>"+ note.profile + "</span> " + this.actionNotes[note.actionNum] + "</div>")
+  		this.notificationList.forEach((note) => {
+  			notes.push("<div class='col-xs-3 col-sm-3 avatar-small note-avatar'><img src='"+ note.image +"' /></div><div class='col-xs-9 col-sm-9'><span class='is-golden'>"+ note.name + "</span> " + note.action + "</div>")
   		})
   		return notes;
   	}
+  },
+  created () {
+    
   }
 }
 </script>

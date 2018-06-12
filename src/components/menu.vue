@@ -5,10 +5,10 @@
 		</div>
 		<div class="row between-xs between-sm menu-brand">
 		  	<div v-on:click="toggleMenu()" class="col-sm col-xs large"><router-link to="/">artistcenter.com</router-link></div>
-		  	<span v-if="signedIn" class="col-sm col-xs large" v-on:click="signOut();"><router-link to="/">Sign Out</router-link></span>
+		  	<span v-if="signedIn" class="col-sm col-xs large sign-out" v-on:click="signOut();">Sign Out</span>
 		</div>
 		<ul class="menu-list non-list">
-			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/auditions">Auditions</router-link></li>
+			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/opportunities">Opportunities</router-link></li>
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/about/center">About</router-link></li>
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/memberships">Memberships</router-link></li>
 		</ul>
@@ -46,8 +46,10 @@ export default {
   },
   methods: {
   	signOut: function() {
-  		this.$store.dispatch('signOut');
-  		this.toggleMenu();
+  		this.$store.dispatch('signOut').then(() => {
+  			this.toggleMenu();
+  			this.$router.push("/")
+  		});	
   	}
   },
   mixins: [menuMixin, currentUser]
@@ -108,6 +110,10 @@ export default {
 	display: flex;
 	align-items: center;
 	margin-bottom: 69px;
+}
+
+.sign-out {
+	cursor: pointer;
 }
 
 </style>

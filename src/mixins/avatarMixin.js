@@ -1,7 +1,7 @@
 export default{
 	methods: {
 	  	userAvatar: function(avatarURL) {
-	  		if (avatarURL !== null && avatarURL !== undefined) {
+	  		if (avatarURL) {
 	          return avatarURL
 	        } else {
 	          return require("../assets/images/avatar-holder.png")

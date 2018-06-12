@@ -1,10 +1,11 @@
 $color-silver: #cccbcb !default;
 $color-lightgray: #d4d4d4 !default;
-$color-midgray: #c9c7c7 !default;
-$color-darkgray: #706d6c !default;
+$color-midgray: #8d8d8d !default;
+$color-darkgray: #3e3c3c !default;
 $color-black: #0d0d0e !default;
 $color-highlight: #edf2ff !default; // color-focus 15% opacity
 $color-gold: #cd9d2b !default;
+$color-lightgold: #ecddba !default;
 $color-tile: #faf6f6 !default;
 $color-darkred: #73020d !default;
 $color-mud: #c3bbad !default;
@@ -16,7 +17,7 @@ $color-success: #35beb1 !default;
 $color-warning: #9e0b0f !default;
 $color-focus: #cd9d2b !default;
 
-$color-text: #3e3c3c !default;
+$color-text: $color-darkgray !default;
 $color-link: $color-text;
 $color-link-hover: #cd9d2b;
 $color-headings: $color-text;
@@ -31,7 +32,7 @@ $font-size-smaller: $font-size - 4px !default;
 $font-size-small: $font-size - 2px !default;
 $font-size-big: $font-size + 2px !default;
 $font-size-large: $font-size + 4px !default;
-$input-font-size: 15px !default;
+$input-font-size: 14px !default;
 $input-font-size-smaller: $input-font-size - 4px !default;
 $input-font-size-small: $input-font-size - 2px !default;
 $input-font-size-big: $input-font-size + 2px !default;
@@ -42,22 +43,22 @@ $text-margin-bottom: $font-size !default;
 // Headings
 // Font Size
 // By default: 60, 48, 36, 24, 21, 18, 16
-$heading-font-size-title: 60px !default;
-$heading-font-size-1: 48px !default;
-$heading-font-size-2: 36px !default;
-$heading-font-size-3: 24px !default;
-$heading-font-size-4: 21px !default;
-$heading-font-size-5: 18px !default;
-$heading-font-size-6: 16px !default;
+$heading-font-size-title: 48px !default;
+$heading-font-size-1: 40px !default;
+$heading-font-size-2: 31px !default;
+$heading-font-size-3: 25px !default;
+$heading-font-size-4: 20px !default;
+$heading-font-size-5: 16px !default;
+$heading-font-size-6: 15px !default;
 
 // Baseline
-$heading-base-line-title: 64px !default;
-$heading-base-line-1: 52px !default;
-$heading-base-line-2: 40px !default;
-$heading-base-line-3: 32px !default;
-$heading-base-line-4: 32px !default;
-$heading-base-line-5: 28px !default;
-$heading-base-line-6: 24px !default;
+$heading-base-line-title: 52px !default;
+$heading-base-line-1: 44px !default;
+$heading-base-line-2: 35px !default;
+$heading-base-line-3: 29px !default;
+$heading-base-line-4: 24px !default;
+$heading-base-line-5: 20px !default;
+$heading-base-line-6: 19px !default;
 
 // Margin
 $heading-margin-bottom: $font-size !default;
@@ -85,11 +86,11 @@ $input-textarea-padding-tb: 8px !default;
 
 // States
 $input-border-width: 1px !default;
-$input-border-color: $color-lightgray !default;
-$input-background-color: #fff !default;
+$input-border-color: #fff !default;
+$input-background-color: #f9f8f8 !default;
 $input-box-shadow: none !default;
 
-$input-focus-background-color: #fff !default;
+$input-focus-background-color: #f9f8f8 !default;
 $input-focus-border-color: $color-focus !default;
 $input-focus-box-shadow: 0 0 2px $color-focus inset !default;
 
@@ -105,8 +106,9 @@ $input-disabled-opacity: .6;
 $input-disabled-color: rgba(0, 0, 0, .5);
 
 // Radius
-$input-border-radius: 0px !default;
+$input-border-radius: 10px !default;
 
 // header
 $header-height: 100px !default;
-$header-height-mobile: 163px !default;
+$header-search-height-mobile: 50px !default;
+$header-height-mobile: $header-height + $header-search-height-mobile !default;

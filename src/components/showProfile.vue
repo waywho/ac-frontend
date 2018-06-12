@@ -18,7 +18,7 @@
 
 					<div class="profile-cover" :style="{'background-image': 'url('+ coverURL +')'}">
 						<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
-					 		<i class="fa fa-camera" aria-hidden="true"></i>Update Cover Photo
+					 		<i class="fa fa-camera" aria-hidden="true"></i><small>Update Cover Photo</small>
 						</div>
 						<input v-if="authorizedUser" type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
 					</div>
@@ -30,7 +30,7 @@
 								<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
 							</svg>
 							
-							<div v-if="authorizedUser" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><span>Update Photo</span></div>
+							<div v-if="authorizedUser" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><br /><div class="small">Update Photo</div></div>
 							<input v-if="authorizedUser" type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
 						</div>
 						
@@ -45,11 +45,11 @@
 				<profile-details v-if="profile" v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details" :connection-level="connectionLevel"></profile-details>
 			</div>
 
+			<profile-seasons v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id" :profile-seasons="profile.seasons"></profile-seasons>
+			
 			<profile-tools v-bind:profile-type="profile.type" v-bind:profile-id="profile.id" class="section-margins"></profile-tools>
 
-			<profile-connections class="profile-section" :connections="profile.connections" v-bind:profile-id="profile.id"></profile-connections>
-
-			<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions>
+<!-- 			<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions> -->
 				
 			<profile-posts :profileId="profileId" :name="profile.details.name"></profile-posts>
 		</div>
@@ -62,8 +62,9 @@ import profileDetails from './profileDetails';
 import auditions from './auditions';
 import profilePosts from './profilePosts';
 import profileConnections from './profileConnections';
+import profileSeasons from './profileSeasons'
 import { mapGetters } from 'vuex';
-import * as firebase from 'firebase';
+// import * as firebase from 'firebase';
 import profileImagesMixin from '../mixins/profileImagesMixin';
 import currentUser from '../mixins/currentUserMixin';
 import firebaseAxios from '../axios-firebase.js';
@@ -75,7 +76,8 @@ export default {
 		'profile-tools': () => import('./profileTools'),
 		'company-auditions': auditions,
 		'profile-posts': profilePosts,
-		'profile-connections': profileConnections
+		'profile-connections': profileConnections,
+		'profile-seasons': profileSeasons
 	},
   	mixins: [profileImagesMixin, currentUser],
   	props: {
@@ -93,30 +95,12 @@ export default {
 			error: null
 		}
 	},
-	methods: {
-		getProfile: function() {
-			firebaseAxios.get("/profiles/" + this.id + ".json")
-			.then(res => {
-				this.loading = false
-				console.log('got the profile', res)
-				this.displayProfile = res.data
-			})
-			// TODO: add message if data is not found somwehere
-			.catch(error => {
-				this.error = error.message
-				console.log('cant get the profile', error)
-			})
-		}
-	},
-	watch: {
-		'$route': 'getProfile'
-	},
 	computed: {
+		showSeason: function() {
+
+		},
 		profile: function() {
-
 			return this.displayProfile
-
-			
 			// console.log(currentProfile)
 			// return currentProfile
 		},
@@ -146,6 +130,24 @@ export default {
 
 		}
 	},
+	methods: {
+		getProfile: function() {
+			firebaseAxios.get("/profiles/" + this.id + ".json")
+			.then(res => {
+				console.log('got the profile', res)
+				this.displayProfile = res.data
+				this.loading = false
+			})
+			// TODO: add message if data is not found somwehere
+			.catch(error => {
+				this.error = error.message
+				console.log('cant get the profile', error)
+			})
+		}
+	},
+	watch: {
+		'$route': 'getProfile'
+	},
 	created () {
 		// console.log('do i have data yet?', this.$store.getters.profile)
 		// console.log(this.authorizedUser)
@@ -156,7 +158,7 @@ export default {
 			setTimeout(() => {
 
 				this.displayProfile = this.$store.getters.profile
-				console.log('avatar', this.displayProfile.avatarURL)
+				// console.log('avatar', this.displayProfile.avatarURL)
 				if (this.displayProfile.avatarURL !== null && this.displayProfile.avatarURL !== undefined && this.displayProfile.avatarURL.length > 0) {  
 					this.avatarURL = this.displayProfile.avatarURL
 				}
@@ -186,14 +188,15 @@ circle {
   fill: transparent;
   stroke: $color-gold;
   stroke-width: 16;
-  stroke-dasharray: 841.946;
-  stroke-dashoffset: 210.487;
-  animation: dash 2s linear reverse;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 3s linear forwards;
+  animation-delay: 1s;
 }
 
 @keyframes dash {
 	to {
-		stroke-dashoffset: 841.946;
+		stroke-dashoffset: 0;
 	}
 }
 

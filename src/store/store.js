@@ -1,11 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/auth';
+import 'firebase/storage';
 // import authAxios from '../axios-auth.js';
 import firebaseAxios from '../axios-firebase.js';
 import router from '../router';
 import cryptoRandomstring from 'crypto-random-string';
 const cryptoRandomString = require('crypto-random-string');
+import oppAxios from '../axios-opportunities.js';
+import axios from 'axios';
+import _ from 'lodash';
 
 Vue.use(Vuex);
 
@@ -26,11 +32,13 @@ export const store = new Vuex.Store({
 			state.idToken = null;
 			state.userId = null;
 			state.currentUserProfile = {};
+			state.currentUserTools = null
 			state.userEmail = null;
 			state.expires = null;
 		},
 		setToken (state, payload) {
 			state.idToken = payload.idToken
+			state.expires = payload.expires
 		},
 		setUserTools (state, payload) {
 			state.currentUserTools = payload;
@@ -47,9 +55,9 @@ export const store = new Vuex.Store({
 		}
 	},
 	actions: {
-		setSessionStorage({state}) {
+		setLocalStorage({state}) {
 			// console.log('setting Session')
-			let sessionData = {
+			let localData = {
 				idToken: state.idToken, 
 				userId: state.userId, 
 				userEmail: state.userEmail, 
@@ -57,86 +65,81 @@ export const store = new Vuex.Store({
 				currentUserProfile: state.currentUserProfile,
 				currentUserTools: state.currentUserTools
 			}
-			sessionStorage.setItem('artistCenter', JSON.stringify(sessionData))
+			localStorage.setItem('artistCenter', JSON.stringify(localData))
 		},
-		// function not being used right now
-		setSignoutTimer({commit, dispatch}, expirationTime) {
-			setTimeout(() => {
-				commit('clearAuthData')
-				sessionStorage.removeItem('artistCenter')
-			}, expirationTime * 1000)
-		},
-		setRefreshTokenTimer({commit, disptach, state}, expirationTime) {
-			console.log('setRefreshTokenTimer', expirationTime)
-			setTimeout(() => {
-				console.log('resetToken dispatch')
-				store.dispatch('resetToken', state.idToken)
-			}, expirationTime * 1000)
-		},
-		resetToken({commit, dispatch, state}, idToken) {
+		resetToken({commit, dispatch}) {
 			return new Promise((resolve, reject) => {
-				const now = new Date()
-					if(now >= state.expires) {
-						// console.log('signOut by resetToken')
-						dispatch('signOut')
+				firebase.auth().onAuthStateChanged(function(user) {
+					if (user) {				
+						user.getIdToken(true).then(idToken => {
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 3600 * 1000)
+							
+							commit('setToken', {'idToken': idToken, 'expires': expirationDate})
+							dispatch('setLocalStorage')
+							resolve()
+						})
+					} else {
+						reject("not signed in")
+					}
+				})
+			})
+		},
+		reAuthorizeUser({commit, dispatch, state}, idToken) {
+			return new Promise((resolve, reject) => {
+
+				firebase.auth().onAuthStateChanged(function(user) {
+					if (user) {
+						console.log('reauthorized user', user)					
+						user.getIdToken(true).then(idToken => {
+							// console.log('authstate', user)
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 3600 * 1000)
+							resolve({idToken: idToken, expires: expirationDate})
+						}).catch(error => {
+							console.log(error)
+							reject(error)
+						})
+					} else {
+						dispatch('signOut').then(() => {
+							router.push("/")
+						})
 						reject('signOut')
 						return 
 					}
 
-				firebase.auth().onAuthStateChanged(function(user) {
-					user.getIdToken(true).then(idToken => {
-						// console.log('authstate', user)
-						commit('setToken', {'idToken': idToken})
-						dispatch('setSessionStorage')
-						resolve('got new token!')
-						dispatch('setRefreshTokenTimer', 3550)
-						// console.log('call refreshTimer from resetToken')
-						// console.log('state idToken from resetToken', state.idToken)
-					
-					}).catch(error => {
-						console.log(error)
-						reject(error)
-					})
 				})
 			})
 		},
 		signUserUp({commit, dispatch}, payload) {
-
-
 			return new Promise((resolve, reject) => {
 
 				firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-					.then(
-						user => {
-							// console.log('sign up', user)
-							user.getIdToken(true).then(idToken => {
-								// console.log('token', idToken)
-								// set token expiry at 24 hours from now
-								const now = new Date()
-								const expirationDate = new Date(now.getTime() + 86400 * 1000)
+					.then(cred => {
+						// console.log('sign up', user)
+						cred.user.getIdToken(true).then(idToken => {
+							// console.log('token', idToken)
+							// set token expiry at 24 hours from now
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 3600 * 1000)
 
-								const newUser = {
-									userId: user.uid,
-									idToken: idToken,
-									userEmail: user.email,
-									expires: expirationDate
-									}
+							const newUser = {
+								userId: cred.user.uid,
+								idToken: idToken,
+								userEmail: cred.user.email,
+								expires: expirationDate
+							}
+							commit('authUser', newUser);
+							dispatch('createUser', {userId: cred.user.uid, email: cred.user.email});
+							dispatch('getUserProfile', newUser);
+							commit('setMessage', {
+								message: 'Signed Up Successfully',
+								messageType: 'success'
+							});
+							resolve(idToken)
+						})
 
-									commit('authUser', newUser);
-									dispatch('createUser', {userId: user.uid, email: user.email});
-									dispatch('getUserProfile', newUser);
-									commit('setMessage', {
-										message: 'Signed Up Successfully',
-										messageType: 'success'
-									});
-									
-									// dispatch('setSessionStorage'); // being called at get User
-								})
-							dispatch('setRefreshTokenTimer', 3550)
-							dispatch('setSignoutTimer', 86400)
-						}
-					)
-					.catch(
+					}).catch(
 						error => {
 							// console.log(error)
 							commit('setMessage', {
@@ -148,127 +151,96 @@ export const store = new Vuex.Store({
 					)				
 			}) 
 
-			// authAxios.post('/signupNewUser?key=' + process.env.FIREBASE_API_KEY, {
-			// 	email: payload.email,
-			// 	password: payload.password
-			// }).then(res => {
-			// 	// consoel.log(res)
-			// 	const newUser = {
-			// 		token: res.data.idToken,
-			// 		userId: res.data.localId
-			// 	}
-			// 	commit('authUser', newUser);
-			// 	dispatch('getUserProfile', newUser);
-
-			// }).catch(error => console.log(error))
-
 		},
 		signUserIn({commit, dispatch}, payload) {
 			return new Promise((resolve, reject) => {
 				firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
-					.then(
-						user => {
-							// console.log('current user', firebase.auth().currentUser)
-							// console.log('sign in', user)
-							user.getIdToken(true).then(idToken => {
-								// console.log('signed in token', idToken)
-								// set token expiry at 24 hours from now
-								const now = new Date()
-								const expirationDate = new Date(now.getTime() + 86400 * 1000)
-
-								const newUser = {
-									idToken: idToken,
-									userId: user.uid,
-									userEmail: user.email,
-									expires: expirationDate
-								}
-								// set token expiry at 24 hours from now
-
-								commit('authUser', newUser);
-								dispatch('getUserProfile', newUser);
-								dispatch('getUserTools', newUser);
-								dispatch('setRefreshTokenTimer', 3550)
-								dispatch('setSignoutTimer', 86400)
-								resolve(user)
-								// dispatch('setSessionStorage'); // being called at get User
-							})
-
-						
+					.then(cred => {
+						// console.log('current user', firebase.auth().currentUser)
+						console.log('sign in', cred.user)
+						cred.user.getIdToken(true).then(idToken => {
+							// console.log('signed in token', idToken)
+							// set token expiry at 24 hours from now
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 3600 * 1000)
+							// console.log('got idToken', idToken)
+							const newUser = {
+								idToken: idToken,
+								userId: cred.user.uid,
+								userEmail: cred.user.email,
+								expires: expirationDate
+							}
+							commit('authUser', newUser);
+							
+							Promise.all([dispatch('getUserProfile', newUser), dispatch('getUserTools', newUser)])
+								.then(res => {
+									dispatch('setLocalStorage');
+									resolve(cred.user)
+								})						
+						})
 					})
-				.catch(
-					error => {
-						// console.log(error)
+					.catch(error => {
+						console.log(error)
 						commit('setMessage', {
 								message: error.message,
 								messageType: 'warning'
 						})
 						reject(error)
-					}
-				)
+					})
 				
 			}) 			
-
-			// authAxios.post('/verifyPassword?key=' + process.env.FIREBASE_API_KEY, {
-			// 	email: payload.email,
-			// 	password: payload.password
-			// }).then(res => {
-			// 	// console.log(res)
-				
-			// 	const newUser = {
-			// 		token: res.data.idToken,
-			// 		userId: res.data.localId
-			// 	}
-			// 	commit('authUser', newUser);
-			// 	dispatch('getUserProfile', newUser)
-
-			// }).catch(error => console.log(error))
 		},
 		signOut({commit}) {
-			console.log('signout')
-			firebase.auth().signOut();
-			console.log('wiping sessionStorage at signOut')
-			sessionStorage.removeItem('artistCenter')
-			commit('clearAuthData')
-			// router.replace('/')
+			return new Promise((resolve, reject) => {
+					console.log('signout')
+					firebase.auth().signOut().then(() => {
+					commit('clearAuthData')
+					localStorage.removeItem('artistCenter')
+					resolve()
+				})
+			})
 		},
 		tryAutoSignIn({commit, dispatch}) {
-			if (!sessionStorage.getItem('artistCenter')) {
+			if (!localStorage.getItem('artistCenter')) {
+				dispatch('signOut').then(() => {
+					router.push("/")
+				})
 				return
 			}
-			const sessionData = JSON.parse(sessionStorage.getItem('artistCenter'))
-			const token = sessionData.idToken
-			// console.log('token session at tryAutoSignIn', token)
-			if(!token) {
-				return
-			}
-			const expirationDate = sessionData.expires
+			const localData = JSON.parse(localStorage.getItem('artistCenter'))
+			const expirationDate = new Date(localData.expires)
+			let authData = {}
 			// console.log('session expires', expirationDate)
 			const now = new Date()
+			// console.log('expiration', expirationDate)
+			// console.log('now', now)
+			// console.log('is it expired?', now >= expirationDate)
+			// console.log('is it expired?', now < expirationDate)
 			if(now >= expirationDate) {
-				return
+				dispatch('reAuthorizeUser')
+					.then(res => {
+						authData.userId = localData.userId
+						authData.idToken = res.idToken
+						authData.userEmail = localData.userEmail
+						authData.expires = res.expires
+
+						commit('authUser', authData);
+						commit('setCurrentUserProfile', localData.currentUserProfile)
+						// console.log('current user tools from session', localData.currentUserTools)
+						commit('setUserTools', localData.currentUserTools)
+						dispatch('setLocalStorage')
+					})
+			} else {
+				authData.userId = localData.userId
+				authData.idToken = localData.idToken
+				authData.userEmail = localData.userEmail
+				authData.expires = localData.expires
+				commit('authUser', authData);
+				commit('setCurrentUserProfile', localData.currentUserProfile)
+				// console.log('current user tools from session', localData.currentUserTools)
+				commit('setUserTools', localData.currentUserTools)
+				dispatch('setLocalStorage')
 			}
-			const userId = sessionData.userId
-			// console.log('session ID', userId)
-			const userEmail = sessionData.userEmail
-			// console.log('session Email', userEmail)
-
-			commit('authUser', {
-					userId: userId,
-					idToken: token,
-					userEmail: userEmail,
-					expires: expirationDate
-				});
-
-			commit('setCurrentUserProfile', sessionData.currentUserProfile)
-			console.log('current user tools from session', sessionData.currentUserTools)
-			commit('setUserTools', sessionData.currentUserTools)
-			// testing: if I don't call reset, will it allow me to reset after token has expired?
-			// TODO: check
-			dispatch('resetToken', token)
-			
-			// console.log('refreshToken on TryAutoSignIn')
-			// console.log('auth user at tryAutoSignIn', firebase.User)
-			
 		},
 		createUser({commit, dispatch, state}, payload) {
 			if(!state.idToken) {
@@ -312,6 +284,8 @@ export const store = new Vuex.Store({
 					var data = {
 						['profiles/' + payload.userId + '/' + dataKey]: payload.data[dataKey],
 						['users/' + payload.userId + '/name']: payload.data.details.name,
+						['users/' + payload.userId + '/firstName']: payload.data.details.name.toLowerCase().slice(0, payload.data.details.name.lastIndexOf(" ")).trim(),
+						['users/' + payload.userId + '/lastName']: payload.data.details.name.toLowerCase().split(" ").pop().trim(),
 						['users/' + payload.userId + '/city']: payload.data.details.city,
 						['users/' + payload.userId + '/country']: payload.data.details.country,
 						['users/' + payload.userId + '/roleType']: payload.data.details.companyType !== null && payload.data.details.companyType !== undefined ? payload.data.details.companyType : payload.data.details.voiceType
@@ -357,7 +331,6 @@ export const store = new Vuex.Store({
 					.then(res => {
 						// console.log('getUserProfile', res)
 						commit('setCurrentUserProfile', res.data)
-						dispatch('setSessionStorage');
 						resolve(res)
 					}).catch(error => {
 						console.log(error);
@@ -366,8 +339,31 @@ export const store = new Vuex.Store({
 			})
 
 		},
+		saveProductionImage({commit, dispatch, state}, payload) {
+			console.log(payload.data)
+			
+			let imageName = payload.data.name
+			let ext = imageName.slice(imageName.lastIndexOf("."))
+
+			payload.data['auth'] = state.idToken
+			//add season name
+			return new Promise((resolve, reject) => {
+				firebase.storage().ref('users').child(state.userId + '/seasons/' + payload.seasonId + '/'+ payload.productionName + ext).put(payload.data)
+					.then(fileData => {
+						console.log(fileData)
+						fileData.ref.getDownloadURL().then(downloadURL => {
+							resolve({filepath: downloadURL})
+						})
+						
+					}).catch(error => {
+						console.log(error)
+						return reject(error)
+					})
+			})
+
+		},
 		saveProfileImages({commit, dispatch, state}, payload) {
-			// console.log(payload.data)
+			console.log(payload)
 			const filename = Object.keys(payload.data)[0]
 			// console.log(filename)
 			const imageName = payload.data[filename].name
@@ -375,37 +371,38 @@ export const store = new Vuex.Store({
 
 			// console.log(ext)
 
-			payload.data['auth'] = state.idToken
+			// payload.data['auth'] = state.idToken
 
 			return new Promise((resolve, reject) => {
-				firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
+				var uploadImageTask = firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
 					.then( fileData => {
-						let imageURL = fileData.metadata.downloadURLs[0]
-						
-						if(filename === 'avatar') {
-							var userImage = {
-								['profiles/' + payload.userId + '/' + filename + 'URL']: imageURL,
-								['users/' + payload.userId + '/' + filename + 'URL']: imageURL,
+						console.log(fileData)
+						fileData.ref.getDownloadURL().then(downloadURL => {
+							console.log(downloadURL)
+							let imageURL = downloadURL
+							var userImage
+							if(filename === 'avatar') {
+								userImage = {
+									['profiles/' + payload.userId + '/' + filename + 'URL']: imageURL,
+									['users/' + payload.userId + '/' + filename + 'URL']: imageURL,
+								}
+							} else {
+								userImage = { ['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL }
 							}
-						} else {
-							var userImage = { ['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL }
-						}
-						
-						// console.log(dataURL)
-						firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
-							.then(res => {
+
+							firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
+								.then(res => {
 									console.log('imageURL', res)
 									dispatch('getUserProfile', {'userId': state.userId})
-								}
-							).catch(error => {
-								return reject(error)
-								console.log(error)
-							})
+								}).catch(error => {
+									console.log(error)
+								 	return reject(error)
+								})
+						})
 					}).catch(error => {
 						reject(error)
-						console.log(error)
-						}
-					)
+						return console.log(error)
+					})
 			})
 		},
 		createUserTools({commit, dispatch, state}, payload) {
@@ -506,7 +503,6 @@ export const store = new Vuex.Store({
 				.then(res => {
 					// console.log('tools', res)
 					commit('setUserTools', res.data)
-					dispatch('setSessionStorage')
 					resolve(res)
 				}).catch(error => {
 					reject(error)
@@ -596,7 +592,10 @@ export const store = new Vuex.Store({
 								imagePromises.push(
 									imageRef.put(imageFile).then(fileData => {
 										// console.log(fileData)
-										return fileData.metadata.downloadURLs[0]
+										fileData.ref.getDownloadURL().then(downloadURL => {
+											return downloadURL
+										})
+										
 									})
 								)
 								
@@ -635,6 +634,7 @@ export const store = new Vuex.Store({
 		getProfilePosts({commit, state}, payload) {
 			// console.log('disptaching getProfilePosts', state.idToken)
 			return new Promise((resolve, reject) => {
+
 				firebaseAxios.get("/posts/" + payload.profileId + ".json" + '?auth=' + state.idToken)
 					.then(res => {
 						// console.log('posts', res)
@@ -643,6 +643,167 @@ export const store = new Vuex.Store({
 						reject(error)
 						console.log(error)
 					})
+			})
+		},
+		postOpportunity({commit, state}, payload) {
+			return new Promise((resolve, reject) => {
+				oppAxios.post("/opportunities.json", 
+					payload)
+        		.then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+					console.log(error)
+				})
+			})
+		},
+		createSeason({commit, dispatch, state}, payload) {
+			console.log(payload)
+			let seasonRef = firebase.database().ref("seasons").child(state.userId)
+			let seasonKey = seasonRef.push().key
+			let databaseRef = firebase.database().ref();
+
+			let seasonUpdates = {
+				['seasons/' + state.userId + '/' + seasonKey]: payload.season,
+				['profiles/' + state.userId + '/seasons/'+ seasonKey ]: payload.season
+			}
+
+			console.log(seasonUpdates)
+
+			return new Promise((resolve, reject) => {
+				let imagePromises = payload.productions.map(production => {
+		 		if(production.imageFile !== null && production.imageFile !== undefined) {
+			 			return dispatch('saveProductionImage', {seasonId: seasonKey, productionName: production.name, data: production.imageFile})
+			 				.then(res => {
+			 					console.log(res)
+			 					production.imageURL = res.filepath
+			 					delete production.imageFile
+			 					return production
+
+			 				}).catch(error => {
+			 					console.log(error)
+			 					return error
+			 				})
+			 		} else {
+			 				delete production.imageFile
+			 				return production
+			 		}
+			 		
+		 		})
+
+			 	Promise.all(imagePromises).then(res => {
+			 		console.log(res)
+			 		seasonUpdates['seasons/' + state.userId + '/' + seasonKey]['productions'] = res
+					seasonUpdates['profiles/' + state.userId + '/seasons/'+ seasonKey ]['productions'] = res
+			 		
+			 		let calendarEvents = res.map(production => {
+						return production.dates.map(productionDate => {
+							return { 
+								date: productionDate.date,
+					            start: productionDate.time,
+					            end: '',
+					            title:  production.name,
+					            location: '',
+					            desc: production.description,
+					            type: 'production'	
+        					}
+						})
+			 		})
+
+			 		calendarEvents = _.flatten(calendarEvents)
+
+			 		let calendarData = {
+						['toolsPublic/' + state.userId + '/calendar']: calendarEvents,
+						['toolsAuthorized/' + state.userId + '/calendar']: calendarEvents
+					}
+			 		
+					let fullData = Object.assign(seasonUpdates, calendarData)
+			 		console.log('events', calendarEvents)
+			 		console.log('calendar data', calendarData)
+			 		console.log('full data', fullData)
+			 		console.log('after production update', seasonUpdates)
+
+			 		databaseRef.update(fullData, error => {
+						if(error) {
+							console.log(error)
+							reject(error)
+						} else {
+							console.log(seasonUpdates)
+							resolve(seasonUpdates['seasons/' + state.userId + '/' + seasonKey])
+						}
+			 		})
+			 	})
+			})
+		 	
+	 		
+
+		},
+		getSeason({commit, state}, payload) {
+			return new Promise((resolve, reject) => {
+				firebaseAxios.get('seasons/' + state.userId + '.json')
+				 .then(res => {
+				 	resolve(res)
+				 }).catch(error => {
+				 	reject(error)
+				 	console.log(error)
+				 })
+			})
+		},
+		updateSeason({commit, state}, payload) {
+			let databaseRef = firebase.database().ref();
+			let seasonUpdates = {}
+
+			for(var key in payload.season) {
+				seasonUpdates['seasons/' + state.userId + '/' + payload.seasonId + '/' + key ] = payload.season[key]
+				seasonUpdates['profiles/' + state.userId + '/seasons/' + payload.seasonId + '/' + key] = payload.season[key]
+			}
+
+			console.log(seasonUpdates)
+
+			return new Promise((resolve, reject) => {
+				databaseRef.update(seasonUpdates).then(error => {
+					if(error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve()
+					}
+				})
+				
+			})
+		},
+		updateProduction({commit, dispatch, state}, payload) {
+			let databaseRef = firebase.database().ref();
+			let seasonUpdates = {
+				['seasons/' + state.userId + '/' + payload.seasonId  + '/productions/' + payload.productionIndex]: payload.production,
+				['profiles/' + state.userId + '/seasons/' + payload.seasonId + '/productions/' + payload.productionIndex]: payload.production
+			}
+
+			if (payload.production.imageFile) {
+				dispatch('saveProductionImage', {seasonId: payload.seasonId, productionName: payload.production.name, data: payload.production.imageFile})
+	 				.then(res => {
+	 					console.log(res)
+	 					for(var key in seasonUpdates) {
+	 						delete seasonUpdates[key].imageFile
+	 						seasonUpdates[key].imageURL = res.filepath
+	 					}
+
+	 				}).catch(error => {
+	 					console.log(error)
+	 					return error
+	 				})
+			}
+
+			return new Promise((resolve, reject) => {
+				databaseRef.update(seasonUpdates).then(error => {
+					if(error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve()
+					}
+				})
+				
 			})
 		}
 	},
@@ -690,315 +851,76 @@ export const store = new Vuex.Store({
 				contentFR: ""
 			}
 		},
-		conversations: {
-			"AlyssaID": {	created: Date.now(),
-				sender: 'Alyssa',
-				lastMessage: 'How are you?'
-			}, 
-			"JohnID": {	
-				created: Date.now(),
-				sender: 'John',
-				lastMessage: 'I just had the best news.'
-			}, 
-			"JamesID": {	
-				created: Date.now(),
-				sender: 'James',
-				lastMessage: 'Grand.'
-			}, 
-			"JaneID": {	
-				created: Date.now(),
-				sender: 'Jane',
-				lastMessage: 'And then?'
-			},
-			"EdwardID": {	
-				created: Date.now(),
-				sender: 'Edward',
-				lastMessage: 'And then?'
-			},
-			"GrantID": {	
-				created: Date.now(),
-				sender: 'Grant',
-				lastMessage: 'And then?'
-			}
-		},
-		users: {
-			"AlyssaID": {
-				name: "Allysia Johnson",
-				role: "Artistic Director",
-				img: require("../assets/images/Caitlin-McCaughey.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			}, 
-			"JohnID": {
-				name: "John Brian",
-				role: "Baritone",
-				img: require("../assets/images/Daevyd-Pepper.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			}, 
-			"JamesID": {
-				name: "James Dean",
-				role: "Conductor",
-				img: require("../assets/images/Brenden-Friesen.png"),
-				city: "Montreal",
-				province: "QC",
-				profileType: "artist"
-			}, 
-			"JaneID": {
-				name: "Jane Great",
-				role: "Project Coordinator",
-				img: require("../assets/images/Julie-Adams.png"),
-				city: "Winnipeg",
-				province: "MB",
-				profileType: "artist"
-			},
-			"EdwardId": {
-				name: "Edward Great",
-				role: "Project Coordinator",
-				img: require("../assets/images/Matthew-Dalen.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			},
-			"GrantID": {
-				name: "Grant Ferries",
-				role: "Project Coordinator",
-				img: require("../assets/images/Leanne-Kaufman.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			},
-			"JoelID": { 
-				name: "Joel Allison",
-				role: "Baritone",
-				img: require("../assets/images/Joel-Allison.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			},
-			"GeorgiaID": { 
-				name: "Georgia Burashko",
-				role: "Mezzo Soprano",
-				img: require("../assets/images/Georgia-Burashko.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			}, 
-			"DanielID": { name: "Daniel Thielman",
-				role: "Tenor",
-				img: require("../assets/images/Daniel-Thielman.png"),
-				city: "Edmonton",
-				province: "AB",
-				profileType: "artist"
-			}, //asdfasdfsad
-			"MyOperaID": {
-				name: "MyOpera",
-				role: "Artistic Director",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			}, 
-			"YourOperaID": {
-				name: "YourOpera",
-				role: "Baritone",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			}, 
-			"GreatOperaID": {
-				name: "Great Opera",
-				role: "Conductor",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Montreal",
-				province: "QC",
-				profileType: "company"
-			}, 
-			"MontrealOperaID": {
-				name: "Montreal Opera",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Winnipeg",
-				province: "MB",
-				profileType: "company"
-			},
-			"OperaInCupID": {
-				name: "Opera In a Cup",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			},
-			"OperaWorldID": {
-				name: "Opera World",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			},
-			"TopOperaID": { 
-				name: "Top Opera",
-				role: "Baritone",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			},
-			"GOOperaID": { 
-				name: "Go Opera",
-				role: "Mezzo Soprano",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			}, 
-			"BritOperaID": { name: "Brit Opera",
-				role: "Tenor",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Edmonton",
-				province: "AB",
-				profileType: "company"
-			}
-		},
-		messages: {
-			"AlyssaID": {
-				"m1": {
-					sender: "Alyssa",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I have a job for you.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Alyssa",
-					text: "Wonderful When?",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JohnID": {
-				"m1": {
-					sender: "John",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "Thanks for your ,application",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "John",
-					text: "Welcome. When is the audition?",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JamesID": {
-				"m1": {
-					sender: "James",
-					text: "Okay. Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I need more info about you.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "James",
-					text: "Ok, I can send it over.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Can you send today please?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JaneID": {
-				"m1": {
-					sender: "Jane",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I am sorry but we need more.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Jane",
-					text: "I can definitely do that.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"EdwardID": {
-				"m1": {
-					sender: "Edward",
-					text: "I would like to audition",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "When would you like to come in?",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Edward",
-					text: "What about tomorrow",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"GrantID": {
-				"m1": {
-					sender: "Grant",
-					text: "I am wonderful! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "That is great news.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Grant",
-					text: "I can definitely do that.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, when can you get here?",
-					timestamp: 1459361875360,
-				}
-			}
-		}
+		opportunityTypes: [
+			'competitions', 
+			'general auditions', 
+			'young artist programms', 
+			'chorus', 
+			'orchestra', 
+			'training programms', 
+			'collaborations', 
+			'job offers'
+		],
+    	categorySubcategories: {
+    		'singers/actors': [
+    			'soprano',
+    			'mezzo-soprano',
+    			'alto & contralto',
+    			'countertenor',
+    			'tenor',
+    			'baritone',
+    			'bass & bass-baritone',
+				'backing vocals',
+				'chorus',
+				'actors',
+				'extras & silent roles',
+				'other'
+    		],
+    		'instruments': [
+				'piano',
+				'harpsichord',
+				'organ',
+				'other keyboards',
+				'strings',
+				'violin',
+				'viola ',
+				'cello',
+				'double bass',
+				'harp',
+				'guitar',
+				'bass',
+				'other strings',
+				'flute',
+				'oboe',
+				'clarinet',
+				'bassoon',
+				'trumpet',
+				'trombone',
+				'french horn',
+				'bass trombone',
+				'tuba',
+				'saxophone',
+				'drums',
+				'timpani',
+				'other percussions',
+				'other instruments'
+	   		],
+    		'administration, production & other': [
+    			'agent',
+				'teacher',
+				'conductor',
+				'musicologist',
+				'production',
+				'administration',
+				'other'
+    		]
+    	},
+    	paymentTypes: [
+    		'paid',
+    		'unpaid',
+    		'pay to play or sing',
+    		'prize money'
+    	]
 
 	}
 })

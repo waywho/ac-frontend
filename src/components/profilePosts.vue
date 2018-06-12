@@ -2,15 +2,13 @@
 	<div class="post-section">
 		<div v-if="authorizedUser" class="post-box col-sm-offset-3 col-sm-9">
 			<div class="row">
-				<div class="col-xs-2">
-					<div class="row">
-			          	<div class="avatar-border">
-            				<img :src="currentUserAvatar" class="user-avatar" />
-        				</div>
-			      </div>
+				<div class="col-xs-2 row center-xs">
+					<div class="avatar-border avatar-medium user-avatar">
+			  			<img :src="currentUserAvatar" />	
+			      	</div>
 				</div>
 				<div class="col-xs-9">
-					<textarea v-model="post.content"></textarea>
+					<textarea v-model="post.content" rows="6"></textarea>
 					<div class="row">
 						<div v-if="imageURLs">
 			          		<div class="multi-image-container">
@@ -188,6 +186,10 @@ export default {
 
 /*post comment box*/
 
+.user-avatar {
+	margin-top: 20px;
+}
+
 .post-section {
 	height: 100%;
 	margin-bottom: 70px;
@@ -201,7 +203,6 @@ export default {
 }
 
 .post-box textarea {
-	height: 79px;
 	max-width: 95%;
 	margin-bottom: 36px;
 	border: 2px solid #d4d4d4;

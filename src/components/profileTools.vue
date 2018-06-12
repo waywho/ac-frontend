@@ -4,19 +4,19 @@
       <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="profileToolData"></component>
     </keep-alive>
     <div :class="[authorizedUser ? 'toolbox-auth' : 'toolbox-public']">
-      <div v-for="tool in profileTools" @click="component = tool.component" class="toolbox-tile is-lightgray"><i :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i><br />{{tool.name}}</div>
+      <div v-for="tool in profileTools" @click="component = tool.component" :class="['toolbox-tile', 'is-lightgray', {'active-tool': component === tool.component}]"><i :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i><br />{{tool.name}}</div>
      </div>
   </div>
 </template>
 
 <script>
-import calendar from './calendar';
-import settingsTool from './settingsTool';
-import messageTool from './messageTool';
-import budgetTool from './budgetTool';
-import mediaTool from './mediaTool';
-import ticketTool from './ticektTool';
-import portfolioTool from './portfolioTool';
+import calendar from './toolCalendar';
+import opportunityTool from './toolOpportunity'
+import settingsTool from './toolSettings';
+import messageTool from './toolMessage';
+import mediaTool from './toolMedia';
+import ticketTool from './toolTicket';
+import portfolioTool from './toolPortfolio';
 import currentUser from '../mixins/currentUserMixin';
 import firebaseAxios from '../axios-firebase.js';
 
@@ -24,9 +24,9 @@ export default {
   name: 'tools',
   components: {
     'calendar': calendar,
+    'opportunity': opportunityTool,
     'settings': settingsTool,
     'message': messageTool,
-    'budget': budgetTool,
     'medias': mediaTool,
     'ticket': ticketTool,
     'portfolio': portfolioTool
@@ -52,15 +52,14 @@ export default {
         { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
-        { name: 'Budget', component: 'budget', icon: 'fa-bar-chart' },
         { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
-        { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
+        { name: 'Opportunity', component: 'opportunity', icon: 'fa-address-book-o'}
       ],
       tools: {
         'calendar': { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         'media': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
         'portfolio': { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' },
-        'medias': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
+        'opportunity': { name: 'Opportunity', component: 'opportunity', icon: 'fa-address-book-o' },
         'ticket': { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
       }
     }
@@ -129,10 +128,11 @@ export default {
   background-color: $color-body;
   height: 582px;
   max-height: 582px;
+  width: 100%;
+  overflow-y: hidden;
 }
 
 .tool-panel-public {
-  display: inline-block;
   flex-basis: 81%;
   min-height: 100%;
   background-color: #fff;
@@ -140,11 +140,11 @@ export default {
 }
 
 .tool-panel-auth {
-  display: inline-block;
   flex-basis: 69%;
   min-height: 100%;
   background-color: #fff;
   float: left;
+  order: 1;
 }
 
 .toolbox-public {
@@ -169,6 +169,7 @@ export default {
   padding-left: 15px;
   height: 100%;
   float: right;
+  order: 2;
 }
 
 .toolbox-tile {
@@ -185,24 +186,36 @@ export default {
   margin-bottom: 15px;
 }
 
-.toolbox-tile:hover, .toolbox-tile:hover .tool-icon, .tool-icon:hover  {
-  background-color: #ecddba;
+.toolbox-tile:hover, .toolbox-tile:hover .tool-icon, .tool-icon:hover, .active-tool  {
+  background-color: $color-lightgold;
+  color: white;
+}
+
+.active-tool i {
   color: white;
 }
 
 
 @media screen and (max-width: 46rem) {
   .profile-tools {
-    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    width: 100%;
+    overflow-y: hidden;
+    flex-wrap: wrap;
   }
 
-  .tool-panel {
+  .tool-panel-auth {
+    flex-basis: 100%;
     width: 100%;
+    height: 100%;
     order: 2;
   }
 
-  .toolbox {
+  .toolbox-auth {
     margin: 0px 0px 20px;
+    flex-basis: 100%;
+    height: 582px;
     width: 100%;
     order: 1;
   }

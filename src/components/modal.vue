@@ -3,7 +3,7 @@
 		<div class="modal-element">
 			<div class="modal-mask" v-on:click="$emit('close')"></div>
 			<div class="modal-wrapper">
-			    <div class="modal-container">
+			    <div class="modal-container" id="modal-details">
 
 			      <div class="modal-header">
 			        <slot name="header">
@@ -69,28 +69,32 @@ export default {
   height: 100%;
   background-color: rgba(203, 157, 43, .5);
   transition: opacity .3s ease;
+  -webkit-transition: opacity .3s ease;
 }
 
 .modal-wrapper {
   position: fixed;
 	z-index: 9999;
-	max-width: 603px;
+	max-width: 750px;
 	width: 90%;
-	height: 751px;
+	max-height: 751px;
 }
 
 .modal-container {
-  max-width: 603px;
+  position: relative;
+  max-width: 750px;
   width: 100%;
   height: 100%;
+  max-height: 751px;
   margin: 0px auto;
-  padding: 20px 30px;
+  padding: 79px 74px;
   background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
-  font-family: Helvetica, Arial, sans-serif;
+  -webkit-transition: all .3s ease;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {
@@ -108,5 +112,12 @@ export default {
 
 .modal-default-button {
   float: right;
+}
+
+
+@media screen and (max-width: 48rem) {
+  .modal-container {
+    padding: 79px 42px;
+  }
 }
 </style>
