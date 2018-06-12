@@ -12,8 +12,8 @@
 
 <script>
 import menu from './components/menu'
-import header from './components/header'
-import footer from './components/footer'
+import header from '@/components/layout/header'
+import footer from '@/components/layout/footer'
 import showProfile from './components/showProfile'
 import signUp from './components/signUp'
 import searchResults from './components/searchResults'

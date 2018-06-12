@@ -1,7 +1,7 @@
 $color-silver: #cccbcb !default;
 $color-lightgray: #d4d4d4 !default;
 $color-midgray: #8d8d8d !default;
-$color-darkgray: #706d6c !default;
+$color-darkgray: #3e3c3c !default;
 $color-black: #0d0d0e !default;
 $color-highlight: #edf2ff !default; // color-focus 15% opacity
 $color-gold: #cd9d2b !default;
@@ -17,7 +17,7 @@ $color-success: #35beb1 !default;
 $color-warning: #9e0b0f !default;
 $color-focus: #cd9d2b !default;
 
-$color-text: #3e3c3c !default;
+$color-text: $color-darkgray !default;
 $color-link: $color-text;
 $color-link-hover: #cd9d2b;
 $color-headings: $color-text;
@@ -110,4 +110,5 @@ $input-border-radius: 10px !default;
 
 // header
 $header-height: 100px !default;
-$header-height-mobile: 163px !default;
+$header-search-height-mobile: 50px !default;
+$header-height-mobile: $header-height + $header-search-height-mobile !default;

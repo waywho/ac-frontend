@@ -24,6 +24,7 @@ import opportunityFilter from './opportunityFilters';
 import countriesList from 'countries-list';
 import Velocity from 'velocity-animate';
 import 'velocity-animate/velocity.ui';
+// import axios from 'axios'
 
 export default {
 	name: 'opportunitiesBoard',
@@ -115,7 +116,9 @@ export default {
 		}
 	},
 	created() {
-	  	oppAxios.get('opportunities.json', {
+		this.$store.dispatch('resetToken').then(() => {
+			console.log('reset token!')
+			oppAxios.get('opportunities.json', {
 	  			params: {
 	  				idToken: this.$store.getters.currentUser.idToken,
 	  				page: 1
@@ -128,9 +131,14 @@ export default {
 	  			console.log(error)
 	  			this.loading = false
 	  		})
-			this.opportunityTypes = this.$store.state.opportunityTypes
-			this.categories = Object.keys(this.$store.state.categorySubcategories)
-			this.paymentTypes = this.$store.state.paymentTypes
+
+		}).catch(error => {
+			this.$router.push("/")
+		})
+
+		this.opportunityTypes = this.$store.state.opportunityTypes
+		this.categories = Object.keys(this.$store.state.categorySubcategories)
+		this.paymentTypes = this.$store.state.paymentTypes
 	},
 	mounted() {
 	  	this.$nextTick(function() {

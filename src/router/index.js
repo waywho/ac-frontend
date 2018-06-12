@@ -7,6 +7,8 @@ import membershipDetails from '@/components/membershipDetails'
 import pageStatic from '@/components/pageStatic'
 import { store } from '@/store/store/'
 import opportunityBoard from '@/components/opportunityBoard'
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 Vue.use(Router)
 
@@ -17,7 +19,7 @@ const signUp = resolve => {
 	})
 };
 
-export default new Router({
+const router = new Router({
 	mode: 'history',
 	scrollBehavior(to, from, savedPosition) {
 		if (savedPosition) {
@@ -33,12 +35,13 @@ export default new Router({
     { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
     { path: '/about/:page', name: 'terms', component: pageStatic},
     { path: '/profiles/:id', name: 'profiles', component: showProfile, props: true},
-    { path: '/opportunities', name: 'opportunitiesList', component: opportunityBoard},
+    { path: '/opportunities', name: 'opportunitiesList', component: opportunityBoard, meta: {requiresAuth: true}},
     { path: '/signup', name: 'signUp', component: signUp,
     	beforeEnter:(to, from, next) => {
-    		console.log('checking');
-    		if(store.state.idToken) {
-    			next('/profiles/' + store.state.userId)
+            let user = firebase.auth().currentUser
+    		console.log('checking', user);
+    		if(user) {
+    			next({name: 'profiles', params: { id: store.state.userId }})
     		} else {
                 next();
             }
@@ -48,4 +51,23 @@ export default new Router({
     { path: '*', reidrect: '/'}
   ]
 })
+
+router.beforeEach((to, from, next) => {
+    // check if route requires quth
+    if(to.matched.some(rec => rec.meta.requiresAuth)) {
+        // check authstate
+        let user = firebase.auth().currentUser
+        if(user) {
+            // user signed in proceed
+            next()
+        } else {
+            //no user signed in redirect to signin
+            next("/")
+        }
+    } else {
+        next()
+    }
+})
+
+export default router
 

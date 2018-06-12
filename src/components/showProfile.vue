@@ -18,7 +18,7 @@
 
 					<div class="profile-cover" :style="{'background-image': 'url('+ coverURL +')'}">
 						<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
-					 		<i class="fa fa-camera" aria-hidden="true"></i>Update Cover Photo
+					 		<i class="fa fa-camera" aria-hidden="true"></i><small>Update Cover Photo</small>
 						</div>
 						<input v-if="authorizedUser" type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
 					</div>
@@ -30,7 +30,7 @@
 								<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
 							</svg>
 							
-							<div v-if="authorizedUser" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><span>Update Photo</span></div>
+							<div v-if="authorizedUser" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><br /><div class="small">Update Photo</div></div>
 							<input v-if="authorizedUser" type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
 						</div>
 						

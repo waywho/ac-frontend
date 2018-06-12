@@ -32,11 +32,13 @@ export const store = new Vuex.Store({
 			state.idToken = null;
 			state.userId = null;
 			state.currentUserProfile = {};
+			state.currentUserTools = null
 			state.userEmail = null;
 			state.expires = null;
 		},
 		setToken (state, payload) {
 			state.idToken = payload.idToken
+			state.expires = payload.expires
 		},
 		setUserTools (state, payload) {
 			state.currentUserTools = payload;
@@ -53,9 +55,9 @@ export const store = new Vuex.Store({
 		}
 	},
 	actions: {
-		setSessionStorage({state}) {
+		setLocalStorage({state}) {
 			// console.log('setting Session')
-			let sessionData = {
+			let localData = {
 				idToken: state.idToken, 
 				userId: state.userId, 
 				userEmail: state.userEmail, 
@@ -63,86 +65,81 @@ export const store = new Vuex.Store({
 				currentUserProfile: state.currentUserProfile,
 				currentUserTools: state.currentUserTools
 			}
-			sessionStorage.setItem('artistCenter', JSON.stringify(sessionData))
+			localStorage.setItem('artistCenter', JSON.stringify(localData))
 		},
-		// function not being used right now
-		setSignoutTimer({commit, dispatch}, expirationTime) {
-			setTimeout(() => {
-				commit('clearAuthData')
-				sessionStorage.removeItem('artistCenter')
-			}, expirationTime * 1000)
-		},
-		setRefreshTokenTimer({commit, disptach, state}, expirationTime) {
-			console.log('setRefreshTokenTimer', expirationTime)
-			setTimeout(() => {
-				console.log('resetToken dispatch')
-				store.dispatch('resetToken', state.idToken)
-			}, expirationTime * 1000)
-		},
-		resetToken({commit, dispatch, state}, idToken) {
+		resetToken({commit, dispatch}) {
 			return new Promise((resolve, reject) => {
-				const now = new Date()
-					if(now >= state.expires) {
-						// console.log('signOut by resetToken')
-						dispatch('signOut')
+				firebase.auth().onAuthStateChanged(function(user) {
+					if (user) {				
+						user.getIdToken(true).then(idToken => {
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 3600 * 1000)
+							
+							commit('setToken', {'idToken': idToken, 'expires': expirationDate})
+							dispatch('setLocalStorage')
+							resolve()
+						})
+					} else {
+						reject("not signed in")
+					}
+				})
+			})
+		},
+		reAuthorizeUser({commit, dispatch, state}, idToken) {
+			return new Promise((resolve, reject) => {
+
+				firebase.auth().onAuthStateChanged(function(user) {
+					if (user) {
+						console.log('reauthorized user', user)					
+						user.getIdToken(true).then(idToken => {
+							// console.log('authstate', user)
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 3600 * 1000)
+							resolve({idToken: idToken, expires: expirationDate})
+						}).catch(error => {
+							console.log(error)
+							reject(error)
+						})
+					} else {
+						dispatch('signOut').then(() => {
+							router.push("/")
+						})
 						reject('signOut')
 						return 
 					}
 
-				firebase.auth().onAuthStateChanged(function(user) {
-					user.getIdToken(true).then(idToken => {
-						// console.log('authstate', user)
-						commit('setToken', {'idToken': idToken})
-						dispatch('setSessionStorage')
-						resolve('got new token!')
-						dispatch('setRefreshTokenTimer', 3550)
-						// console.log('call refreshTimer from resetToken')
-						// console.log('state idToken from resetToken', state.idToken)
-					
-					}).catch(error => {
-						console.log(error)
-						reject(error)
-					})
 				})
 			})
 		},
 		signUserUp({commit, dispatch}, payload) {
-
-
 			return new Promise((resolve, reject) => {
 
 				firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-					.then(
-						user => {
-							// console.log('sign up', user)
-							user.getIdToken(true).then(idToken => {
-								// console.log('token', idToken)
-								// set token expiry at 24 hours from now
-								const now = new Date()
-								const expirationDate = new Date(now.getTime() + 86400 * 1000)
+					.then(cred => {
+						// console.log('sign up', user)
+						cred.user.getIdToken(true).then(idToken => {
+							// console.log('token', idToken)
+							// set token expiry at 24 hours from now
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 3600 * 1000)
 
-								const newUser = {
-									userId: user.uid,
-									idToken: idToken,
-									userEmail: user.email,
-									expires: expirationDate
-									}
+							const newUser = {
+								userId: cred.user.uid,
+								idToken: idToken,
+								userEmail: cred.user.email,
+								expires: expirationDate
+							}
+							commit('authUser', newUser);
+							dispatch('createUser', {userId: cred.user.uid, email: cred.user.email});
+							dispatch('getUserProfile', newUser);
+							commit('setMessage', {
+								message: 'Signed Up Successfully',
+								messageType: 'success'
+							});
+							resolve(idToken)
+						})
 
-									commit('authUser', newUser);
-									dispatch('createUser', {userId: user.uid, email: user.email});
-									dispatch('getUserProfile', newUser);
-									commit('setMessage', {
-										message: 'Signed Up Successfully',
-										messageType: 'success'
-									});
-									
-									// dispatch('setSessionStorage'); // being called at get User
-								})
-							dispatch('setRefreshTokenTimer', 3550)
-							dispatch('setSignoutTimer', 86400)
-						}
-					)
-					.catch(
+					}).catch(
 						error => {
 							// console.log(error)
 							commit('setMessage', {
@@ -154,128 +151,96 @@ export const store = new Vuex.Store({
 					)				
 			}) 
 
-			// authAxios.post('/signupNewUser?key=' + process.env.FIREBASE_API_KEY, {
-			// 	email: payload.email,
-			// 	password: payload.password
-			// }).then(res => {
-			// 	// console.log(res)
-			// 	const newUser = {
-			// 		token: res.data.idToken,
-			// 		userId: res.data.localId
-			// 	}
-			// 	commit('authUser', newUser);
-			// 	dispatch('getUserProfile', newUser);
-
-			// }).catch(error => console.log(error))
-
 		},
 		signUserIn({commit, dispatch}, payload) {
 			return new Promise((resolve, reject) => {
 				firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
-					.then(
-						cred => {
-							// console.log('current user', firebase.auth().currentUser)
-							console.log('sign in', cred.user)
-							console.log('sign in', cred.user.idToken)
-							cred.user.getIdToken(true).then(idToken => {
-								// console.log('signed in token', idToken)
-								// set token expiry at 24 hours from now
-								const now = new Date()
-								const expirationDate = new Date(now.getTime() + 86400 * 1000)
-
-								const newUser = {
-									idToken: idToken,
-									userId: cred.user.uid,
-									userEmail: cred.user.email,
-									expires: expirationDate
-								}
-								// set token expiry at 24 hours from now
-
-								commit('authUser', newUser);
-								dispatch('getUserProfile', newUser);
-								dispatch('getUserTools', newUser);
-								dispatch('setRefreshTokenTimer', 3550)
-								dispatch('setSignoutTimer', 86400)
-								resolve(cred.user)
-								// dispatch('setSessionStorage'); // being called at get User
-							})
-
-						
+					.then(cred => {
+						// console.log('current user', firebase.auth().currentUser)
+						console.log('sign in', cred.user)
+						cred.user.getIdToken(true).then(idToken => {
+							// console.log('signed in token', idToken)
+							// set token expiry at 24 hours from now
+							const now = new Date()
+							const expirationDate = new Date(now.getTime() + 3600 * 1000)
+							// console.log('got idToken', idToken)
+							const newUser = {
+								idToken: idToken,
+								userId: cred.user.uid,
+								userEmail: cred.user.email,
+								expires: expirationDate
+							}
+							commit('authUser', newUser);
+							
+							Promise.all([dispatch('getUserProfile', newUser), dispatch('getUserTools', newUser)])
+								.then(res => {
+									dispatch('setLocalStorage');
+									resolve(cred.user)
+								})						
+						})
 					})
-				.catch(
-					error => {
+					.catch(error => {
 						console.log(error)
 						commit('setMessage', {
 								message: error.message,
 								messageType: 'warning'
 						})
 						reject(error)
-					}
-				)
+					})
 				
 			}) 			
-
-			// authAxios.post('/verifyPassword?key=' + process.env.FIREBASE_API_KEY, {
-			// 	email: payload.email,
-			// 	password: payload.password
-			// }).then(res => {
-			// 	// console.log(res)
-				
-			// 	const newUser = {
-			// 		token: res.data.idToken,
-			// 		userId: res.data.localId
-			// 	}
-			// 	commit('authUser', newUser);
-			// 	dispatch('getUserProfile', newUser)
-
-			// }).catch(error => console.log(error))
 		},
 		signOut({commit}) {
-			console.log('signout')
-			firebase.auth().signOut();
-			console.log('wiping sessionStorage at signOut')
-			sessionStorage.removeItem('artistCenter')
-			commit('clearAuthData')
-			// router.replace('/')
+			return new Promise((resolve, reject) => {
+					console.log('signout')
+					firebase.auth().signOut().then(() => {
+					commit('clearAuthData')
+					localStorage.removeItem('artistCenter')
+					resolve()
+				})
+			})
 		},
 		tryAutoSignIn({commit, dispatch}) {
-			if (!sessionStorage.getItem('artistCenter')) {
+			if (!localStorage.getItem('artistCenter')) {
+				dispatch('signOut').then(() => {
+					router.push("/")
+				})
 				return
 			}
-			const sessionData = JSON.parse(sessionStorage.getItem('artistCenter'))
-			const token = sessionData.idToken
-			// console.log('token session at tryAutoSignIn', token)
-			if(!token) {
-				return
-			}
-			const expirationDate = sessionData.expires
+			const localData = JSON.parse(localStorage.getItem('artistCenter'))
+			const expirationDate = new Date(localData.expires)
+			let authData = {}
 			// console.log('session expires', expirationDate)
 			const now = new Date()
+			// console.log('expiration', expirationDate)
+			// console.log('now', now)
+			// console.log('is it expired?', now >= expirationDate)
+			// console.log('is it expired?', now < expirationDate)
 			if(now >= expirationDate) {
-				return
+				dispatch('reAuthorizeUser')
+					.then(res => {
+						authData.userId = localData.userId
+						authData.idToken = res.idToken
+						authData.userEmail = localData.userEmail
+						authData.expires = res.expires
+
+						commit('authUser', authData);
+						commit('setCurrentUserProfile', localData.currentUserProfile)
+						// console.log('current user tools from session', localData.currentUserTools)
+						commit('setUserTools', localData.currentUserTools)
+						dispatch('setLocalStorage')
+					})
+			} else {
+				authData.userId = localData.userId
+				authData.idToken = localData.idToken
+				authData.userEmail = localData.userEmail
+				authData.expires = localData.expires
+				commit('authUser', authData);
+				commit('setCurrentUserProfile', localData.currentUserProfile)
+				// console.log('current user tools from session', localData.currentUserTools)
+				commit('setUserTools', localData.currentUserTools)
+				dispatch('setLocalStorage')
 			}
-			const userId = sessionData.userId
-			// console.log('session ID', userId)
-			const userEmail = sessionData.userEmail
-			// console.log('session Email', userEmail)
-
-			commit('authUser', {
-					userId: userId,
-					idToken: token,
-					userEmail: userEmail,
-					expires: expirationDate
-				});
-
-			commit('setCurrentUserProfile', sessionData.currentUserProfile)
-			console.log('current user tools from session', sessionData.currentUserTools)
-			commit('setUserTools', sessionData.currentUserTools)
-			// testing: if I don't call reset, will it allow me to reset after token has expired?
-			// TODO: check
-			dispatch('resetToken', token)
-			
-			// console.log('refreshToken on TryAutoSignIn')
-			// console.log('auth user at tryAutoSignIn', firebase.User)
-			
 		},
 		createUser({commit, dispatch, state}, payload) {
 			if(!state.idToken) {
@@ -366,7 +331,6 @@ export const store = new Vuex.Store({
 					.then(res => {
 						// console.log('getUserProfile', res)
 						commit('setCurrentUserProfile', res.data)
-						dispatch('setSessionStorage');
 						resolve(res)
 					}).catch(error => {
 						console.log(error);
@@ -539,7 +503,6 @@ export const store = new Vuex.Store({
 				.then(res => {
 					// console.log('tools', res)
 					commit('setUserTools', res.data)
-					dispatch('setSessionStorage')
 					resolve(res)
 				}).catch(error => {
 					reject(error)
@@ -671,6 +634,7 @@ export const store = new Vuex.Store({
 		getProfilePosts({commit, state}, payload) {
 			// console.log('disptaching getProfilePosts', state.idToken)
 			return new Promise((resolve, reject) => {
+
 				firebaseAxios.get("/posts/" + payload.profileId + ".json" + '?auth=' + state.idToken)
 					.then(res => {
 						// console.log('posts', res)
