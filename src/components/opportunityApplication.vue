@@ -17,7 +17,7 @@
 <script>
 import modal from './modal';
 import oppAxios from '../axios-opportunities.js';
-// import axios from 'axios';
+import axios from 'axios';
 import opportunityApplicationSubmission from './opportunityApplicationSubmission';
 import opportunityApplicationSuccess from './opportunityApplicationSuccess';
 
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
   	createApplication: function() {
-  		oppAxios.post(`/opportunities/${this.opp.id}/opportunity_applications.json`, {
+  		oppAxios.post(`opportunities/${this.opp.id}/opportunity_applications.json`, {
   			idToken: this.$store.getters.currentUser.idToken,
   			opportunity_application: this.profile
   		}).then(res => {

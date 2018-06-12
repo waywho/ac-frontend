@@ -44,19 +44,13 @@ export default {
   	onSignIn: function(){
       this.messageShow = false
   		this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
-        .then(() => {},
+        .then(res => {
+          this.$router.push({name: 'profiles', params: { id: res.uid }})
+          this.$emit('close')
+        },
           error => {
             this.messageShow = true
           })
-  	}
-  },
-  watch: {
-  	user (value) {
-  		if (value !== null && value !== undefined) {
-  			console.log(value)
-  			this.$router.push({name: 'profiles', params: { id: value.id }})
-  			this.$emit('close')
-  		}
   	}
   }
 }

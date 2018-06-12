@@ -66,7 +66,8 @@
 import currentUserMixin from '../mixins/currentUserMixin';
 import avatarMixin from '../mixins/avatarMixin';
 import message from './message';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
 import _ from 'lodash';
 
 export default {
@@ -241,6 +242,11 @@ export default {
   							this.currentChatThread.push(newThread)
   							this.inputMessage = ""
   						}
+  					}).then(res => {
+  						databaseRef.child('threads').child(this.currentChat.id).once('value', snapshot => {
+  							 var chatThread = snapshot.val();
+  							this.currentChatThread = _.orderBy(Object.values(chatThread), ['timestamp'], ['asc'])
+  						})
   					})
   					
   				}
@@ -332,7 +338,7 @@ export default {
   		let changedChat = childSnapshot.val()
   		changedChat.id = childSnapshot.key
   		changedChat.status = "changed-chat"
-  		// console.log('changed chat', changedChat)
+  		console.log('changed chat', changedChat)
 		let oldChat = this.chats.filter((chat, index) => {
   			return chat.id.match(childSnapshot.key)
   		})[0]

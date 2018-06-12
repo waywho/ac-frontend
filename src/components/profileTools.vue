@@ -53,13 +53,13 @@ export default {
         { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
         { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
-        { name: 'Opportunity', component: 'opportunity', icon: 'fa-calendar'}
+        { name: 'Opportunity', component: 'opportunity', icon: 'fa-address-book-o'}
       ],
       tools: {
         'calendar': { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
         'media': { name: 'Media', component: 'media', icon: 'fa-play-circle' },
         'portfolio': { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' },
-        'opportunity': { name: 'Opportunity', component: 'opportunity', icon: 'fa-play-circle' },
+        'opportunity': { name: 'Opportunity', component: 'opportunity', icon: 'fa-address-book-o' },
         'ticket': { name: 'Ticket', component: 'ticket', icon: 'fa-ticket' }
       }
     }

@@ -2,11 +2,11 @@
   <div class="seasons row">
       <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 title-row row">
         <ul v-for="(season, key) in profileSeasons" class="season-list">
-          <li><span class="selection selection-text-vertical">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button" @click="seasonEdit(season, key)">edit</span></li>
+          <li class="season-list-li"><span class="selection selection-text-vertical">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
         </ul>
         <div class="season-heading"> 
           <h2 class="inline-header">Company Seasons</h2>
-          <span v-if="authorizedUser" class="smaller text-button" @click="seasonAdd">add</span>
+          <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonAdd">add</span>
          
         </div>
       </div>
@@ -113,6 +113,7 @@ export default {
   flex-direction: column;
   justify-content: flex-end;
   min-height: 100px;
+  margin-right: 10px;
 }
 
 .inline-header {
@@ -173,6 +174,14 @@ export default {
 .production-title h3 {
   margin-top: 0px;
   margin-bottom: 10px;
+}
+
+.season-edit {
+  visibility: hidden;
+}
+
+.season-heading:hover .season-edit, .season-list-li:hover .season-edit {
+  visibility: visible;
 }
 
 @media screen and (max-width: 46rem) {
