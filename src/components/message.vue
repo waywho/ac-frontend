@@ -2,9 +2,9 @@
   <div class="message-container">
   	<div :class="getPosition">
   		<div class="message-text smaller">
-  		{{ message.text }}
+  		{{ message.content || message.lastMessage }}
   		</div>
-  		<span class="smaller">{{ message.timestamp | moment("MM/DD/YYYY hh:mm")}}</span>
+  		<span class="smaller">{{ dateObject | moment("MM/DD/YYYY hh:mm")}}</span>
   	</div>
   </div>
 </template>
@@ -24,8 +24,11 @@ export default {
     }
   },
   computed: {
+    dateObject: function() {
+      return new Date(this.message.timestamp)
+    },
   	getPosition() {
-  		if (this.message.sender === this.$store.state.profiles['companyXYZ'].username) {
+  		if (this.message.sender === this.$store.getters.profile.details.name) {
   			return 'my message'
   		} else {
   			return 'message'

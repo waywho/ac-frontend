@@ -1,11 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/auth';
+import 'firebase/storage';
 // import authAxios from '../axios-auth.js';
 import firebaseAxios from '../axios-firebase.js';
 import router from '../router';
 import cryptoRandomstring from 'crypto-random-string';
 const cryptoRandomString = require('crypto-random-string');
+import oppAxios from '../axios-opportunities.js';
+import axios from 'axios';
+import _ from 'lodash';
 
 Vue.use(Vuex);
 
@@ -152,7 +158,7 @@ export const store = new Vuex.Store({
 			// 	email: payload.email,
 			// 	password: payload.password
 			// }).then(res => {
-			// 	// consoel.log(res)
+			// 	// console.log(res)
 			// 	const newUser = {
 			// 		token: res.data.idToken,
 			// 		userId: res.data.localId
@@ -167,10 +173,11 @@ export const store = new Vuex.Store({
 			return new Promise((resolve, reject) => {
 				firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
 					.then(
-						user => {
+						cred => {
 							// console.log('current user', firebase.auth().currentUser)
-							// console.log('sign in', user)
-							user.getIdToken(true).then(idToken => {
+							console.log('sign in', cred.user)
+							console.log('sign in', cred.user.idToken)
+							cred.user.getIdToken(true).then(idToken => {
 								// console.log('signed in token', idToken)
 								// set token expiry at 24 hours from now
 								const now = new Date()
@@ -178,8 +185,8 @@ export const store = new Vuex.Store({
 
 								const newUser = {
 									idToken: idToken,
-									userId: user.uid,
-									userEmail: user.email,
+									userId: cred.user.uid,
+									userEmail: cred.user.email,
 									expires: expirationDate
 								}
 								// set token expiry at 24 hours from now
@@ -189,7 +196,7 @@ export const store = new Vuex.Store({
 								dispatch('getUserTools', newUser);
 								dispatch('setRefreshTokenTimer', 3550)
 								dispatch('setSignoutTimer', 86400)
-								resolve(user)
+								resolve(cred.user)
 								// dispatch('setSessionStorage'); // being called at get User
 							})
 
@@ -197,7 +204,7 @@ export const store = new Vuex.Store({
 					})
 				.catch(
 					error => {
-						// console.log(error)
+						console.log(error)
 						commit('setMessage', {
 								message: error.message,
 								messageType: 'warning'
@@ -312,6 +319,8 @@ export const store = new Vuex.Store({
 					var data = {
 						['profiles/' + payload.userId + '/' + dataKey]: payload.data[dataKey],
 						['users/' + payload.userId + '/name']: payload.data.details.name,
+						['users/' + payload.userId + '/firstName']: payload.data.details.name.toLowerCase().slice(0, payload.data.details.name.lastIndexOf(" ")).trim(),
+						['users/' + payload.userId + '/lastName']: payload.data.details.name.toLowerCase().split(" ").pop().trim(),
 						['users/' + payload.userId + '/city']: payload.data.details.city,
 						['users/' + payload.userId + '/country']: payload.data.details.country,
 						['users/' + payload.userId + '/roleType']: payload.data.details.companyType !== null && payload.data.details.companyType !== undefined ? payload.data.details.companyType : payload.data.details.voiceType
@@ -366,8 +375,31 @@ export const store = new Vuex.Store({
 			})
 
 		},
+		saveProductionImage({commit, dispatch, state}, payload) {
+			console.log(payload.data)
+			
+			let imageName = payload.data.name
+			let ext = imageName.slice(imageName.lastIndexOf("."))
+
+			payload.data['auth'] = state.idToken
+			//add season name
+			return new Promise((resolve, reject) => {
+				firebase.storage().ref('users').child(state.userId + '/seasons/' + payload.seasonId + '/'+ payload.productionName + ext).put(payload.data)
+					.then(fileData => {
+						console.log(fileData)
+						fileData.ref.getDownloadURL().then(downloadURL => {
+							resolve({filepath: downloadURL})
+						})
+						
+					}).catch(error => {
+						console.log(error)
+						return reject(error)
+					})
+			})
+
+		},
 		saveProfileImages({commit, dispatch, state}, payload) {
-			// console.log(payload.data)
+			console.log(payload)
 			const filename = Object.keys(payload.data)[0]
 			// console.log(filename)
 			const imageName = payload.data[filename].name
@@ -375,37 +407,38 @@ export const store = new Vuex.Store({
 
 			// console.log(ext)
 
-			payload.data['auth'] = state.idToken
+			// payload.data['auth'] = state.idToken
 
 			return new Promise((resolve, reject) => {
-				firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
+				var uploadImageTask = firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
 					.then( fileData => {
-						let imageURL = fileData.metadata.downloadURLs[0]
-						
-						if(filename === 'avatar') {
-							var userImage = {
-								['profiles/' + payload.userId + '/' + filename + 'URL']: imageURL,
-								['users/' + payload.userId + '/' + filename + 'URL']: imageURL,
+						console.log(fileData)
+						fileData.ref.getDownloadURL().then(downloadURL => {
+							console.log(downloadURL)
+							let imageURL = downloadURL
+							var userImage
+							if(filename === 'avatar') {
+								userImage = {
+									['profiles/' + payload.userId + '/' + filename + 'URL']: imageURL,
+									['users/' + payload.userId + '/' + filename + 'URL']: imageURL,
+								}
+							} else {
+								userImage = { ['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL }
 							}
-						} else {
-							var userImage = { ['profiles' + '/' + payload.userId + '/' + filename + 'URL']: imageURL }
-						}
-						
-						// console.log(dataURL)
-						firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
-							.then(res => {
+
+							firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
+								.then(res => {
 									console.log('imageURL', res)
 									dispatch('getUserProfile', {'userId': state.userId})
-								}
-							).catch(error => {
-								return reject(error)
-								console.log(error)
-							})
+								}).catch(error => {
+									console.log(error)
+								 	return reject(error)
+								})
+						})
 					}).catch(error => {
 						reject(error)
-						console.log(error)
-						}
-					)
+						return console.log(error)
+					})
 			})
 		},
 		createUserTools({commit, dispatch, state}, payload) {
@@ -596,7 +629,10 @@ export const store = new Vuex.Store({
 								imagePromises.push(
 									imageRef.put(imageFile).then(fileData => {
 										// console.log(fileData)
-										return fileData.metadata.downloadURLs[0]
+										fileData.ref.getDownloadURL().then(downloadURL => {
+											return downloadURL
+										})
+										
 									})
 								)
 								
@@ -644,6 +680,167 @@ export const store = new Vuex.Store({
 						console.log(error)
 					})
 			})
+		},
+		postOpportunity({commit, state}, payload) {
+			return new Promise((resolve, reject) => {
+				oppAxios.post("/opportunities.json", 
+					payload)
+        		.then(res => {
+					resolve(res)
+				}).catch(error => {
+					reject(error)
+					console.log(error)
+				})
+			})
+		},
+		createSeason({commit, dispatch, state}, payload) {
+			console.log(payload)
+			let seasonRef = firebase.database().ref("seasons").child(state.userId)
+			let seasonKey = seasonRef.push().key
+			let databaseRef = firebase.database().ref();
+
+			let seasonUpdates = {
+				['seasons/' + state.userId + '/' + seasonKey]: payload.season,
+				['profiles/' + state.userId + '/seasons/'+ seasonKey ]: payload.season
+			}
+
+			console.log(seasonUpdates)
+
+			return new Promise((resolve, reject) => {
+				let imagePromises = payload.productions.map(production => {
+		 		if(production.imageFile !== null && production.imageFile !== undefined) {
+			 			return dispatch('saveProductionImage', {seasonId: seasonKey, productionName: production.name, data: production.imageFile})
+			 				.then(res => {
+			 					console.log(res)
+			 					production.imageURL = res.filepath
+			 					delete production.imageFile
+			 					return production
+
+			 				}).catch(error => {
+			 					console.log(error)
+			 					return error
+			 				})
+			 		} else {
+			 				delete production.imageFile
+			 				return production
+			 		}
+			 		
+		 		})
+
+			 	Promise.all(imagePromises).then(res => {
+			 		console.log(res)
+			 		seasonUpdates['seasons/' + state.userId + '/' + seasonKey]['productions'] = res
+					seasonUpdates['profiles/' + state.userId + '/seasons/'+ seasonKey ]['productions'] = res
+			 		
+			 		let calendarEvents = res.map(production => {
+						return production.dates.map(productionDate => {
+							return { 
+								date: productionDate.date,
+					            start: productionDate.time,
+					            end: '',
+					            title:  production.name,
+					            location: '',
+					            desc: production.description,
+					            type: 'production'	
+        					}
+						})
+			 		})
+
+			 		calendarEvents = _.flatten(calendarEvents)
+
+			 		let calendarData = {
+						['toolsPublic/' + state.userId + '/calendar']: calendarEvents,
+						['toolsAuthorized/' + state.userId + '/calendar']: calendarEvents
+					}
+			 		
+					let fullData = Object.assign(seasonUpdates, calendarData)
+			 		console.log('events', calendarEvents)
+			 		console.log('calendar data', calendarData)
+			 		console.log('full data', fullData)
+			 		console.log('after production update', seasonUpdates)
+
+			 		databaseRef.update(fullData, error => {
+						if(error) {
+							console.log(error)
+							reject(error)
+						} else {
+							console.log(seasonUpdates)
+							resolve(seasonUpdates['seasons/' + state.userId + '/' + seasonKey])
+						}
+			 		})
+			 	})
+			})
+		 	
+	 		
+
+		},
+		getSeason({commit, state}, payload) {
+			return new Promise((resolve, reject) => {
+				firebaseAxios.get('seasons/' + state.userId + '.json')
+				 .then(res => {
+				 	resolve(res)
+				 }).catch(error => {
+				 	reject(error)
+				 	console.log(error)
+				 })
+			})
+		},
+		updateSeason({commit, state}, payload) {
+			let databaseRef = firebase.database().ref();
+			let seasonUpdates = {}
+
+			for(var key in payload.season) {
+				seasonUpdates['seasons/' + state.userId + '/' + payload.seasonId + '/' + key ] = payload.season[key]
+				seasonUpdates['profiles/' + state.userId + '/seasons/' + payload.seasonId + '/' + key] = payload.season[key]
+			}
+
+			console.log(seasonUpdates)
+
+			return new Promise((resolve, reject) => {
+				databaseRef.update(seasonUpdates).then(error => {
+					if(error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve()
+					}
+				})
+				
+			})
+		},
+		updateProduction({commit, dispatch, state}, payload) {
+			let databaseRef = firebase.database().ref();
+			let seasonUpdates = {
+				['seasons/' + state.userId + '/' + payload.seasonId  + '/productions/' + payload.productionIndex]: payload.production,
+				['profiles/' + state.userId + '/seasons/' + payload.seasonId + '/productions/' + payload.productionIndex]: payload.production
+			}
+
+			if (payload.production.imageFile) {
+				dispatch('saveProductionImage', {seasonId: payload.seasonId, productionName: payload.production.name, data: payload.production.imageFile})
+	 				.then(res => {
+	 					console.log(res)
+	 					for(var key in seasonUpdates) {
+	 						delete seasonUpdates[key].imageFile
+	 						seasonUpdates[key].imageURL = res.filepath
+	 					}
+
+	 				}).catch(error => {
+	 					console.log(error)
+	 					return error
+	 				})
+			}
+
+			return new Promise((resolve, reject) => {
+				databaseRef.update(seasonUpdates).then(error => {
+					if(error) {
+						console.log(error)
+						reject(error)
+					} else {
+						resolve()
+					}
+				})
+				
+			})
 		}
 	},
 	getters: {
@@ -690,315 +887,76 @@ export const store = new Vuex.Store({
 				contentFR: ""
 			}
 		},
-		conversations: {
-			"AlyssaID": {	created: Date.now(),
-				sender: 'Alyssa',
-				lastMessage: 'How are you?'
-			}, 
-			"JohnID": {	
-				created: Date.now(),
-				sender: 'John',
-				lastMessage: 'I just had the best news.'
-			}, 
-			"JamesID": {	
-				created: Date.now(),
-				sender: 'James',
-				lastMessage: 'Grand.'
-			}, 
-			"JaneID": {	
-				created: Date.now(),
-				sender: 'Jane',
-				lastMessage: 'And then?'
-			},
-			"EdwardID": {	
-				created: Date.now(),
-				sender: 'Edward',
-				lastMessage: 'And then?'
-			},
-			"GrantID": {	
-				created: Date.now(),
-				sender: 'Grant',
-				lastMessage: 'And then?'
-			}
-		},
-		users: {
-			"AlyssaID": {
-				name: "Allysia Johnson",
-				role: "Artistic Director",
-				img: require("../assets/images/Caitlin-McCaughey.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			}, 
-			"JohnID": {
-				name: "John Brian",
-				role: "Baritone",
-				img: require("../assets/images/Daevyd-Pepper.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			}, 
-			"JamesID": {
-				name: "James Dean",
-				role: "Conductor",
-				img: require("../assets/images/Brenden-Friesen.png"),
-				city: "Montreal",
-				province: "QC",
-				profileType: "artist"
-			}, 
-			"JaneID": {
-				name: "Jane Great",
-				role: "Project Coordinator",
-				img: require("../assets/images/Julie-Adams.png"),
-				city: "Winnipeg",
-				province: "MB",
-				profileType: "artist"
-			},
-			"EdwardId": {
-				name: "Edward Great",
-				role: "Project Coordinator",
-				img: require("../assets/images/Matthew-Dalen.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			},
-			"GrantID": {
-				name: "Grant Ferries",
-				role: "Project Coordinator",
-				img: require("../assets/images/Leanne-Kaufman.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "artist"
-			},
-			"JoelID": { 
-				name: "Joel Allison",
-				role: "Baritone",
-				img: require("../assets/images/Joel-Allison.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			},
-			"GeorgiaID": { 
-				name: "Georgia Burashko",
-				role: "Mezzo Soprano",
-				img: require("../assets/images/Georgia-Burashko.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "artist"
-			}, 
-			"DanielID": { name: "Daniel Thielman",
-				role: "Tenor",
-				img: require("../assets/images/Daniel-Thielman.png"),
-				city: "Edmonton",
-				province: "AB",
-				profileType: "artist"
-			}, //asdfasdfsad
-			"MyOperaID": {
-				name: "MyOpera",
-				role: "Artistic Director",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			}, 
-			"YourOperaID": {
-				name: "YourOpera",
-				role: "Baritone",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			}, 
-			"GreatOperaID": {
-				name: "Great Opera",
-				role: "Conductor",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Montreal",
-				province: "QC",
-				profileType: "company"
-			}, 
-			"MontrealOperaID": {
-				name: "Montreal Opera",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Winnipeg",
-				province: "MB",
-				profileType: "company"
-			},
-			"OperaInCupID": {
-				name: "Opera In a Cup",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			},
-			"OperaWorldID": {
-				name: "Opera World",
-				role: "Project Coordinator",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Vancouver",
-				province: "BC",
-				profileType: "company"
-			},
-			"TopOperaID": { 
-				name: "Top Opera",
-				role: "Baritone",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			},
-			"GOOperaID": { 
-				name: "Go Opera",
-				role: "Mezzo Soprano",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Toronto",
-				province: "ON",
-				profileType: "company"
-			}, 
-			"BritOperaID": { name: "Brit Opera",
-				role: "Tenor",
-				img: require("../assets/images/myopera-logo.png"),
-				city: "Edmonton",
-				province: "AB",
-				profileType: "company"
-			}
-		},
-		messages: {
-			"AlyssaID": {
-				"m1": {
-					sender: "Alyssa",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I have a job for you.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Alyssa",
-					text: "Wonderful When?",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JohnID": {
-				"m1": {
-					sender: "John",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "Thanks for your ,application",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "John",
-					text: "Welcome. When is the audition?",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JamesID": {
-				"m1": {
-					sender: "James",
-					text: "Okay. Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I need more info about you.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "James",
-					text: "Ok, I can send it over.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Can you send today please?",
-					timestamp: 1459361875360,
-				}
-			},
-			"JaneID": {
-				"m1": {
-					sender: "Jane",
-					text: "I am great! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "I am sorry but we need more.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Jane",
-					text: "I can definitely do that.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"EdwardID": {
-				"m1": {
-					sender: "Edward",
-					text: "I would like to audition",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "When would you like to come in?",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Edward",
-					text: "What about tomorrow",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, can you get here by 5pm?",
-					timestamp: 1459361875360,
-				}
-			},
-			"GrantID": {
-				"m1": {
-					sender: "Grant",
-					text: "I am wonderful! Thanks",
-					timestamp: 1459361875337,
-				},
-				"m2": {
-					sender: "MyOpera",
-					text: "That is great news.",
-					timestamp: 1459361875340,
-				},
-				"m3": {
-					sender: "Grant",
-					text: "I can definitely do that.",
-					timestamp: 1459361875345,
-				},
-				"m4": {
-					sender: "MyOpera",
-					text: "Today, when can you get here?",
-					timestamp: 1459361875360,
-				}
-			}
-		}
+		opportunityTypes: [
+			'competitions', 
+			'general auditions', 
+			'young artist programms', 
+			'chorus', 
+			'orchestra', 
+			'training programms', 
+			'collaborations', 
+			'job offers'
+		],
+    	categorySubcategories: {
+    		'singers/actors': [
+    			'soprano',
+    			'mezzo-soprano',
+    			'alto & contralto',
+    			'countertenor',
+    			'tenor',
+    			'baritone',
+    			'bass & bass-baritone',
+				'backing vocals',
+				'chorus',
+				'actors',
+				'extras & silent roles',
+				'other'
+    		],
+    		'instruments': [
+				'piano',
+				'harpsichord',
+				'organ',
+				'other keyboards',
+				'strings',
+				'violin',
+				'viola ',
+				'cello',
+				'double bass',
+				'harp',
+				'guitar',
+				'bass',
+				'other strings',
+				'flute',
+				'oboe',
+				'clarinet',
+				'bassoon',
+				'trumpet',
+				'trombone',
+				'french horn',
+				'bass trombone',
+				'tuba',
+				'saxophone',
+				'drums',
+				'timpani',
+				'other percussions',
+				'other instruments'
+	   		],
+    		'administration, production & other': [
+    			'agent',
+				'teacher',
+				'conductor',
+				'musicologist',
+				'production',
+				'administration',
+				'other'
+    		]
+    	},
+    	paymentTypes: [
+    		'paid',
+    		'unpaid',
+    		'pay to play or sing',
+    		'prize money'
+    	]
 
 	}
 })

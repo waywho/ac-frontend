@@ -19,8 +19,7 @@ html, body {
   	background-color: #f9f9f9;
   	line-height: $base-line;
   	overflow-x: hidden;
-  	position: fixed;
-  	transition: left 0.8s ease-in-out;
+  	-webkit-overflow-scrolling: touch;
   	left: 0px;
 }
 
@@ -64,6 +63,10 @@ div {
 	color: $color-darkgray;
 }
 
+.is-midgray {
+	color: $color-midgray;
+}
+
 .is-lightgray {
 	color: $color-lightgray;
 }
@@ -81,99 +84,60 @@ div {
 }
 
 .avatar-border {
-  height: 45px;
-  width: 45px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
+	border-radius: 50%;
+	border: solid 3px $color-gold;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
 }
 
-.avatar-large-border {
-  height: 119px;
-  width: 119px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
-}
-
-.avatar-medium-border {
-  height: 98px;
-  width: 98px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
-}
-
-.avatar-small-border {
-  height: 35px;
-  width: 35px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
-}
-
-.avatar-smaller-border {
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  border: solid 3px $color-gold;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
+.avatar-border-thicker {
+	border-radius: 50%;
+	border: solid 5px $color-gold;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
 }
 
 .avatar {
-  height: 45px;
-  width: 45px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
+}
+
+.avatar img, .avatar-border img {
+	border-radius: 50%;
+}
+
+
+.avatar-larger {
+	height: 119px;
+	width: 119px;
 }
 
 .avatar-large {
-  height: 119px;
-  width: 119px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
+	height: 98px;
+	width: 98px;
 }
 
 .avatar-medium {
-  height: 98px;
-  width: 98px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
+	height: 41px;
+	width: 41px;
 }
 
 .avatar-small {
-  height: 35px;
-  width: 35px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
+	height: 35px;
+	width: 35px;
 }
 
 
 .avatar-smaller {
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  margin: 0 auto;
+	height: 25px;
+	width: 25px;
 }
 
 .note-avatar {
@@ -190,16 +154,26 @@ div {
 	color: $color-gold;
 }
 
+.text-button {
+	font-weight: 500;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+.text-button:hover {
+	color: $color-gold;
+}
+
 
 button,
 .button {
 	color: white;
 	background-color: $color-gold;
-	border-radius: 0px;
+	border-radius: 10px;
 	min-height: 30px;
 	min-width: 70px;
-	padding: 5px;
-	font-weight: normal;
+	padding: 3px 10px;
+	font-weight: 700;
 	text-decoration: none;
 	cursor: pointer;
 	display: inline-block;
@@ -248,11 +222,12 @@ button[disabled="disabled"] {
 	min-width: 120px;
 	text-align: center;
 	cursor: pointer;
+	transition: font-size 0.1s ease-out;
 }
 
 .selection-text-vertical {
-	margin-bottom: 15px;
-	margin-right: 15px;
+	margin-bottom: 8px;
+	margin-right: 8px;
 	height: 28px;
 	line-height: 28px;
 	display: block;
@@ -261,6 +236,7 @@ button[disabled="disabled"] {
   	width: -moz-fit-content;
   	width: fit-content;
   	white-space: nowrap;
+  	transition: font-size 0.1s ease-out;
 }
 
 .selection-icon-horizontal {
@@ -275,17 +251,26 @@ button[disabled="disabled"] {
 	width: -webkit-fit-content;
 	width: -moz-fit-content;
 	width: fit-content;
+	transition: font-size 0.1s ease-out;
 }
 
 .selection-text-vertical:hover {
 	color: $color-gold;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 18px;
 }
 
 .selection-text-horizontal:hover {
 	color: $color-gold;
-	font-size: 20px;
+	font-size: 18px;
+	height: 22px;
+	line-height: 22px;
+}
+
+.selection-text-active {
+	color: $color-gold;
+	font-size: 18px;
+	font-weight: bold;
 	height: 24px;
 	line-height: 24px;
 }
@@ -452,10 +437,21 @@ input:checked + .slider:before {
 	margin: 0px 6px 0px;
 }
 
+//tool box and panels
+
 .icon-container:hover, .icon-container:hover .icon, .icon:hover,
 .toolbox-tile:hover, .toolbox-tile:hover .tool-icon, .tool-icon:hover  {
 	background-color: $color-gold;
 	color: white;
+}
+
+#tool-panel-flow {
+  padding-left: 100px;
+  overflow-y: auto;
+}
+
+.tool-panel-left-padding {
+  padding-left: 100px;
 }
 
 
@@ -567,8 +563,90 @@ input:checked + .slider:before {
 	margin-top: 0px;
 }
 
+.loading-spinner {
+	margin-top: 25px;
+	color: $color-gold;
+	visibility: visible;
+	font-size:90px;
+}
 
-@media screen and (max-width: 46rem) {
+.fade-quick-enter-active, .fade-quick-leave-active {
+	transition: opacity 0.05s linear;
+}
+
+.fade-quick-enter, .fade-quick-leave-to {
+	opacity: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+	transition: opacity 0.2s ease;
+}
+
+.fade-enter, .fade-leave-to {
+	opacity: 0;
+}
+
+
+.fade-long-enter-active, .fade-long-leave-active {
+	transition: opacity 0.7s ease;
+}
+
+.fade-long-enter, .fade-long-leave-to {
+	opacity: 0;
+}
+
+.post-text {
+	white-space: pre-wrap;
+}
+
+//candidate tile
+
+.candidates-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.candidate-details {
+  flex-grow: 2;
+  margin-left: 15px;
+}
+
+.auditionee-details {
+  	text-align: center;
+}
+
+.candidate-tile {
+	background-color: #f7f4f4;
+	min-height: 70px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 7px;
+	margin-right: 8px;
+	flex-basis: 48%;
+	flex-grow: 1;
+	padding: 10px 15px 10px 10px;
+}
+
+.candidate-tile:hover {
+  background-color: #cd9d2b;
+  color: white;
+}
+
+.candidate-tile:hover a, .candidate-tile a:hover {
+	color: white;
+}
+
+.close-button {
+	cursor: pointer;
+	position: absolute;
+	top: 50px;
+	right: 50px;
+}
+
+@media screen and (max-width: 48rem) {
 	ul {
 		-webkit-padding-start: 0px;
 		-webkit-margin-before: 0px;

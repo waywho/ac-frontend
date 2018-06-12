@@ -1,13 +1,14 @@
 export default {
   methods: {
-    isEmpty(object) {
-        for(var key in obj) {
-          if(obj[key]) {
-            return false
+    anyEmpty(object) {
+        for(var key in object) {
+          if(object[key]) {
+            continue;
+          } else { 
+            return true 
             break;
           }
         }
-        return true
      },
     requiredField(field) {
     	if(field) {

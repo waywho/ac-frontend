@@ -276,6 +276,11 @@ div.desc {
         margin-right: 8px;
     }
 }
+
+.button-right-margin {
+    margin-right: 8px;
+}
+
 form,
 .form-item, {
     margin-bottom: 2rem;
@@ -299,7 +304,8 @@ form,
 .form-inline {
     & input,
     & textarea,
-    & select {
+    & select,
+    & label {
         display: inline-block;
         width: auto;
     }

@@ -9,11 +9,16 @@
       <li class="search" id="search-element">
         <input v-on:keyup.enter="searchResults($event.target.value)" type="search" id="search" class="small" placeholder="search profiles" />
       </li>
-      <li v-if="signedIn" class="header-avatar" v-on:click="notificationActive = !notificationActive">
-        <app-notificationBubble v-if="!notificationActive" class="notification-bubble"></app-notificationBubble>
-        <div class="avatar avatar-small-border avatar-space" >
-            <img :src="currentUserAvatar" class="user-avatar" />
-        </div>
+      <li class="notification-icon" v-on:click="notificationActive = !notificationActive">
+        <app-notification-bubble v-if="!notificationActive" class="notification-bubble"></app-notification-bubble>
+        <i class="fa fa-bell-o" aria-hidden="true"></i>
+      </li>
+      <li v-if="signedIn" class="header-avatar">
+        <router-link :to="'/profiles/' + this.profileId">
+          <div class="avatar-border avatar-small avatar-space" >
+              <img :src="currentUserAvatar" alt="user avatar" />
+          </div>
+        </router-link>
       </li>
       <li v-if="!signedIn" class='avatar-space sign-in-item' id="show-modal" v-on:click="showSignIn()">Sign in</li>
 
@@ -39,10 +44,11 @@ import currentUser from '../mixins/currentUserMixin';
 export default {
   components: {
     'app-notifications': notifications,
-    'app-notificationBubble': notificationBubble
+    'app-notification-bubble': notificationBubble
   },
   props: {
-    isActive: Boolean
+    isActive: Boolean,
+    profileId: String
   },
   mixins: [menuMixin, clickaway, currentUser],
   data() {
@@ -81,6 +87,7 @@ export default {
   width: 100%;
   height: $header-height;
   transition: top 0.2s ease-in-out, left 1s ease-in-out;
+  -webkit-transition: top 0.2s ease-in-out, left 1s ease-in-out;
 }
 
 .header-inner {
@@ -115,11 +122,25 @@ export default {
   cursor: pointer;
 }
 
+.notification-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: $color-gold;
+  color: white;
+  margin-left: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
 .notification-bubble {
   position: absolute;
   z-index: 9990;
-  top: -8px;
-  right: 20px;
+  top: -10px;
+  right: -10px;
 }
 
 .logo img {
@@ -129,10 +150,6 @@ export default {
 
 .avatar-space {
     margin: 0px 30px 0px 30px;
-}
-
-.user-avatar {
-    z-index: -1;
 }
 
 .avatar img {
@@ -168,7 +185,7 @@ export default {
   background-color: $color-tile;
   width: 237px;
   position: absolute;
-  right: 160px;
+  right: 225px;
   top: 90px;
   padding: 30px 0.5rem;
 }

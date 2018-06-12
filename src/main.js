@@ -11,24 +11,38 @@ import 'chart.js'
 import VueMediaEmbed from 'vue-media-embed'
 import 'hchs-vue-charts'
 import Vuex from 'vuex'
-import * as firebase from 'firebase'
+import firebase from 'firebase'
+import 'firebase/database'
+import 'firebase/auth'
+import 'firebase/storage'
+import VueChatScroll from 'vue-chat-scroll';
 
-
-Vue.use(VueMediaEmbed, { store })
+Vue.use(VueMediaEmbed, { store });
 Vue.use(VueCharts);
 Vue.use(vueEventCalendar, { locale: 'en'});
 Vue.use(require('vue-moment'));
-
+Vue.use(firebase);
+Vue.use(VueChatScroll);
 
 Vue.config.productionTip = false
-
-
 
 Vue.filter('to-uppercase', function(value) {
 	if (value !== null && value !== undefined) {
     return value.toUpperCase()
   } else {
     return ''
+  }
+})
+
+Vue.filter('imageProcess', function(value, type) {
+  let imageURLs = {
+    'avatar': require("./assets/images/avatar-holder.png"),
+    'season': require("./assets/images/seasonicon.png")
+  }
+  if (value !== null && value !== undefined) {
+    return value
+  } else {
+    return imageURLs[type]
   }
 })
 
@@ -40,11 +54,27 @@ Vue.filter('capitalize', function (value) {
 
 Vue.filter('camel-to-space', function (value) {
   if (value !== null && value !== undefined) {
+    value = value.split("-").join(" ");
+    return value.charAt(0).toUpperCase() + value.slice(1)
+  } else {
+    return ''
+  }
+})
+
+Vue.filter('kabab-to-space', function (value) {
+  if (value !== null && value !== undefined) {
     value = value.replace(/([A-Z])/g, " $1");
     return value.charAt(0).toUpperCase() + value.slice(1)
   } else {
     return ''
   }
+})
+
+Vue.filter('truncate', function (value, length) {
+  length = length || 15
+  if( !value || typeof value !== 'string') return ''
+    if( value.length <= length) return value
+      return value.substring(0, length) + '...'
 })
 
 /* eslint-disable no-new */
