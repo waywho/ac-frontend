@@ -11,16 +11,16 @@
 </template>
 
 <script>
-import menu from './components/menu'
-import header from '@/components/layout/header'
-import footer from '@/components/layout/footer'
-import showProfile from './components/showProfile'
+import menu from '@/components/layouts/menu'
+import header from '@/components/layouts/header'
+import footer from '@/components/layouts/footer'
+import showProfile from '@/components/showProfile'
 import signUp from '@/components/auth/signUp'
-import searchResults from './components/searchResults'
-import landing from './components/landing'
+import searchResults from '@/components/searchResults'
+import landing from '@/components/static_pages/landing'
 import signIn from '@/components/auth/signInModal'
-import pageStatic from './components/pageStatic'
-import currentUser from './mixins/currentUserMixin';
+import pageStatic from '@/components/static_pages/pageStatic'
+import currentUser from '@/mixins/currentUserMixin';
 
 export default {
   name: 'app',

@@ -1,11 +1,7 @@
 <template>
 	<div class="">
-		<div class="icon-container" v-if="step === 'next'">
-			<i class="fa fa-chevron-right is-golden icon" aria-hidden="true"></i>
-		</div>
-		<div class="icon-container" v-if="step === 'last'">
-			<i class="fa fa-chevron-left is-golden icon" aria-hidden="true"></i>
-		</div>
+		<i v-if="step === 'next' class="fa fa-chevron-circle-right is-golden icon" aria-hidden="true"></i>
+		<i v-if="step === 'last' class="fa fa-chevron-circle-left is-golden icon" aria-hidden="true"></i>
 	</div>
 </template>
 
@@ -27,10 +23,5 @@ export default {
 <style scoped>
 .next-step {
 	display: inline-block;
-}
-
-.icon-container {
-	height: 38px;
-	width: 38px;
 }
 </style>

@@ -10,14 +10,14 @@
 </template>
 
 <script>
-import calendar from './toolCalendar';
-import opportunityTool from './toolOpportunity'
-import settingsTool from './toolSettings';
-import messageTool from './toolMessage';
-import mediaTool from './toolMedia';
-import ticketTool from './toolTicket';
-import portfolioTool from './toolPortfolio';
-import currentUser from '../mixins/currentUserMixin';
+import calendar from '@/components/calendars/toolCalendar';
+import opportunityTool from '@/components/opportunities/toolOpportunity'
+import settingsTool from '@/components/toolSettings';
+import messageTool from '@/components/messages/toolMessage';
+import mediaTool from '@/components/medias/toolMedia';
+import ticketTool from '@/components/toolTicket';
+import portfolioTool from '@/components/portfolios/toolPortfolio';
+import currentUser from '@/mixins/currentUserMixin';
 import firebaseAxios from '@/axios/axios-firebase.js';
 
 export default {

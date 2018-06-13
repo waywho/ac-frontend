@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import seasonForm from './seasonForm'
+import seasonForm from '@/components/seasons/seasonForm'
 import productionDetails from './productionDetails'
 import currentUser from '../mixins/currentUserMixin';
 

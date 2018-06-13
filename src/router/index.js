@@ -2,11 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import showProfile from '@/components/showProfile'
 import searchResults from '@/components/searchResults'
-import landing from '@/components/landing'
-import membershipDetails from '@/components/membershipDetails'
-import pageStatic from '@/components/pageStatic'
+import landing from '@/components/static_pages/landing'
+import membershipDetails from '@/components/static_pages/membershipDetails'
+import pageStatic from '@/components/static_pages/pageStatic'
 import { store } from '@/store/store/'
-import opportunityBoard from '@/components/opportunityBoard'
+import opportunityBoard from '@/components/opportunities/opportunityBoard'
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
