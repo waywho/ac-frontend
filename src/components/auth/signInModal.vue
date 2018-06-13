@@ -1,6 +1,6 @@
 <template>
   <modal @close="$emit('close')">
-  	<img slot='header' src='../assets/images/artistcenter-logo2.svg' alt="operaop logo" class="logo-image" />
+  	<img slot='header' src='../../assets/images/artistcenter-logo2.svg' alt="operaop logo" class="logo-image" />
   	<h3 slot='header' class='signin-heading'>Sign in.</h3>
   	<form slot='body' class="signin-form" @submit.prevent="onSignIn">
   		<input  type="text" placeholder="email" class='form-element' v-model="email" />
@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import modal from './modal';
-import successWarningNotice from './successWarningNotice'; 
+import modal from '@/components/modal';
+import successWarningNotice from '@/components/successWarningNotice'; 
 
 export default {
   name: 'signIn',
@@ -58,7 +58,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import '../styles/style-variables';
+@import '../../styles/style-variables';
 
 .logo-image {
 	max-width: 329px;

@@ -18,7 +18,7 @@ import mediaTool from './toolMedia';
 import ticketTool from './toolTicket';
 import portfolioTool from './toolPortfolio';
 import currentUser from '../mixins/currentUserMixin';
-import firebaseAxios from '../axios-firebase.js';
+import firebaseAxios from '@/axios/axios-firebase.js';
 
 export default {
   name: 'tools',

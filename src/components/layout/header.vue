@@ -95,28 +95,32 @@ export default {
     }    
   },
   created() {
-    var notificationRef = firebase.database().ref('notifications').child(this.profileId)
+    if(this.authorizedUser) {
+      var notificationRef = firebase.database().ref('notifications').child(this.profileId)
 
-    if(this.lastKey) {
-      notificationRef.orderByKey().startAt(this.lastKey).on('child_added', snapshot => {
-        this.notificationAlert = true
-      })
-    } else {
-      firebase.database().ref('notificationViews').child(this.profileId).once("value", snapshot => {
-        this.lastKey = snapshot.val()
-        console.log(this.lastKey)
-        if(!snapshot.val()) {
-          notificationRef.orderByChild('created').startAt(Date.now()).on('child_added', snapshot => {
-           this.notificationAlert = true
-          })
-        } else {
-          notificationRef.orderByKey().startAt(this.lastKey).on('child_added', snapshot => {
-            this.notificationAlert = true
-          })
-        }
-        
-      })
+      if(this.lastKey) {
+        notificationRef.orderByKey().startAt(this.lastKey).on('child_added', snapshot => {
+          this.notificationAlert = true
+        })
+      } else {
+        firebase.database().ref('notificationViews').child(this.profileId).once("value", snapshot => {
+          this.lastKey = snapshot.val()
+          console.log(this.lastKey)
+          if(!snapshot.val()) {
+            notificationRef.orderByChild('created').startAt(Date.now()).on('child_added', snapshot => {
+             this.notificationAlert = true
+            })
+          } else {
+            notificationRef.orderByKey().startAt(this.lastKey).on('child_added', snapshot => {
+              this.notificationAlert = true
+            })
+          }
+          
+        })
+      }
     }
+  
+
     
   }
 }

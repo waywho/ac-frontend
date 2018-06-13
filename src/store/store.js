@@ -5,11 +5,11 @@ import 'firebase/database';
 import 'firebase/auth';
 import 'firebase/storage';
 // import authAxios from '../axios-auth.js';
-import firebaseAxios from '../axios-firebase.js';
+import firebaseAxios from '@/axios/axios-firebase.js';
 import router from '../router';
 import cryptoRandomstring from 'crypto-random-string';
 const cryptoRandomString = require('crypto-random-string');
-import oppAxios from '../axios-opportunities.js';
+import oppAxios from '@/axios/axios-opportunities.js';
 import axios from 'axios';
 import _ from 'lodash';
 
@@ -102,7 +102,7 @@ export const store = new Vuex.Store({
 						})
 					} else {
 						dispatch('signOut').then(() => {
-							router.push("/")
+							router.replace("/")
 						})
 						reject('signOut')
 						return 
@@ -203,7 +203,7 @@ export const store = new Vuex.Store({
 		tryAutoSignIn({commit, dispatch}) {
 			if (!localStorage.getItem('artistCenter')) {
 				dispatch('signOut').then(() => {
-					router.push("/")
+					router.replace("/")
 				})
 				return
 			}

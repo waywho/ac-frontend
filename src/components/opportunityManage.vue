@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import oppAxios from '../axios-opportunities.js';
+import oppAxios from '@/axios/axios-opportunities.js';
 
 export default {
   name: 'opportunityManage',

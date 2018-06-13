@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import oppAxios from '../axios-opportunities.js';
+import oppAxios from '@/axios/axios-opportunities.js';
 import opportunityList from './opportunityList';
 import opportunityFilter from './opportunityFilters';
 import countriesList from 'countries-list';

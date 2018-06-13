@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import signUpCredentials from './signUpCredentials'
+import signUpCredentials from '@/components/auth/signUpCredentials'
 
 export default {
   name: 'landing',

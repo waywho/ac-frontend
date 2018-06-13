@@ -2,16 +2,16 @@
   <div class="message-panel">
 	  	<div class="message-sidepanel">
 	  		<h2>Messages</h2>
-	  		<input type="text" id="sender-search" class="small" placeholder="search profiles" v-on:keydown.space="getUsers" v-on:keydown.enter="getUsers" v-model="userSearch" @input="hideChat" />
+	  		<input type="search" id="sender-search" class="small" placeholder="search profiles" v-on:keyup="getUsers" v-model="userSearch" @input="hideChat" />
 	  		<div class="senders-window">
-	  			<transition name="fade-quick" mode="out-in">
+	  			
 		  			<i v-if="chatsLoading" class="fa fa-circle-o-notch fa-spin loading-spinner" key="chatsLoading"></i>
 		  			
 		  			<div v-if="!chatsLoading">
 		  				<p v-if="!showChat && searchResultMessage" class="warning" key="resultsWarning"><small>{{searchResultMessage}}</small></p>
 			  			<div v-if="!showChat" v-for="(user, index) in userResults" class="sender" :key="user.id" v-on:click="startMessage(user)">
-			  				<div class="avatar-box">
-						      	<img :src="userAvatar(user.avatarURL)" class="avatar-small" />
+			  				<div class="avatar-box avatar avatar-small">
+						      	<img :src="userAvatar(user.avatarURL)"  />
 							</div>
 						    <div class="sender-name">
 						    	<b>{{ user.name}}</b><br />
@@ -20,8 +20,8 @@
 			  			</div>
 
 			  			<div v-if="showChat" v-for="(chat, index) in chats" :class="['sender', {'active-chat': currentChat.id === chat.id}]" :key="chat.id" v-on:click="startChat(chat)">
-			  				<div class="avatar-box">
-						      	<img :src="userAvatar(chat.chatee.avatarURL)" class="avatar-small" />
+			  				<div class="avatar-box avatar avatar-small">
+						      	<img :src="userAvatar(chat.chatee.avatarURL)" />
 							</div>
 						    <div class="sender-name">
 						    	<span :class="chat.status">{{ chat.chatee.name }}</span><br />
@@ -29,7 +29,7 @@
 						    </div>
 			  			</div>
 		  			</div>
-	  			</transition>
+	  			
 	  		</div>
 	  	</div>
 	  	<div class="message-window">
@@ -88,7 +88,7 @@ export default {
 		currentChatThread: [],
 		chatee: null,
 		error: '',
-		userSearch: null,
+		userSearch: "",
 		userResults: [],
 		inputMessage: null,
 		initialMessage: null,
@@ -275,41 +275,50 @@ export default {
   		}
   	},
   	getUsers: function() {
-  		this.chatsLoading = true
-  		var userArray = []
-  		var usersRef = firebase.database().ref("users")
+  		if(this.userSearch.length > 2) {
+	  		this.chatsLoading = true
+	  		var userArray = []
+	  		var usersRef = firebase.database().ref("users")
 
-  		usersRef.orderByChild("firstName").equalTo(this.userSearch.toLowerCase().trim()).once("value", snapshot => {
-  			// console.log('firebase', snapshot.val())
-  			// console.log('firebase num', snapshot.numChildren())
-  			if(snapshot.numChildren() > 0) {
-				userArray = Object.values(snapshot.val())
-			}
+	  		usersRef.orderByChild("firstName")
+	  			.startAt(this.userSearch.toLowerCase().trim())
+	  			.endAt(this.userSearch.toLowerCase().trim() + "\uf8ff")
+	  			.once("value", snapshot => {
+	  			// console.log('firebase', snapshot.val())
+	  			// console.log('firebase num', snapshot.numChildren())
+	  			if(snapshot.numChildren() > 0) {
+					userArray = Object.values(snapshot.val())
+				}
 
-  		}).then(res => {
-  			usersRef.orderByChild("lastName").equalTo(this.userSearch.toLowerCase().trim()).once("value", snapshotTwo => {
-  				// console.log('second search', snapshotTwo.val())
-  				// console.log(snapshotTwo.numChildren())
+	  		}).then(res => {
+	  			usersRef.orderByChild("lastName")
+	  				.startAt(this.userSearch.toLowerCase().trim())
+	  				.endAt(this.userSearch.toLowerCase().trim() + "\uf8ff")
+	  				.once("value", snapshotTwo => {
+	  				// console.log('second search', snapshotTwo.val())
+	  				// console.log(snapshotTwo.numChildren())
 
-  				if (snapshotTwo.numChildren() > 0 && userArray.length > 0) {
-  					// console.log(Object.values(snapshotTwo.val()))
+	  				if (snapshotTwo.numChildren() > 0 && userArray.length > 0) {
+	  					// console.log(Object.values(snapshotTwo.val()))
 
-  					userArray.concat(Object.values(snapshotTwo.val()))
-  					
-  				} else if(snapshotTwo.numChildren() > 0) {
-  					userArray = Object.values(snapshotTwo.val())
-  				}
-  				// console.log(userArray)
-  				
-  				this.userResults = userArray
-  				if(this.userResults < 1) {
-  					this.searchResultMessage = "sorry, no profiles found."
-  				}
-  				this.chatsLoading = false
-  			})
-  		}, error => {
-  			console.log(error)
-  		})
+	  					userArray.concat(Object.values(snapshotTwo.val()))
+	  					
+	  				} else if(snapshotTwo.numChildren() > 0) {
+	  					userArray = Object.values(snapshotTwo.val())
+	  				}
+	  				// console.log(userArray)
+	  				
+	  				this.userResults = userArray
+	  				if(this.userResults < 1) {
+	  					this.searchResultMessage = "sorry, no profiles found."
+	  				}
+	  				this.chatsLoading = false
+	  			})
+	  		}, error => {
+	  			console.log(error)
+	  		})  			
+  		}
+
   	}
   },
   created() {
@@ -369,19 +378,6 @@ export default {
 	padding-left: 100px;
 }
 
-.senders-window {
-	overflow-y: scroll;
-	height: 430px;
-}
-
-.sender {
-	// border: 1px solid #dddcdc;
-	height: 75px;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
 
 .message-window {
 	// border: 1px solid #dddcdc;
@@ -424,16 +420,26 @@ export default {
 	margin-bottom: 5px;
 }
 
-#sender-search {
-	max-width: 80%;
-	margin-bottom: 15px;
+.senders-window {
+	overflow-y: scroll;
+	height: 430px;
 }
 
 .sender {
+	height: 75px;
+	width: 100%;
 	display: flex;
 	justify-content: flex-start;
+	align-items: center;
 	cursor: pointer;
 }
+
+#sender-search {
+	max-width: 95%;
+	margin-bottom: 15px;
+	margin-right: 15px;
+}
+
 
 .sender:hover, .active-chat {
 	background: #ecddba;
@@ -445,10 +451,10 @@ export default {
 }
 
 .avatar-box {
-	width: 75px;
 	display: inline-flex;
 	justify-content: center;
 	align-items: center;
+	margin-right: 15px;
 }
 
 .sender-name {

@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import stepMixin from '../mixins/stepMixin';
-import successWarningNotice from './successWarningNotice'; 
+import stepMixin from '@/mixins/stepMixin';
+import successWarningNotice from '@/components/successWarningNotice'; 
 
 export default {
   name: 'signUpStepOne',
@@ -87,7 +87,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import '../styles/style-variables';
+@import '../../styles/style-variables';
 
 .signup-form {
   text-align: center;

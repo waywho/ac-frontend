@@ -59,24 +59,22 @@
 <script>
 import profileDetails from './profileDetails';
 // import profileTools from './profileTools';
-import auditions from './auditions';
+// import auditions from '@/audition/auditions';
 import profilePosts from './profilePosts';
-import profileConnections from './profileConnections';
+// import profileConnections from './profileConnections';
 import profileSeasons from './profileSeasons'
 import { mapGetters } from 'vuex';
 // import * as firebase from 'firebase';
 import profileImagesMixin from '../mixins/profileImagesMixin';
 import currentUser from '../mixins/currentUserMixin';
-import firebaseAxios from '../axios-firebase.js';
+import firebaseAxios from '@/axios/axios-firebase.js';
 
 export default {
 	name: 'profile',
 	components: {
 		'profile-details': profileDetails,
 		'profile-tools': () => import('./profileTools'),
-		'company-auditions': auditions,
 		'profile-posts': profilePosts,
-		'profile-connections': profileConnections,
 		'profile-seasons': profileSeasons
 	},
   	mixins: [profileImagesMixin, currentUser],

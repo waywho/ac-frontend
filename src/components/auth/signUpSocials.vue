@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import nextLastStep from './nextLastStep'
-import stepMixin from '../mixins/stepMixin';
+import nextLastStep from '@/components/nextLastStep'
+import stepMixin from '@/mixins/stepMixin';
 
 export default {
   name: 'signUpStepThree',
@@ -39,7 +39,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import '../styles/style-variables';
+@import '../../styles/style-variables';
 .subheadline {
 	margin-bottom: 65px;
 }

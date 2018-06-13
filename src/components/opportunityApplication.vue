@@ -16,7 +16,7 @@
 
 <script>
 import modal from './modal';
-import oppAxios from '../axios-opportunities.js';
+import oppAxios from '@/axios/axios-opportunities.js';
 import axios from 'axios';
 import opportunityApplicationSubmission from './opportunityApplicationSubmission';
 import opportunityApplicationSuccess from './opportunityApplicationSuccess';

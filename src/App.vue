@@ -15,10 +15,10 @@ import menu from './components/menu'
 import header from '@/components/layout/header'
 import footer from '@/components/layout/footer'
 import showProfile from './components/showProfile'
-import signUp from './components/signUp'
+import signUp from '@/components/auth/signUp'
 import searchResults from './components/searchResults'
 import landing from './components/landing'
-import signIn from './components/signInModal'
+import signIn from '@/components/auth/signInModal'
 import pageStatic from './components/pageStatic'
 import currentUser from './mixins/currentUserMixin';
 

@@ -10,12 +10,10 @@ import opportunityBoard from '@/components/opportunityBoard'
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
-Vue.use(Router)
-
 //lazy loading signUp
 const signUp = resolve => {
-	require.ensure(['@/components/signUp'], () => {
-		resolve(require('@/components/signUp'));
+	require.ensure(['@/components/auth/signUp'], () => {
+		resolve(require('@/components/auth/signUp'));
 	})
 };
 
@@ -60,6 +58,7 @@ router.beforeEach((to, from, next) => {
         if(user) {
             // user signed in proceed
             next()
+
         } else {
             //no user signed in redirect to signin
             next("/")
@@ -68,6 +67,8 @@ router.beforeEach((to, from, next) => {
         next()
     }
 })
+
+Vue.use(Router)
 
 export default router
 

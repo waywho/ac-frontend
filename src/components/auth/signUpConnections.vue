@@ -44,10 +44,10 @@
 </template>
 
 <script>
-import connectionTile from './connectionTile'
-import nextLastStep from './nextLastStep'
-import stepMixin from '../mixins/stepMixin'
-import firebaseAxios from '../axios-firebase.js'
+import connectionTile from '@/components/auth/connectionTile'
+import nextLastStep from '@/components/nextLastStep'
+import stepMixin from '@/mixins/stepMixin'
+import firebaseAxios from '@/axios/axios-firebase.js'
 
 export default {
   name: 'signUpArtistconnections',
@@ -127,7 +127,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import '../styles/style-variables';
+@import '../../styles/style-variables';
 
 .connections {
 	width: 100%;

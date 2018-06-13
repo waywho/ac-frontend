@@ -17,9 +17,9 @@ import signUpProfileType from './signUpProfileType'
 import signUpDetails from './signUpDetails'
 import signUpSocials from './signUpSocials'
 import signUpPhotos from './signUpPhotos'
-import signUpConnections from './signUpConnections'
+// import signUpConnections from './signUpConnections'
 import signUpComplete from './signUpComplete'
-import nextLastStep from './nextLastStep'
+import nextLastStep from '@/components/nextLastStep'
 
 export default {
   name: 'signUp',
@@ -29,7 +29,7 @@ export default {
    	'signUpDetails': signUpDetails,
    	'signUpSocials': signUpSocials,
    	'signUpPhotos': signUpPhotos,
-   	'signUpConnections': signUpConnections,
+   	// 'signUpConnections': signUpConnections,
    	'signUpComplete': signUpComplete,
    	'next-last-step': nextLastStep
   },
@@ -91,7 +91,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import '../styles/style-variables';
+@import '../../styles/style-variables';
 
 .signup {
 	width: 100%;
