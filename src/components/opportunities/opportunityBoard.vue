@@ -10,7 +10,7 @@
   	</keep-alive>
   		
 
-  	<opportunity-list v-if="windowWidth >= 993" class="opportunity-section" :opportunities="opportunities" :loading="loading" :selected-sort="selectedSort" @apply-sort="sortApply"></opportunity-list>
+  	<opportunity-list v-if="windowWidth >= 414" class="opportunity-section" :opportunities="opportunities" :loading="loading" :selected-sort="selectedSort" @apply-sort="sortApply"></opportunity-list>
   			
   		
   	</div>
@@ -82,7 +82,7 @@ export default {
 	 		}).then(res => {
 	 			console.log(res)
 	 			this.opportunities = res.data
-	 			if(this.windowWidth < 993) {this.component = 'opportunity-list'}
+	 			if(this.windowWidth <= 413) {this.component = 'opportunity-list'}
 	 			this.loading = false
 	 		}).catch(error => {
 	 			console.log(error)

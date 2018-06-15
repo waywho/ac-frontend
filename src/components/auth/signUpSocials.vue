@@ -1,29 +1,26 @@
 <template>
   <div class="">
-  	<h3>Social</h3>
-  	<p>Please enter your social network profiles</p>
+  	<h3>Social Media</h3>
+  	<p>Please enter your social media profile links</p>
   	<div class='row'>
 	  	<div v-for="(social, key, index) in socials" class="col-sm-6 col-xs-12 social-form">
 	  		<label class="strong">{{key | capitalize}}</label>
 	  		<input type="text" class="signup-input" :key="key" :name="key" placeholder="Enter Your Profile URL" v-model="socials[key]" />
 	  	</div>
   	</div>
-  	<next-last-step v-on:click.native="updateData(1, {'socials': socials})" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 
 <script>
-import nextLastStep from '@/components/nextLastStep'
-import stepMixin from '@/mixins/stepMixin';
 
 export default {
-  name: 'signUpStepThree',
-  components: {
-  	'next-last-step': nextLastStep
+  name: 'signUpSocials',
+  props: {
+    socials: Object
   },
   data () {
     return {
-      socials: {
+      currentSocials: {
       	facebook: "",
       	twitter: "",
       	linkedin: "",
@@ -32,8 +29,7 @@ export default {
       	vimeo: ""
       }
     }
-  },
-  mixins: [stepMixin]
+  }
 }
 </script>
 

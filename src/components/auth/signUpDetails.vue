@@ -2,55 +2,48 @@
   <div class="">
   	<h3>Profile Details</h3>
   	<div class="row">
-    	<div v-for="(detail, key, index) in details" :class="['col-xs-12', 'col-sm-6', newProfile.type === 'artist' && key === 'voiceType' ? 'companyType-hide' : 'voiceType-hide' ]" :id="key" :key="key">
-        <div v-if="key !== 'descriptions' && key !== 'voiceType' && key !== 'companyType'">
+    	<div v-for="(detail, key, index) in details" class="col-xs-12 col-sm-6" :id="key" :key="key">
+        <div v-if="key !== 'descriptions' && key !== 'role'">
       		<label class="strong label-header">{{key | camel-to-space}}</label>
-      		<input type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter your ' + key" v-model="details[key]" />
+      		<input type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter ' + type +' ' + key" v-model="details[key]" />
         </div>
     		<div v-if="key === 'descriptions'">
-          <textarea type="text" class="signup-input" name="name" placeholder="Your description" v-model="details[key]" /></textarea>
+          <label class="strong label-header">{{key | camel-to-space}}</label>
+          <textarea type="text" class="signup-input" name="name" :placeholder="'Enter ' + type + ' descriptions'" v-model="currentDetails[key]" /></textarea>
         </div>
-        <div v-if="newProfile.type === 'artist' && key === 'voiceType'">
+        <div v-if="type === 'artist' && key === 'role'">
           <label class="strong label-header">{{key | camel-to-space}}</label>
           <select class="signup-input" v-model="details[key]">
             <option disabled selected value>Select a Voice Type</option>
-            <option v-for="type in voiceTypes">{{type | capitalize}}</option>
+            <option v-for="type in voiceTypes" :value="type">{{type | capitalize}}</option>
           </select>
         </div>
 
-        <div v-if="newProfile.type === 'company' && key === 'companyType'">
+        <div v-if="type === 'company' && key === 'role'">
           <label  class="strong label-header">{{key | camel-to-space}}</label>
           <select class="signup-input" v-model="details[key]">
             <option disabled selected value>Select a Company Type</option>
-            <option v-for="type in companyTypes">{{type | capitalize}}</option>
+            <option v-for="type in companyTypes" :value="type">{{type | capitalize}}</option>
           </select>
         </div>
-
-
     	</div>
   	</div>
-
-	<next-last-step v-on:click.native="updateData(1, {'details': details})" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 
 <script>
-import nextLastStep from '@/components/nextLastStep';
-import stepMixin from '@/mixins/stepMixin';
 
 export default {
-  name: 'signUpStepThree',
-  components: {
-  	'next-last-step': nextLastStep
-  },
+  name: 'signUpcurrentDetails',
   props: {
-    newProfile: Object
+    details: Object,
+    type: String
   },
   data () {
     return {
       voiceTypes: ['soprano', 'mezzo soprano', 'tenor', 'baritone', 'bass'],
-      companyTypes: ['regional', 'national', 'touring'],
-      details: {
+      companyTypes: ['regional company', 'national company', 'touring company', 'other'],
+      currentDetails: {
         name: "",
         voiceType: "",
         companyType: "",
@@ -60,8 +53,7 @@ export default {
         descriptions: ""
       }
     }
-  },
-  mixins: [stepMixin]
+  }
 }
 </script>
 
@@ -85,10 +77,6 @@ export default {
 
 textarea.signup-input {
 	height: 250px;
-}
-
-.voiceType-hide#voiceType, .companytype-hide#companyType {
-  display: none;
 }
 
 .step-container {

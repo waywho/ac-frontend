@@ -1,17 +1,19 @@
 <template>
   <modal @close="$emit('close')">
-  	<img slot='header' src='../../assets/images/artistcenter-logo2.svg' alt="operaop logo" class="logo-image" />
-  	<h3 slot='header' class='signin-heading'>Sign in.</h3>
+  	<img slot='header' :src="require('@/assets/images/artistcenter-logo2.svg')" alt="operaop logo" class="logo-image" />
+  	<h2 slot='header' class='signin-heading'>Sign In</h2>
   	<form slot='body' class="signin-form" @submit.prevent="onSignIn">
   		<input  type="text" placeholder="email" class='form-element' v-model="email" />
-	  	<div class="checkbox form-element">
+	  	<div class="checkbox form-element small">
 	          <input id='remember' type='radio' :value='remember' v-model='remember' />
-	          <label for='remember'><span></span>Remember me</label>
+	          <label for='remember'><span></span>Remember Me</label>
 	    </div>
 	  	<input slot='body' type="password" placeholder="password" class='form-element' v-model="password" />
       <success-warning-notice v-if="messageShow" class="form-element"></success-warning-notice>
-	  	<div class="password form-element is-darkgray">forgot password</div>
-	  	<button type="submit" class="button">Sign in</button>
+	  	<div class="password form-element is-darkgray small">forgot password</div>
+	  	<div>
+        <button type="submit" class="button sign-in-button">Sign in</button>
+      </div>
   	</form>
   	<div slot='footer' class="modal-footer is-darkgray">@artist.center 2017. All Rights Reserved.</div>
   </modal>
@@ -91,6 +93,12 @@ export default {
 	padding-top: 25px;
 	margin: 45px auto 25px;
 	width: 80%;
+}
+
+.sign-in-button {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 </style>

@@ -6,13 +6,13 @@ export default{
 		onFilePicked (event, imageType) {
 			const file = event.target.files[0]
 			let filename = file.name
-			// console.log(filename)
+			console.log(filename)
 			if (filename.lastIndexOf('.') <= 0) {
 				return alert('Please add a file with valid extension')
 			}
 			const fileReader = new FileReader()
 			fileReader.addEventListener('load', () => {
-				this[imageType + 'URL'] = fileReader.result
+				this[imageType + 'CurrentURL'] = fileReader.result
 			})
 			fileReader.readAsDataURL(file)
 
@@ -23,6 +23,9 @@ export default{
 			// console.log('imagefile', newData)
 
 			this.$store.dispatch('saveProfileImages', {userId: this.$store.getters.currentUser.id, data: newData} )
+			.then(res => {
+				this.$emit('update:' + res.key, res.path)
+			})
 		},
 		onPostFilePicked(event, imageType) {
 			const file = event.target.files[0]

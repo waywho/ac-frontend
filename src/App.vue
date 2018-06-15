@@ -1,8 +1,8 @@
 <template>
-  <div :class="[{'push-left': isActive }]" id="main-app">
-    <app-menu :class="['app-menu', {'menu-open': isActive}]" v-on:toggleMenu="menuToggle($event)"></app-menu>
-    <div id="app">
-      <app-signIn v-if="showSignInModal" @close="showSignInModal = false"></app-signIn>
+  <div  id="main-app">
+    <app-menu :class="['app-menu', {'menu-open': isActive}]" :style="menuStyle" v-on:toggleMenu="menuToggle($event)"></app-menu>
+    <div id="app-inner">
+      <app-sign-in v-if="showSignInModal" @close="showSignInModal = false"></app-sign-in>
       <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive" :profile-id="currentUser.id"></app-header>
       <router-view class="main-body" @scroll="handleScroll"/>
       <app-footer></app-footer>
@@ -31,7 +31,7 @@ export default {
     'show-profile': showProfile,
     'sign-Up': signUp,
     'app-search-results': searchResults,
-    'app-signIn': signIn,
+    'app-sign-in': signIn,
     'app-page-static': pageStatic
   },
   data() {
@@ -42,10 +42,31 @@ export default {
       scrollPosition: 0,
       navPosition: '',
       isActive: false,
-      showSignInModal: false
+      showSignInModal: false,
+      windowWidth: 500,
     }
   },
   mixins: [currentUser],
+  computed: {
+    menuStyle: function() {
+      if(this.windowWidth >= 500) {
+        return {
+          width: '400px',
+          right: '-400px'
+        }
+      } else if (this.windowWidth <= 499) {
+        return {
+          width: this.windowWidth + 'px',
+          right: '-' + this.windowWidth + 'px'
+        }
+      } else {
+        return {
+          width: this.windowWidth + 'px',
+          right: '-' + this.windowWidth + 'px'
+        }
+      }
+    }
+  },
   methods: {
     handleScroll: function(e) {
        var currentScrollPosition = e.srcElement.scrollTop;
@@ -59,15 +80,13 @@ export default {
        }
       this.scrollPosition = currentScrollPosition;
     },
+    getWindowWidth(event) {
+          this.windowWidth = document.documentElement.clientWidth;
+    },
     menuToggle: function(msg) {
       this.isActive = !this.isActive;
       // document.body.classList.toggle('push-left')
     }
-  },
-  computed: {
-    // userIsAuthenticated() {
-    //   return this.$store.getters.currentUser !== null && this.$store.getters.currentUser !== undefined
-    // }
   },
   created() {
     document.body.addEventListener('scroll', this.handleScroll);
@@ -76,6 +95,15 @@ export default {
   },
   destroyed() {
     document.body.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener('resize', this.getWindowWidth);
+  },
+  mounted() {
+      this.$nextTick(function() {
+        window.addEventListener('resize', this.getWindowWidth);
+
+        //Init
+        this.getWindowWidth()
+    })
   }
 }
 </script>
@@ -83,7 +111,7 @@ export default {
 <style lang="scss">
 @import './styles/global';
 
-#app {
+#app-inner {
   font-family: 'Raleway', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -118,15 +146,9 @@ export default {
   top: -100px !important;
 }
 
-.push-left {
-  left: -923px;
-}
-
 .app-menu {
   position: fixed;
-  width: 503px;
   height: 100%;
-  right: -503px;
   background-color: #20201f;
   color: white;
   z-index: 999;

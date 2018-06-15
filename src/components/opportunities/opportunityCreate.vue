@@ -5,9 +5,7 @@
       <h2>Opportunity</h2>
       <span class="is-golden"><b>Create Your Opportunities</b></span>
         <h3>{{stepHeading | capitalize}}</h3>
-          <ul class="progress-bar" v-if="currentStep !== 3" >
-            <li v-for="(step, index) in setupSteps" v-if="index !== 3" :class="[{active: currentStep === index}, 'small']"><span>{{index + 1}}</span></li>
-          </ul>
+        <progress-bar v-if="currentStep !== 3" :current-step="currentStep" :setup-steps="setupSteps"></progress-bar>
         <transition name="fade" mode="out-in">
           <div v-if="currentStep > 0 && currentStep !== 3" class="is-lightgray small text-button back-button" @click="backStep"><i class="fa fa-chevron-left" aria-hidden="true" key="backButton"></i>Back to {{lastStep}}</div>
           <div v-else class="back-button small" key="home">Select opportunity types to begin</div>
@@ -43,6 +41,7 @@ import opportunityDetails from './opportunityDetails';
 import opportunityReview from './opportunityReview';
 import opportunityComplete from './opportunityComplete';
 import countriesList from 'countries-list';
+import progressBar from '@/components/progressBar';
 // import axios from 'axios'; // for dev
 
 export default {
@@ -51,7 +50,8 @@ export default {
     'opportunity-filters': opportunityFilters,
     'opportunity-details': opportunityDetails,
     'opportunity-review': opportunityReview,
-    'opportunity-complete': opportunityComplete
+    'opportunity-complete': opportunityComplete,
+    'progress-bar': progressBar
   },
   props: {
    
@@ -189,75 +189,6 @@ export default {
   display: none;
 }
 
-ul.progress-bar {
-  margin-left: 0px;
-}
-
-li {
-  width: 1em;
-  height: 1em;
-  text-align: center;
-  line-height: 2em;
-  border-radius: 1em;
-  background: $color-gold;
-  margin: 0em 66px 1em 1em;
-  display: inline-block;
-  color: white;
-  position: relative;
-}
-
-li span {
-  text-align: center;
-  position: absolute;
-  top: 1.2em;
-  left: 0.4em;
-  color: $color-darkgray;
-}
-
-li:first-child {
-  margin-left: 0px;
-}
-
-li::before {
-  content: '';
-  position: absolute;
-  top: .4em;
-  left: -5.7em;
-  width: 6em;
-  height: .2em;
-  background: $color-gold;
-  z-index: 1;
-}
-
-
-li:first-child::before {
-  display: none;
-}
-
-.active {
-  background: $color-gold;
-  width: 1.5em;
-  height: 1.5em;
-  top: 0.3em;
-
-}
-
-.active::before {
-  top: .6em;
-}
-
-.active span {
-  color: $color-gold;
-  top: 1.4em;
-}
-
-.active ~ li {
-  background: $color-lightgray;
-}
-
-.active ~ li::before {
-  background: $color-lightgray;
-}
 
 @media screen and (max-width: 46rem) {
   .opportunity-next {

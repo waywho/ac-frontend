@@ -1,14 +1,16 @@
 <template>
   <form class="signup-form" v-on:submit.prevent="onSignUp">
-  	<input type="text" class="signup-input" name="profileEmail" placeholder="Email Address" v-model="credentials.email" @focus="clearMessage"/>
+  	<input type="text" class="signup-input" name="profileEmail" placeholder="Email Address" v-model="credentials.email" @input="$emit('update:email', credentials.email)" @focus="clearMessage"/>
   	<input type="password" class="signup-input" name="profilePassword" placeholder="Password with 6 or more characters" v-model="credentials.password" @focus="clearMessage"/>
     <input type="password" class="signup-input" name="confirmPassword" placeholder="Confirm Password" v-model="credentials.confirmPassword" @focus="clearMessage"/>
     <div class="inline-checkbox signup-input">
-          <input id='consent' type='checkbox' v-model='credentials.consent' />
+          <input id='consent' type='checkbox' v-model='credentials.consent' @input.lazy="$emit('update:consent', credentials.consent)" />
           <label for='consent'><span></span>I agree to receiving site updates and related news.</label>
     </div>
     <success-warning-notice v-if="messageShow" :messaging="messaging" class="signup-input"></success-warning-notice>
-  	<button type="submit" class="signup-button">Sign Up</button>
+    <div class="button-container">
+      <button type="submit" class="signup-button">Sign Up</button>
+    </div>
   </form>
 </template>
 
@@ -17,14 +19,19 @@ import stepMixin from '@/mixins/stepMixin';
 import successWarningNotice from '@/components/successWarningNotice'; 
 
 export default {
-  name: 'signUpStepOne',
+  name: 'signUpCredentials',
   components: {
     'success-warning-notice': successWarningNotice
+  },
+  props: {
+    email: String,
+    consent: Boolean
   },
   data () {
     return {
       messageShow: false,
       credentials: {
+        email: null,
       	consent: true,
         password: null,
         confirmPassword: null
@@ -77,7 +84,7 @@ export default {
     idToken(value) {
       if(value !== null && value !== undefined) {
         console.log('id', this.$store.getters.currentUser.id)
-        this.takeStep(1, {id: this.$store.getters.currentUser.id})
+        this.$emit('successful-signup')
       }
     }
   },
@@ -89,10 +96,6 @@ export default {
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
 
-.signup-form {
-  text-align: center;
-}
-
 .subheadline {
 	margin-bottom: 65px;
 }
@@ -102,7 +105,12 @@ export default {
   display: block;
 }
 
+.button-container {
+  text-align: center;
+}
+
 .signup-button {
   margin: auto auto;
+  text-align: center;
 }
 </style>

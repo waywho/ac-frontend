@@ -129,16 +129,15 @@ export const store = new Vuex.Store({
 								userEmail: cred.user.email,
 								expires: expirationDate
 							}
-							commit('authUser', newUser);
-							dispatch('createUser', {userId: cred.user.uid, email: cred.user.email});
-							dispatch('getUserProfile', newUser);
-							commit('setMessage', {
-								message: 'Signed Up Successfully',
-								messageType: 'success'
-							});
-							resolve(idToken)
+							dispatch('createUser', {idToken: idToken, user: {id: cred.user.uid, email: cred.user.email, consent: payload.consent}}).then(() => {
+								commit('authUser', newUser);
+								commit('setMessage', {
+									message: 'Signed Up Successfully',
+									messageType: 'success'
+								});
+								resolve(idToken)
+							})
 						})
-
 					}).catch(
 						error => {
 							// console.log(error)
@@ -170,10 +169,12 @@ export const store = new Vuex.Store({
 								userEmail: cred.user.email,
 								expires: expirationDate
 							}
-							commit('authUser', newUser);
+
 							
+														
 							Promise.all([dispatch('getUserProfile', newUser), dispatch('getUserTools', newUser)])
 								.then(res => {
+									commit('authUser', newUser);
 									dispatch('setLocalStorage');
 									resolve(cred.user)
 								})						
@@ -192,7 +193,7 @@ export const store = new Vuex.Store({
 		},
 		signOut({commit}) {
 			return new Promise((resolve, reject) => {
-					console.log('signout')
+				console.log('signout')
 					firebase.auth().signOut().then(() => {
 					commit('clearAuthData')
 					localStorage.removeItem('artistCenter')
@@ -243,25 +244,23 @@ export const store = new Vuex.Store({
 			}
 		},
 		createUser({commit, dispatch, state}, payload) {
-			if(!state.idToken) {
-				return
-			}
-			// console.log(payload)
+			console.log('creating user', payload)
 			let user = {
-				['profiles/' + payload.userId]: { id: payload.userId, email: payload.email },
-				['users/' + payload.userId]: { id: payload.userId },
+				['/profiles/' + payload.user.id]: payload.user,
+				['users/' + payload.user.id]: payload.user,
 			}
 
 			return new Promise((resolve, reject) => {
-				firebaseAxios.patch( '.json' +'?auth=' + state.idToken, user)
-					.then(res => {
-						console.log(res)
-						dispatch('getUserProfile', {userId: payload.userId})
-						resolve(res)
-					}).catch(error => {
+				firebase.database().ref().update(user, error => {
+					if(error) {
 						console.log(error)
-						reject(error);
-					})				
+						reject(error)
+					} else {
+						dispatch('getUserProfileOnce', {userId: payload.user.id}).then(res => {
+							resolve(res)
+						})
+					}
+				})
 			})
 
 		},
@@ -288,7 +287,7 @@ export const store = new Vuex.Store({
 						['users/' + payload.userId + '/lastName']: payload.data.details.name.toLowerCase().split(" ").pop().trim(),
 						['users/' + payload.userId + '/city']: payload.data.details.city,
 						['users/' + payload.userId + '/country']: payload.data.details.country,
-						['users/' + payload.userId + '/roleType']: payload.data.details.companyType !== null && payload.data.details.companyType !== undefined ? payload.data.details.companyType : payload.data.details.voiceType
+						['users/' + payload.userId + '/role']: payload.data.details.role
 					}
 					break;
 				default: 
@@ -299,7 +298,7 @@ export const store = new Vuex.Store({
 				firebaseAxios.patch('.json' + '?auth=' + state.idToken, data)
 					.then(res => {
 						console.log(res)
-						dispatch('getUserProfile', {userId: payload.userId})
+						dispatch('getUserProfileOnce', {userId: payload.userId})
 						commit('setMessage', {
 							message: 'Updated Profile Successfully',
 							messageType: 'success'
@@ -325,17 +324,31 @@ export const store = new Vuex.Store({
 			// 		console.log(error)
 			// 	)
 		},
+		getUserProfileOnce({commit, dispatch, state}, payload) {
+			return new Promise((resolve, reject) => {
+				firebase.database().ref("/profiles/" + payload.userId).once('value', snapshot => {
+					console.log(snapshot.val())
+					commit('setCurrentUserProfile', snapshot.val())
+					resolve(snapshot.val())
+				})
+								
+			}).catch(error => {
+				console.log(error);
+				reject(error);
+			})
+
+		},
 		getUserProfile({commit, dispatch, state}, payload) {
 			return new Promise((resolve, reject) => {
-				firebaseAxios.get("/profiles/" + payload.userId + ".json")
-					.then(res => {
-						// console.log('getUserProfile', res)
-						commit('setCurrentUserProfile', res.data)
-						resolve(res)
-					}).catch(error => {
-						console.log(error);
-						reject(error);
-					})				
+				firebase.database().ref("/profiles/" + payload.userId).on('value', snapshot => {
+					console.log(snapshot.val())
+					commit('setCurrentUserProfile', snapshot.val())
+					resolve(snapshot.val())
+				})
+								
+			}).catch(error => {
+				console.log(error);
+				reject(error);
 			})
 
 		},
@@ -394,6 +407,9 @@ export const store = new Vuex.Store({
 								.then(res => {
 									console.log('imageURL', res)
 									dispatch('getUserProfile', {'userId': state.userId})
+									return resolve({
+										key: filename + 'URL',
+										path: imageURL})
 								}).catch(error => {
 									console.log(error)
 								 	return reject(error)
@@ -499,25 +515,14 @@ export const store = new Vuex.Store({
 			// console.log(token)
 
 			return new Promise((resolve, reject) => {
-				firebaseAxios.get("/toolsAuthorized/" + payload.userId + ".json" + '?auth=' + state.idToken)
-				.then(res => {
-					// console.log('tools', res)
-					commit('setUserTools', res.data)
-					resolve(res)
-				}).catch(error => {
-					reject(error)
-					console.log(error)
+				firebase.database().ref('toolsAuthorized/' + payload.userId).on('value', snapshot => {
+					console.log(snapshot.val());
+					commit('setUserTools', snapshot.val())
+					resolve(snapshot.val())
 				})
+			}).catch(error => {
+					console.log(error)
 			})
-			
-
-			// firebase.database().ref('tools/' + payload.id).once('value')
-			// 	.then((snapshot) => {
-			// 		console.log(snapshot.val());
-			// 		commit('setUserTools', snapshot.val())
-			// 	}).catch(error => {
-			// 		console.log(error)
-			// 	})
 		},
 		getProfileTools({commit, state}, payload) {
 			// console.log('disptaching getProfileTools')
@@ -798,9 +803,9 @@ export const store = new Vuex.Store({
 				databaseRef.update(seasonUpdates).then(error => {
 					if(error) {
 						console.log(error)
-						reject(error)
+						return reject(error)
 					} else {
-						resolve()
+						return resolve()
 					}
 				})
 				

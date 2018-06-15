@@ -5,6 +5,7 @@
         <li class="logo">
           <router-link to="/"><img src='../../assets/images/artistcenter-logo.png' alt="artistcenter logo" /></router-link>
         </li>
+        
         <li class="search header-item-space" id="search-element">
           <input v-on:keyup.enter="searchResults($event.target.value)" type="search" id="search" class="small" placeholder="search profiles" />
         </li>
