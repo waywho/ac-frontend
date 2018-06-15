@@ -68,7 +68,7 @@ export default {
           youtube: ""
         }
       },
-      currentStep: 2,
+      currentStep: 0,
       progressPosition: '',
       scrollPosition: 0,
       signUpSteps: [

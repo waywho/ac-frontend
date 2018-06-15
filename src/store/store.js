@@ -406,7 +406,7 @@ export const store = new Vuex.Store({
 							firebaseAxios.patch('.json' + '?auth=' + state.idToken, userImage)
 								.then(res => {
 									console.log('imageURL', res)
-									dispatch('getUserProfile', {'userId': state.userId})
+									dispatch('getUserProfileOnce', {'userId': state.userId})
 									return resolve({
 										key: filename + 'URL',
 										path: imageURL})

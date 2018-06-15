@@ -135,6 +135,18 @@ input[type="checkbox"] + label span,
     border: 1px solid $color-midgray;
     background-color: $color-midgray;
     cursor: pointer;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+input[type="checkbox"] + label,
+    input[type="radio"] + label {
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
 }
 
 input[type="checkbox"]:checked + label,
