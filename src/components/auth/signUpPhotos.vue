@@ -11,7 +11,7 @@
           <div class="upload-avatar" v-if="avatarCurrentURL === null">
   				  <i class="fa fa-user-o fa-4x is-white" aria-hidden="true"></i>        
   			 </div>
-  			<div class="image-type">Profile Image</div>
+  			<div class="image-type is-lightgray">Profile Image</div>
 
         <input type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
   		</div>
@@ -24,7 +24,7 @@
           <img :src="require('@/assets/images/cover-icon.png')" alt="cover icon" />
   				
   			</div>
-  			<div class="image-type">Cover Image</div>
+  			<div class="image-type is-lightgray">Cover Image</div>
 
         <input type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
   		</div>
