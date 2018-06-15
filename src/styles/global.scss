@@ -196,6 +196,10 @@ button[disabled="disabled"] {
 	cursor: auto;
 }
 
+button:hover, .button:hover {
+	background-color: $color-darkred;
+}
+
 // making css class input gold border
 // .item-input {
 // 	border: 2px solid $color-gold;

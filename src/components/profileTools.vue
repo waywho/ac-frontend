@@ -4,7 +4,10 @@
       <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="profileToolData"></component>
     </keep-alive>
     <div :class="[authorizedUser ? 'toolbox-auth' : 'toolbox-public']">
-      <div v-for="tool in profileTools" @click="component = tool.component" :class="['toolbox-tile', 'is-lightgray', {'active-tool': component === tool.component}]"><i :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i><br />{{tool.name}}</div>
+      <div v-for="tool in profileTools" @click="component = tool.component" :class="['toolbox-tile', 'is-lightgray', {'active-tool': component === tool.component}]">
+        <img v-if="!tool.name" :src="tool.icon" />
+        <i v-else :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i><br />{{tool.name}}
+      </div>
      </div>
   </div>
 </template>
@@ -43,17 +46,19 @@ export default {
       component: 'calendar',
       artistAuthTools: [
         { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
-        { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
         { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
-        { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' }
+        { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' },
+        { name: '', component: '', icon: '', icon: require('@/assets/images/artistcenter-logo.png')},
+        { name: '', component: '', icon: '', icon: ''}
       ],
       companyAuthTools: [
         { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
-        { name: 'Settings', component: 'settings', icon: 'fa-cogs' },
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
         { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
-        { name: 'Opportunity', component: 'opportunity', icon: 'fa-address-book-o'}
+        { name: 'Opportunity', component: 'opportunity', icon: 'fa-address-book-o'},
+        { name: '', component: '', icon: '', icon: require('@/assets/images/artistcenter-logo.png')},
+        { name: '', component: '', icon: '', icon: ''}
       ],
       tools: {
         'calendar': { name: 'Schedule', component: 'calendar', icon: 'fa-calendar' },
