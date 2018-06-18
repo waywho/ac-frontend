@@ -3,8 +3,6 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import vueEventCalendar from 'vue-event-calendar'
-import 'vue-event-calendar/dist/style.css'
 import { store } from './store/store'
 import vueMoment from 'vue-moment'
 import 'chart.js'
@@ -36,8 +34,8 @@ Vue.filter('to-uppercase', function(value) {
 
 Vue.filter('imageProcess', function(value, type) {
   let imageURLs = {
-    'avatar': require("./assets/images/avatar-holder.png"),
-    'season': require("./assets/images/seasonicon.png")
+    'avatar': require("@/assets/images/avatar-holder.png"),
+    'season': require("@/assets/images/seasonicon.png")
   }
   if (value !== null && value !== undefined) {
     return value

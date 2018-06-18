@@ -87,9 +87,9 @@ export default {
       this.showNotificatons = false;
       // console.log('clicked')
     },
-    searchResults: function(term) {
+    searchResults: function(searchTerm) {
       // console.log('entereds')
-      this.$router.push({ path: '/search', query: {profiles: term}})
+      this.$router.push({ path: '/search', query: {profiles: searchTerm}})
     },
     showSignIn: function() {
       this.$emit('signInModalShow', true)
