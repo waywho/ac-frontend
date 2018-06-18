@@ -169,7 +169,6 @@ export default {
 
 .media {
   background-color: $color-body;
-  width: 100%;
   height: 100%;
   display: flex;
 }
@@ -179,7 +178,7 @@ export default {
   height: 100%;
   background: #fff;
   margin-right: 7px;
-  padding: 00px 30px 0px 100px;
+  padding: 0px 30px 0px 100px;
   vertical-align: top;
 }
 

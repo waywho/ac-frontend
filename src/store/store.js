@@ -135,8 +135,10 @@ export const store = new Vuex.Store({
 									message: 'Signed Up Successfully',
 									messageType: 'success'
 								});
+								dispatch('sendVerificationEmail')
 								resolve(idToken)
 							})
+
 						})
 					}).catch(
 						error => {
@@ -150,6 +152,44 @@ export const store = new Vuex.Store({
 					)				
 			}) 
 
+		},
+		sendVerificationEmail({commit, dispatch}, payload) {
+			var user = firebase.auth().currentUser;
+
+			return new Promise((resolve, reject) => {
+				user.sendEmailVerification().then(() => {
+					commit('setMessage', {
+						message: "A verification email is sent to your email address, please verify your email",
+						messageType: "notice"
+					})
+
+					resolve()
+				}).catch((error) => {
+					console.log(error)
+					reject(error)
+				})
+			}) 
+
+		},
+		resetPasswordEmail({commit, dispatch, state}, payload) {
+			var auth = firebase.auth()
+			return new Promise((resolve, reject) => {
+				auth.sendPasswordResetEmail(payload.email).then(() => {
+					commit('setMessage', {
+						message: "A reset password email is sent to your email address, please check your email",
+						messageType: "notice"
+					})
+					resolve()
+				}).catch(error => {
+					console.log(error)
+					commit('setMessage', {
+						message: error.message,
+						messageType: "warning"
+					})
+					reject(error)
+				})
+			})
+	
 		},
 		signUserIn({commit, dispatch}, payload) {
 			return new Promise((resolve, reject) => {
@@ -213,10 +253,7 @@ export const store = new Vuex.Store({
 			let authData = {}
 			// console.log('session expires', expirationDate)
 			const now = new Date()
-			// console.log('expiration', expirationDate)
-			// console.log('now', now)
-			// console.log('is it expired?', now >= expirationDate)
-			// console.log('is it expired?', now < expirationDate)
+
 			if(now >= expirationDate) {
 				dispatch('reAuthorizeUser')
 					.then(res => {

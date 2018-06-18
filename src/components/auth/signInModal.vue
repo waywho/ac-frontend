@@ -3,14 +3,14 @@
   	<img slot='header' :src="require('@/assets/images/artistcenter-logo2.svg')" alt="operaop logo" class="logo-image" />
   	<h2 slot='header' class='signin-heading'>Sign In</h2>
   	<form slot='body' class="signin-form" @submit.prevent="onSignIn">
-  		<input  type="text" placeholder="Email" class='form-element' v-model="email" />
-	  	<div class="checkbox form-element small">
-	          <input id='remember' type='radio' :value='remember' v-model='remember' />
-	          <label for='remember'><span></span>Remember Me</label>
+  		<input  type="text" placeholder="Email" class='form-element' @focus="messageShow = false" v-model="email" />
+	  	<div class="checkbox form-element smaller">
+	          <input id='remember-input' type='checkbox' v-model='remember' />
+	          <label for='remember-input' class="smaller"><span></span>Remember Me</label>
 	    </div>
-	  	<input slot='body' type="password" placeholder="Password" class='form-element' v-model="password" />
-      <success-warning-notice v-if="messageShow" class="form-element"></success-warning-notice>
-	  	<div class="password form-element is-darkgray small">forgot password</div>
+	  	<input slot='body' type="password" placeholder="Password" @focus="messageShow = false" class='form-element' v-model="password" />
+      <success-warning-notice v-if="messageShow" :messaging="messaging" class="form-element"></success-warning-notice>
+	  	<div class="password form-element is-darkgray text-button" @click="resetPassword">Forgot Password</div>
 	  	<div>
         <button type="submit" class="button sign-in-button">Sign In</button>
       </div>
@@ -21,7 +21,7 @@
 
 <script>
 import modal from '@/components/modal';
-import successWarningNotice from '@/components/successWarningNotice'; 
+import successWarningNotice from '@/components/successWarningNotice';
 
 export default {
   name: 'signIn',
@@ -31,10 +31,14 @@ export default {
   },
   data () {
     return {
-      messageShow: false,
-      remember: true,
-      email: "",
-  		password: ""
+     	messageShow: false,
+     	remember: true,
+     	email: null,
+  		password: null,
+  		messaging: {
+  			message: null,
+  			messageType: null
+  		}
     }
   },
   computed: {
@@ -53,6 +57,24 @@ export default {
           error => {
             this.messageShow = true
           })
+  	},
+  	resetPassword: function() {
+  		this.messageShow = false
+  		this.messaging.message = null
+  		this.messaging.messageType = null
+
+  		if(this.email !== null && this.email !== undefined) {
+  			this.$store.dispatch('resetPasswordEmail', {email: this.email}).then(() => {
+
+  				this.messageShow = true
+  			}).catch(error => {
+  				this.messageShow = true
+  			})
+  		} else {
+  			this.messaging.message = "please enter an email address"
+  			this.messaging.messageType = "warning"
+  			this.messageShow = true
+  		}
   	}
   }
 }

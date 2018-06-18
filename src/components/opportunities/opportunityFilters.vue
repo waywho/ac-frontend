@@ -2,7 +2,7 @@
 	<div class="">
   		<h2 v-if="mode !== 'inputMode'">Personalize Your Opportunities</h2>
   		<p v-if="mode !=='inputMode'">Select your preferences below to filter opportunities.</p>
-  		<div class="row">
+  		<div class="row filters-panel">
   			<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 options-selector">
   				<label>Region</label>
   				<select v-model="selectedFilters.region" @change="selectorEnable($event, 'country')" @focus="showMessage = false">
@@ -27,14 +27,14 @@
   			<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 options-selector">
   				<label>Category</label>
   				<select :multiple="mode === 'inputMode'" v-model="selectedFilters.category_list" @change="selectorEnable($event, 'subcategory')" @focus="showMessage = false">
-  					<option value="all">All</option>
+  					<option v-if="mode !== 'inputMode'" value="all">All</option>
   					<option v-for="category in categories" :value="category">{{category | capitalize}}</option>
   				</select>
   			</div>
   			<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 options-selector">
   				<label>Subcategory</label>
   				<select :multiple="mode === 'inputMode'" v-model="selectedFilters.subcategory_list" :disabled="subcategoryDisable" @focus="showMessage = false">
-  					<option value="all">All</option>
+  					<option v-if="mode !== 'inputMode'" value="all">All</option>
   					<option v-for="subcategory in subcategories" :value="subcategory">{{subcategory | capitalize}}</option>
   				</select>
   			</div>
@@ -131,6 +131,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
+
+.filters-panel {
+  height: 100%;
+}
 
 .options-selector {
 	margin-bottom: 40px;

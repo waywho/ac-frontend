@@ -1,5 +1,5 @@
 <template>
-  	<div>
+  	<div class="opportunity-panel">
   		<div v-if="component === ''" class="tool-panel-left-padding">
   			<h2>Opportunity</h2>
 			<span class="is-golden"><b>Manage or Create Your Opportunities</b></span>
@@ -46,6 +46,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
 .opportunity-panel {
+	height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
