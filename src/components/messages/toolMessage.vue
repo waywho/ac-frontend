@@ -5,30 +5,30 @@
 	  		<input type="search" id="sender-search" class="small" placeholder="search profiles" v-on:keyup="getUsers" v-model="userSearch" @input="hideChat" />
 	  		<div class="senders-window">
 	  			
-		  			<i v-if="chatsLoading" class="fa fa-circle-o-notch fa-spin loading-spinner" key="chatsLoading"></i>
-		  			
-		  			<div v-if="!chatsLoading">
-		  				<p v-if="!showChat && searchResultMessage" class="warning" key="resultsWarning"><small>{{searchResultMessage}}</small></p>
-			  			<div v-if="!showChat" v-for="(user, index) in userResults" class="sender" :key="user.id" v-on:click="startMessage(user)">
-			  				<div class="avatar-box avatar avatar-small">
-						      	<img :src="userAvatar(user.avatarURL)"  />
-							</div>
-						    <div class="sender-name">
-						    	<b>{{ user.name}}</b><br />
-						    	<span class="smaller is-silver medium">{{user.lastMessage}}</span>
-						    </div>
-			  			</div>
+	  			<i v-if="chatsLoading" class="fa fa-circle-o-notch fa-spin loading-spinner" key="chatsLoading"></i>
+	  			
 
-			  			<div v-if="showChat" v-for="(chat, index) in chats" :class="['sender', {'active-chat': currentChat.id === chat.id}]" :key="chat.id" v-on:click="startChat(chat)">
-			  				<div class="avatar-box avatar avatar-small">
-						      	<img :src="userAvatar(chat.chatee.avatarURL)" />
-							</div>
-						    <div class="sender-name">
-						    	<span :class="chat.status">{{ chat.chatee.name }}</span><br />
-						    	<span class="smaller is-silver medium">{{chat.lastMessage}}</span>
-						    </div>
-			  			</div>
-		  			</div>
+  				<p v-if="!showChat && searchResultMessage" class="warning" key="resultsWarning"><small>{{searchResultMessage}}</small></p>
+	  			<div v-if="!showChat && !chatsLoading" v-for="(user, index) in userResults" class="sender" :key="user.id" v-on:click="startMessage(user)">
+	  				<div class="avatar-box avatar avatar-small">
+				      	<img :src="userAvatar(user.avatarURL)"  />
+					</div>
+				    <div class="sender-name">
+				    	<b>{{ user.name}}</b><br />
+				    	<span class="smaller is-silver medium">{{user.lastMessage}}</span>
+				    </div>
+	  			</div>
+
+	  			<div v-if="showChat && !chatsLoading" v-for="(chat, index) in chats" :class="['sender', {'active-chat': currentChat.id === chat.id}]" :key="chat.id" v-on:click="startChat(chat)">
+	  				<div class="avatar-box avatar avatar-small">
+				      	<img :src="userAvatar(chat.chatee.avatarURL)" />
+					</div>
+				    <div class="sender-name">
+				    	<span :class="chat.status">{{ chat.chatee.name }}</span><br />
+				    	<span class="smaller is-silver medium">{{chat.lastMessage}}</span>
+				    </div>
+	  			</div>
+	
 	  			
 	  		</div>
 	  	</div>
@@ -365,7 +365,6 @@ export default {
 
 .message-panel {
 	min-height: 100%;
-	width: 100%;
 	display: flex;
 	justify-content: space-between;
 	background-color: $color-body;
@@ -455,6 +454,7 @@ export default {
 	justify-content: center;
 	align-items: center;
 	margin-right: 15px;
+	margin-left: 10px;
 }
 
 .sender-name {
@@ -468,13 +468,15 @@ export default {
 	font-weight: bold;
 }
 
-@media screen and (max-width: 46rem) {
+@media all and (min-width: 46rem) {
 	.message-sidepanel {
-		flex-basis: 100%;
+		width: 100%;
+		flex-basis: auto;
 	}
 
 	.message-window {
-		flex-basis: 100%;
+		width: 100%;
+		flex-basis: auto;
 	}
 }
 </style>

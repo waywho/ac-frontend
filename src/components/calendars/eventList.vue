@@ -63,6 +63,7 @@ export default {
 
 .dot-content {
 	padding-top: 0.8rem;
+	padding-right: 0.8rem;
 }
 
 .dot {

@@ -17,7 +17,6 @@ import VueChatScroll from 'vue-chat-scroll';
 
 Vue.use(VueMediaEmbed, { store });
 Vue.use(VueCharts);
-Vue.use(vueEventCalendar, { locale: 'en'});
 Vue.use(require('vue-moment'));
 Vue.use(firebase);
 Vue.use(VueChatScroll);

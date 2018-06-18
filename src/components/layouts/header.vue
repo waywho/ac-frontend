@@ -17,9 +17,9 @@
           <app-notification-bubble v-if="notificationAlert" class="notification-bubble"></app-notification-bubble>
           <i class="fa fa-bell-o" aria-hidden="true"></i>
         </li>
-        <li v-if="signedIn" class="header-avatar">
+        <li v-if="signedIn" class="header-avatar header-item-space">
           <router-link :to="'/profiles/' + this.profileId">
-            <div class="avatar-border avatar-small header-item-space" >
+            <div class="avatar-border avatar-small " >
                 <img :src="currentUserAvatar" alt="user avatar" />
             </div>
           </router-link>
