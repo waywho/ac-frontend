@@ -1,32 +1,38 @@
 <template>
-  <div id="tool-panel-flow" class="tool-panel-paddings">
-  	  <div class="calendar-title row">
-        <h2 class="col-xs-10 col-sm-10">Schedule</h2>
-        <button v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'vue-event-calendar' && authorizedUser"><i class="fa fa-chevron-right" ></i> Add</button>
-        <i class="fa fa-times is-darkgray button-fa col-xs col-sm text-right" v-on:click="keepFormAlive()" aria-hidden="true" v-if="component === 'calendar-form'"></i>
+  <div class="tool-panel-paddings calendar-panel">
+  	  <div class="calendar-title">
+        <div class="title-piece">
+          <h2 >Calendar</h2>
+        </div>
+        <div class='button-piece'>
+          <button v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'calendar-display' && authorizedUser"><i class="fa fa-plus" ></i> Add</button>
+          <i class="fa fa-times is-darkgray col-xs col-sm text-right" v-on:click="keepFormAlive()" aria-hidden="true" v-if="component === 'calendar-form'"></i>
+        </div>
       </div>
-      <div class="selection row" v-if="component === 'vue-event-calendar'">
-        <span class="selection-text-horizontal col-sm-2 col-xs">Production</span>
-        <span class="selection-text-horizontal col-sm-2 col-xs">Rehearsal</span>
-        <span class="selection-text-horizontal col-sm-2 col-xs">Audition</span>
-      </div>
-      <div class="calendar">
-        <keep-alive :include="include" >
-          <component :events="currentEvents" :is="component" @addToCalendar="calendarUpdate($event)"></component>
-        </keep-alive>
+      <div class="row top-xs">
+          <keep-alive :include="include" >
+            <component :events="currentEventList" :is="component" @addToCalendar="calendarUpdate($event)" :class="'col-xs-12 col-md calendar-display'"></component>
+          </keep-alive>
+
+        <event-list class="col-xs-12 col-md" v-if="component !== 'calendar-form'" :events="calendar"></event-list>
       </div>
   </div>
 </template>
 
 <script>
-import calendarForm from './calendarForm'
-import profileToolsMixin from '@/mixins/profileToolsMixin'
+import calendarForm from './calendarForm';
+import profileToolsMixin from '@/mixins/profileToolsMixin';
 import currentUser from '@/mixins/currentUserMixin';
+import moment from 'moment'
+import calendarDisplay from './calendarDisplay';
+import eventList from './eventList';
 
 export default {
-  name: 'calendar',
+  name: 'Calendar',
   components: {
-    'calendar-form': calendarForm
+    'calendar-form': calendarForm,
+    'calendar-display': calendarDisplay,
+    'event-list': eventList
   },
   props: {
     calendar: {
@@ -35,25 +41,22 @@ export default {
     },
     profileId: String
   },
-  data () {
+  data () {   
     return {
-      component: 'vue-event-calendar',
+      currentEventList: this.calendar,
+      dateContext: null,
+      component: 'calendar-display', //'vue-event-calendar',
       include: ''
     }
   },
   mixins: [profileToolsMixin, currentUser],
   methods: {
     calendarUpdate: function(object) {
-      this.currentEvents.push(object.event)
-      this.component = 'vue-event-calendar'
+      this.currentEventList.push(object.event)
+      this.component = 'calendar-display'
       this.include = ''
-      let eventsData = {}
 
-      this.currentEvents.forEach((event, index) => {
-        eventsData[index] = {event}
-      })
-
-      this.$store.dispatch('updateUserTools', {userId: this.$store.getters.user.id, toolName: 'calendar', data: eventsData})
+      this.$store.dispatch('updateUserTools', {userId: this.$store.getters.currentUser.id, toolName: 'calendar', data: this.currentEventList})
       
     },
     toggleForm: function() {
@@ -62,38 +65,10 @@ export default {
     },
     keepFormAlive: function() {
       this.include = 'calendarForm'
-      this.component='vue-event-calendar'
+      this.component='calendar-display'
     }
   },
   computed: {
-    currentEvents: function() {
-      if(this.calendar !== null && this.calendar !== undefined) {
-        return this.calendar
-      } else {
-        var now = new Date()
-        var dd = now.getDate()
-        var mm = now.getMonth() + 1
-        var yyyy = now.getFullYear()
-        if(dd<10) {
-          dd = '0'+ dd
-        }
-        if(mm<10) {
-          mm = '0'+ mm
-        }
-        let today = yyyy + '/' + mm + '/' + dd
-        console.log(now)
-        console.log(today)
-        return [
-          { date: today,
-            start: '',
-            end: '',
-            title:  "you have no events yet",
-            location: '',
-            desc: 'longlonglong description',
-            type: 'production'}
-          ]
-      }
-    }
   },
   created() {
     this.include = 'calendar-form'
@@ -102,27 +77,37 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-#tool-panel-flow {
-  padding-left: 100px;
-  overflow-y: auto;
+<style lang="scss" scoped>
+@import '../../styles/style-variables';
+
+.calendar-panel {
+  height: 100%;
 }
 
 .calendar-title {
-  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }
 
-.button-fa {
-  margin-right: 30px;
+.calendar-display {
+  margin-bottom: 25px;
 }
 
-@media screen and (max-width: 46rem) {
-  .calendar-title {
-    padding-right: 0px;
-  }
+.fa-times {
+  cursor: pointer;
+}
 
+
+@media all and (min-width: $bp-small) {
   #tool-panel-flow {
-    padding-left: 0px;
+    padding-left: 100px;
+    overflow-y: auto;
   }
+
+  .tool-panel-paddings {
+    padding-left: 100px;
+    padding-right: 25px;
+  }
+
 }
 </style>

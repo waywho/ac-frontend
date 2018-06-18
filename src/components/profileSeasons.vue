@@ -5,7 +5,7 @@
           <li class="season-list-li"><span class="selection selection-text-vertical">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
         </ul>
         <div class="season-heading"> 
-          <h2 class="inline-header">Company Seasons</h2>
+          <h2 class="inline-header season-title">Company Seasons</h2>
           <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonAdd">add</span>
          
         </div>
@@ -123,6 +123,7 @@ export default {
 
 .season-heading {
   order: 2;
+  margin-bottom: 1rem;
 }
 
 .season-list {

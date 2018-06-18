@@ -287,6 +287,11 @@ div.desc {
     & .button {
         margin-right: 8px;
     }
+
+    & button:focus,
+    & .button:focus {
+        outline: -webkit-focus-ring-color auto 0px;
+    }
 }
 
 .button-right-margin {

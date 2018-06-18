@@ -518,6 +518,7 @@ export const store = new Vuex.Store({
 				firebase.database().ref('toolsAuthorized/' + payload.userId).on('value', snapshot => {
 					console.log(snapshot.val());
 					commit('setUserTools', snapshot.val())
+					dispatch('setLocalStorage')
 					resolve(snapshot.val())
 				})
 			}).catch(error => {

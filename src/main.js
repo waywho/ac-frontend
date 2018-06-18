@@ -77,6 +77,8 @@ Vue.filter('truncate', function (value, length) {
       return value.substring(0, length) + '...'
 })
 
+export const bus = new Vue();
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
