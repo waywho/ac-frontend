@@ -49,28 +49,7 @@
 	          	</div>
 	          	<div class="post-icons">
 		          	<i class="fa fa-heart post-icon smaller" aria-hidden="true"></i><span class="icon-count smaller">{{post.likes}}</span>
-		          	<i class="fa fa-comment post-icon smaller" aria-hidden="true"></i><span class="icon-count smaller">{{post.commentCount}} comments</span>
 	          	</div>
-	          	<hr class="divider" />
-	          	<div v-for="(comment, index) in post.comments" class="comment-container">
-	          		<div class="comment-avatar">
-	          			<div class="avatar-small">
-	          				<img :src="userAvatar(comment.userAvatarURL)">
-	          			</div>
-	          		</div>
-	          		<div class="comment-content">
-	          			<span class="small medium text-golden">{{comment.user}}</span><br />
-	          			<span class="smaller comment-text">{{comment.content}}</span>
-	          		</div>
-	          	</div>
-	          	<div class="comment-input-container">
-	          		<div class="avatar-small-border">
-		            	<img :src="currentUserAvatar" class="user-avatar" />
-		          	</div>
-		          	<form class="message-input-container" @submit.prevent="commentSubmit(post.id, post.newComment)">
-						<input type="text" class="smaller" name="comment" v-model="post.newComment" placeholder="write a comment" />
-					</form>
-				</div>
 			</div>
 		</div>
 	</div>

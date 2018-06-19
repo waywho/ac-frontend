@@ -1,12 +1,11 @@
 <template>
 	<div class="">
 
+    <p v-if="profileType === 'company'">{{ profileDetails.role | capitalize }} based in {{ profileDetails.country }} |<br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
 
-		<p><span>{{ profileDetails.city }}, {{ profileDetails.province }} </span><br class="xs-break" /><span class="is-golden" v-if="dataAvailable(connectionLevel.strength)">{{ connectionLevel.strength }}% {{ connectionLevel.name | to-uppercase }}</span></p>
+		<p v-if="profileType === 'artist'">{{ profileDetails.role | capitalize }} based in {{ profileDetails.city }}, {{ profileDetails.province }}  {{ profileDetails.country }} <br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
 
-    <p v-if="profileType === 'company'">{{ profileDetails.type }} Opera Company based in {{ profileDetails.country }} |<br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
-
-		<p v-if="profileType === 'artist'">{{ profileDetails.voiceType }} based in {{ profileDetails.country }} <br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
+    <p>{{profileDetails.descriptions}}</p>
 	</div>
 </template>
 

@@ -1,11 +1,8 @@
 <template>
-	<div class="">
-		<div class="icon-container" v-if="step === 'next'">
-			<i class="fa fa-chevron-right is-golden icon" aria-hidden="true"></i>
-		</div>
-		<div class="icon-container" v-if="step === 'last'">
-			<i class="fa fa-chevron-left is-golden icon" aria-hidden="true"></i>
-		</div>
+	<div class="step-container">
+		<i v-if="step === 'next'" class="fa fa-chevron-circle-right is-midgray step-icon" aria-hidden="true"></i> 
+		<i v-if="step === 'last'" class="fa fa-chevron-circle-left is-midgray step-icon" aria-hidden="true"></i> 
+		<span class="small instruction">{{instruction}}</span>
 	</div>
 </template>
 
@@ -13,7 +10,11 @@
 export default {
   name: 'nextLastStep',
   props: {
-  	step: String
+  	step: String,
+  	instruction: {
+  		type: String,
+  		required: false
+  	}
   },
   data () {
     return {
@@ -24,13 +25,29 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.next-step {
-	display: inline-block;
+<style lang="scss" scoped>
+@import '../styles/style-variables';
+
+.step-container {
+	height: 25px;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
 }
 
-.icon-container {
-	height: 38px;
-	width: 38px;
+.instruction {
+	margin-left: 1rem;
 }
+
+.step-container:hover, .step-container:hover .step-icon {
+	color: $color-gold;
+}
+
+.step-icon {
+	font-size: 25px;
+	cursor: pointer;
+}
+
+
+
 </style>

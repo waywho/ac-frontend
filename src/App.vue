@@ -1,26 +1,26 @@
 <template>
-  <div :class="[{'push-left': isActive }]" id="main-app">
-    <app-menu :class="['app-menu', {'menu-open': isActive}]" v-on:toggleMenu="menuToggle($event)"></app-menu>
-    <div id="app">
-      <app-signIn v-if="showSignInModal" @close="showSignInModal = false"></app-signIn>
+  <div id="main-app">
+    <app-menu :class="['app-menu', {'menu-open': isActive}]" :style="menuStyle" v-on:toggleMenu="menuToggle($event)"></app-menu>
+    <div id="app-inner">
       <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive" :profile-id="currentUser.id"></app-header>
-      <router-view class="main-body" @scroll="handleScroll"/>
+      <router-view class="main-body"></router-view>
       <app-footer></app-footer>
+      <app-sign-in v-if="showSignInModal" @close="showSignInModal = false"></app-sign-in>
     </div>
   </div>
 </template>
 
 <script>
-import menu from './components/menu'
-import header from '@/components/layout/header'
-import footer from '@/components/layout/footer'
-import showProfile from './components/showProfile'
+import menu from '@/components/layouts/menu'
+import header from '@/components/layouts/header'
+import footer from '@/components/layouts/footer'
+import showProfile from '@/components/showProfile'
 import signUp from '@/components/auth/signUp'
-import searchResults from './components/searchResults'
-import landing from './components/landing'
+import searchResults from '@/components/searchResults'
+import landing from '@/components/static_pages/landing'
 import signIn from '@/components/auth/signInModal'
-import pageStatic from './components/pageStatic'
-import currentUser from './mixins/currentUserMixin';
+import pageStatic from '@/components/static_pages/pageStatic'
+import currentUser from '@/mixins/currentUserMixin';
 
 export default {
   name: 'app',
@@ -31,7 +31,7 @@ export default {
     'show-profile': showProfile,
     'sign-Up': signUp,
     'app-search-results': searchResults,
-    'app-signIn': signIn,
+    'app-sign-in': signIn,
     'app-page-static': pageStatic
   },
   data() {
@@ -42,11 +42,35 @@ export default {
       scrollPosition: 0,
       navPosition: '',
       isActive: false,
-      showSignInModal: false
+      showSignInModal: false,
+      windowWidth: 500,
     }
   },
   mixins: [currentUser],
+  computed: {
+    menuStyle: function() {
+      if(this.windowWidth >= 500) {
+        return {
+          width: '400px',
+          right: '-400px'
+        }
+      } else if (this.windowWidth <= 499) {
+        return {
+          width: this.windowWidth + 'px',
+          right: '-' + this.windowWidth + 'px'
+        }
+      } else {
+        return {
+          width: this.windowWidth + 'px',
+          right: '-' + this.windowWidth + 'px'
+        }
+      }
+    }
+  },
   methods: {
+    logScroll: function(e) {
+      console.log("scrool", e)
+    },
     handleScroll: function(e) {
        var currentScrollPosition = e.srcElement.scrollTop;
        // console.log(e)
@@ -59,23 +83,36 @@ export default {
        }
       this.scrollPosition = currentScrollPosition;
     },
+    getWindowWidth(event) {
+          this.windowWidth = document.documentElement.clientWidth;
+    },
     menuToggle: function(msg) {
       this.isActive = !this.isActive;
       // document.body.classList.toggle('push-left')
     }
   },
-  computed: {
-    // userIsAuthenticated() {
-    //   return this.$store.getters.currentUser !== null && this.$store.getters.currentUser !== undefined
-    // }
-  },
   created() {
-    document.body.addEventListener('scroll', this.handleScroll);
+    // console.log(document.documentElement)
+    var scrollDoc = document.getElementById("app-inner")
+    console.log(scrollDoc)
+    // .addEventListener('scroll', this.handleScroll);
+
+
     // document.body.addEventListener('scroll', console.log('listenToScroll'));
     this.$store.dispatch('tryAutoSignIn');
   },
   destroyed() {
     document.body.removeEventListener('scroll', this.handleScroll);
+
+    window.removeEventListener('resize', this.getWindowWidth);
+  },
+  mounted() {
+      this.$nextTick(function() {
+        window.addEventListener('resize', this.getWindowWidth);
+
+        //Init
+        this.getWindowWidth()
+    })
   }
 }
 </script>
@@ -83,7 +120,7 @@ export default {
 <style lang="scss">
 @import './styles/global';
 
-#app {
+#app-inner {
   font-family: 'Raleway', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -118,15 +155,9 @@ export default {
   top: -100px !important;
 }
 
-.push-left {
-  left: -923px;
-}
-
 .app-menu {
   position: fixed;
-  width: 503px;
   height: 100%;
-  right: -503px;
   background-color: #20201f;
   color: white;
   z-index: 999;

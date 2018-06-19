@@ -135,12 +135,24 @@ input[type="checkbox"] + label span,
     border: 1px solid $color-midgray;
     background-color: $color-midgray;
     cursor: pointer;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+
+input[type="checkbox"] + label,
+    input[type="radio"] + label {
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
 }
 
 input[type="checkbox"]:checked + label,
 input[type="radio"]:checked + label {
     color: $color-gold;
-    font-weight: 700 !important;
+    // font-weight: 500 !important;
 }
 
 input[type="checkbox"]:checked + label span,
@@ -274,6 +286,11 @@ div.desc {
     & button,
     & .button {
         margin-right: 8px;
+    }
+
+    & button:focus,
+    & .button:focus {
+        outline: -webkit-focus-ring-color auto 0px;
     }
 }
 

@@ -5,7 +5,7 @@
           <li class="season-list-li"><span class="selection selection-text-vertical">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
         </ul>
         <div class="season-heading"> 
-          <h2 class="inline-header">Company Seasons</h2>
+          <h2 class="inline-header season-title">Company Seasons</h2>
           <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonAdd">add</span>
          
         </div>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import seasonForm from './seasonForm'
+import seasonForm from '@/components/seasons/seasonForm'
 import productionDetails from './productionDetails'
 import currentUser from '../mixins/currentUserMixin';
 
@@ -60,7 +60,12 @@ export default {
   },
   computed: {
     currentProductions: function () {
-      return this.currentSeason.productions
+      if(this.currentSeason) {
+        return this.currentSeason.productions
+      } else {
+        return null
+      }
+      
     }
   },
   methods: {
@@ -86,8 +91,11 @@ export default {
     }
   },
   created() {
-    this.currentSeason = this.profileSeasons[Object.keys(this.profileSeasons)[0]]
-    this.currentProduction = this.currentSeason.productions[0]
+    if (this.profileSeasons) {
+        this.currentSeason = this.profileSeasons[Object.keys(this.profileSeasons)[0]]
+        this.currentProduction = this.currentSeason.productions[0]
+    }
+
   }
 }
 </script>
@@ -123,6 +131,7 @@ export default {
 
 .season-heading {
   order: 2;
+  margin-bottom: 1rem;
 }
 
 .season-list {

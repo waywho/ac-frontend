@@ -5,49 +5,52 @@
 
   	<div class="image-uploader">
   		<div class="uploadbox" v-on:click="onPickFile('avatarInput')">
-  			<div :class="['avatar-medium', 'upload-avatar', {'upload-avatar-border': avatarURL === null}]"><img v-if="avatarURL !== null" :src="avatarURL" />
-  				<i v-if="avatarURL === null" class="fa fa-user fa-4x is-dargray" aria-hidden="true"></i>
-
-  			</div>
-  			<div>Profile Image</div>
+          <div class="upload-avatar" v-if="avatarCurrentURL !== null" >
+          <img  :src="avatarCurrentURL" alt="uploaded cover" />
+          </div>
+          <div class="upload-avatar" v-if="avatarCurrentURL === null">
+  				  <i class="fa fa-user-o fa-4x is-white" aria-hidden="true"></i>        
+  			 </div>
+  			<div class="image-type is-lightgray">Profile Image</div>
 
         <input type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
   		</div>
 
    		<div class="uploadbox" v-on:click="onPickFile('coverInput')">
-        <img v-if="coverURL !== null" :src="coverURL" class='upload-avatar'/>
-  			<div v-if="coverURL === null" :class="['avatar-medium', 'upload-avatar', {'upload-avatar-border': coverURL === null}]">
-  				<i v-if="coverURL === null" class="fa fa-picture-o fa-4x is-darkgray" aria-hidden="true"></i>
+        <div class="upload-cover" v-if="coverCurrentURL !== null">
+          <img :src="coverCurrentURL" alt="uploaded cover" />
+        </div>
+  			<div v-if="coverCurrentURL === null" class="upload-avatar avatar-with-padding">
+          <img :src="require('@/assets/images/cover-icon.png')" alt="cover icon" />
+  				
   			</div>
-  			<div>Cover Image</div>
+  			<div class="image-type is-lightgray">Cover Image</div>
+
         <input type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
   		</div>
           
   	</div>
-
-  	<next-last-step v-on:click.native="takeStep(1, {})" :step="'next'" class="step-container"></next-last-step>
   </div>
 </template>
 
 <script>
-import nextLastStep from '@/components/nextLastStep'
-import stepMixin from '@/mixins/stepMixin'
 import profileImagesMixin from '@/mixins/profileImagesMixin'
 
 export default {
-  name: 'signUpStepSix',
-  components: {
-  	'next-last-step': nextLastStep
+  name: 'signUpPhotos',
+  props: {
+    avatarURL: String,
+    coverURL: String
   },
   data () {
     return {
       avatar: null,
-      avatarURL: null,
+      avatarCurrentURL: null,
       cover: null,
-      coverURL: null
+      coverCurrentURL: null
     }
   },
-  mixins: [stepMixin, profileImagesMixin]
+  mixins: [profileImagesMixin]
 }
 </script>
 
@@ -58,6 +61,7 @@ export default {
 .image-uploader {
 	margin: 65px 0px 100px;
 	display: flex;
+  flex-direction: column;
 	justify-content: center;
 	width: 100%;
 }
@@ -66,24 +70,39 @@ export default {
 	flex-basis: 50%;
 	cursor: pointer;
 	text-align: center;
+  width: 100%;
+  margin-bottom: 30px;
 }
 
 .upload-avatar {
+  background-color: $color-lightgray;
 	color: $color-darkgray;
 	display: flex;
 	justify-content: center;
-	align-item: center;
+	align-items: center;
 	margin: 25px auto;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
-.upload-avatar-border {
-  border: solid 9px $color-darkgray;
+.avatar-with-padding {
+  padding: 10px 10px;
 }
 
-.uploadbox:hover, .uploadbox:hover .upload-avatar, .uploadbox:hover .fa {
-	color: $color-gold;
-	font-color: $color-gold;
-	border-color: $color-gold;
+.upload-cover {
+  width: 100%;
+  height: 434px;
+  overflow: hidden;
+}
+
+.uploadbox:hover .upload-avatar {
+	background-color: $color-gold;
+}
+
+.uploadbox:hover .image-type {
+  color: $color-gold;
 }
 
 .step-container {

@@ -10,6 +10,7 @@
 }
 
 html, body {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	padding: 0px;
@@ -20,7 +21,9 @@ html, body {
   	background-color: #f9f9f9;
   	line-height: $base-line;
   	overflow-x: hidden;
+  	overflow-y: scroll;
   	-webkit-overflow-scrolling: touch;
+  	-webkit-transform: translateZ(0px);
   	left: 0px;
 }
 
@@ -91,6 +94,7 @@ div {
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
+	z-index: 2;
 }
 
 .avatar-border-thicker {
@@ -100,6 +104,7 @@ div {
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
+	z-index: 2;
 }
 
 .avatar {
@@ -108,13 +113,15 @@ div {
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
+	z-index: 2;
 }
 
 .avatar img, .avatar-border img {
 	margin: 0 auto;
+	border-radius: 50%;
 	width: 100%;
+	z-index: 1;
 }
-
 
 .avatar-larger {
 	height: 119px;
@@ -175,6 +182,7 @@ button,
 	min-height: 30px;
 	min-width: 70px;
 	padding: 3px 10px;
+	font-size: $font-size-small;
 	font-weight: 700;
 	text-decoration: none;
 	cursor: pointer;
@@ -190,9 +198,19 @@ button,
 	}
 }
 
+button:focus, 
+	.button:focus {
+        outline: -webkit-focus-ring-color none 0px;
+    
+	}
+
 button[disabled="disabled"] {
 	opacity: 0.5;
 	cursor: auto;
+}
+
+button:hover, .button:hover {
+	background-color: $color-darkred;
 }
 
 // making css class input gold border
@@ -201,14 +219,6 @@ button[disabled="disabled"] {
 // 	width: 57%;
 // 	height: 21px;
 // }
-
-.date-num {
-	font-size: $font-size-smaller !important;
-}
-
-.weeks .item {
-	font-size: $font-size-smaller !important;
-}
 
 
 .selection {
@@ -648,7 +658,7 @@ input:checked + .slider:before {
 	right: 50px;
 }
 
-@media screen and (min-width: 768px) and (max-width: 1024px) {
+@media screen and (min-width: 813px) and (max-width: 1024px) {
 	.slide {
 		overflow-x: auto;
 		flex-wrap: nowrap !important;
@@ -657,6 +667,7 @@ input:checked + .slider:before {
 	}
 }
 
+// mobile
 @media screen and (max-width: 812px) {
 	ul {
 		-webkit-padding-start: 0px;

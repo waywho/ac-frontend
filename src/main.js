@@ -2,26 +2,20 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
-import vueEventCalendar from 'vue-event-calendar'
-import 'vue-event-calendar/dist/style.css'
 import { store } from './store/store'
 import vueMoment from 'vue-moment'
 import 'chart.js'
 import VueMediaEmbed from 'vue-media-embed'
 import 'hchs-vue-charts'
 import Vuex from 'vuex'
-import firebase from 'firebase'
-import 'firebase/database'
-import 'firebase/auth'
-import 'firebase/storage'
 import VueChatScroll from 'vue-chat-scroll';
+import router from '@/router'
+import firebaseApp from '@/firebase/init';
 
 Vue.use(VueMediaEmbed, { store });
 Vue.use(VueCharts);
-Vue.use(vueEventCalendar, { locale: 'en'});
 Vue.use(require('vue-moment'));
-Vue.use(firebase);
+Vue.use(firebaseApp);
 Vue.use(VueChatScroll);
 
 Vue.config.productionTip = false
@@ -36,8 +30,8 @@ Vue.filter('to-uppercase', function(value) {
 
 Vue.filter('imageProcess', function(value, type) {
   let imageURLs = {
-    'avatar': require("./assets/images/avatar-holder.png"),
-    'season': require("./assets/images/seasonicon.png")
+    'avatar': require("@/assets/images/avatar-holder.png"),
+    'season': require("@/assets/images/seasonicon.png")
   }
   if (value !== null && value !== undefined) {
     return value
@@ -52,7 +46,7 @@ Vue.filter('capitalize', function (value) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 })
 
-Vue.filter('camel-to-space', function (value) {
+Vue.filter('kabab-to-space', function (value) {
   if (value !== null && value !== undefined) {
     value = value.split("-").join(" ");
     return value.charAt(0).toUpperCase() + value.slice(1)
@@ -61,7 +55,7 @@ Vue.filter('camel-to-space', function (value) {
   }
 })
 
-Vue.filter('kabab-to-space', function (value) {
+Vue.filter('camel-to-space', function (value) {
   if (value !== null && value !== undefined) {
     value = value.replace(/([A-Z])/g, " $1");
     return value.charAt(0).toUpperCase() + value.slice(1)
@@ -77,6 +71,8 @@ Vue.filter('truncate', function (value, length) {
       return value.substring(0, length) + '...'
 })
 
+export const bus = new Vue();
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -85,12 +81,6 @@ new Vue({
   template: '<App/>',
   components: { App },
   created() {
-  	firebase.initializeApp({
-	  	apiKey: 'AIzaSyBj0LSNuwTZNyD1BKZxwYQE62n9CpOT3E0',
-		authDomain: 'artist-center.firebaseapp.com',
-		databaseURL: 'https://artist-center.firebaseio.com',
-		projectId: 'artist-center',
-		storageBucket: 'artist-center.appspot.com'
-	})
+
   }
 })

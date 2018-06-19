@@ -1,13 +1,17 @@
 <template>
   <div class="signup">
-  	<div class="progress-bar" :style="progress" :class="progressPosition"></div>
   	<div class="signup-inner">
 	  	<h1>Create Profile</h1>
 		<div class="strong subheadline">Create your account, and start connecting today.</div>
+    <progress-bar v-if="currentStep < 5" class="progress-bar-margin" :current-step="currentStep" :setup-steps="signUpSteps"></progress-bar>
+    <next-last-step v-if="currentStep > 1 && currentStep < 5"  v-on:click.native="currentStep -= 1" :step="'last'" class="step-container"></next-last-step>
 		<keep-alive>
-	  		<component :is="component" :newProfile="newProfile" v-on:takeStep="nextComponent($event.theStep)" v-on:updateData="updateProfile($event)" class="signup-content"></component>
+	  		<component :is="currentComponent" :newProfile="newProfile" v-bind.sync="newProfile" class="signup-content" @successful-signup="currentStep += 1"></component>
 	  	</keep-alive>
+
+      <next-last-step v-if="currentStep > 0 && currentStep < 5" v-on:click.native="updateProfile" :step="'next'" class="step-container" :instruction="'Continue Profile Setup'"></next-last-step>
   	</div>
+    
   </div>
 </template>
 
@@ -20,6 +24,8 @@ import signUpPhotos from './signUpPhotos'
 // import signUpConnections from './signUpConnections'
 import signUpComplete from './signUpComplete'
 import nextLastStep from '@/components/nextLastStep'
+import stepMixin from '@/mixins/stepMixin'
+import progressBar from '@/components/progressBar'
 
 export default {
   name: 'signUp',
@@ -31,32 +37,67 @@ export default {
    	'signUpPhotos': signUpPhotos,
    	// 'signUpConnections': signUpConnections,
    	'signUpComplete': signUpComplete,
-   	'next-last-step': nextLastStep
+   	'next-last-step': nextLastStep,
+    'progress-bar': progressBar
   },
+  mixins: [stepMixin],
   data () {
     return {
-      component: "signUpCredentials",
-      newProfile: {},
+      newProfile: {
+        consent: true,
+        email: "",
+        type: "",
+        id: "",
+        avatarURL: null,
+        coverURL: null,
+        details: {
+          name: "",
+          role: "",
+          city: "",
+          postcode: "",
+          provinceOrState: "",
+          country: "",
+          descriptions: ""
+        },
+        socials: {
+          facebook: "",
+          instagram: "",
+          linkedin: "",
+          twitter: "",
+          vimeo: "",
+          youtube: ""
+        }
+      },
       currentStep: 0,
       progressPosition: '',
       scrollPosition: 0,
       signUpSteps: [
-      	'signUpCredentials',
-  		 	'signUpProfileType',
-  		 	'signUpDetails',
-  		 	'signUpPhotos',
-  		 	'signUpSocials',
-  		 	'signUpConnections',
-  		 	'signUpComplete'
+      	{component: 'signUpCredentials', fields: "email"},
+  		 	{component: 'signUpProfileType', fields: "type"},
+  		 	{component: 'signUpDetails', fields: "details"},
+  		 	{component: 'signUpPhotos', fields: null},
+  		 	{component: 'signUpSocials', fields: "socials"},
+  		 	{component: 'signUpComplete', fields: null}
       ]
     }
   },
+  computed: {
+    currentComponent: function() {
+      return this.signUpSteps[this.currentStep].component
+    }
+  },
   methods: {
-  	updateProfile: function(object) {
+  	updateProfile: function() {
       // console.log(object)
-      this.newProfile = Object.assign({}, this.newProfile, object.newData);
-      this.$store.dispatch('updateUserProfile', {userId: this.$store.getters.currentUser.id, data: object.newData})
-      this.nextComponent(object.theStep);
+      let fieldName = this.signUpSteps[this.currentStep].fields
+      
+      if(fieldName !== null) {
+        this.$store.dispatch('updateUserProfile', {userId: this.$store.getters.currentUser.id, data: {[fieldName]: this.newProfile[fieldName]}}).then(() => {
+          this.currentStep += 1
+        })
+      } else {
+        this.currentStep += 1
+      }
     },
     nextComponent: function(step) {
       this.currentStep += step;
@@ -72,16 +113,9 @@ export default {
       this.scrollPosition = currentScrollPosition;
     }
   },
-  computed: {
-  	progress: function() {
-    	var progress = (this.currentStep + 1) * 14.3;
-    	// console.log("width: " + progress + '%;')
-    	return "width: " + progress + '%;';
-    }
-  },
   created() {
-  	this.currentStep = this.signUpSteps.indexOf(this.component)
     document.body.addEventListener('scroll', this.handleScroll);
+
   },
   destroyed() {
     document.body.removeEventListener('scroll', this.handleScroll);
@@ -107,19 +141,12 @@ export default {
 .signup-inner {
 	background: white;
 	margin: 50px auto 130px;
+  padding: 65px 5%;
 	min-height: 600px;
 	width: 63%;
 	max-width: 792px;
 	text-align: center;
-	padding: 65px 8%;
-}
-
-.progress-bar {
-	border: 5px solid $color-gold;
-	position: fixed;
-	top: 100px;
-	transition: top 0.2s ease-in-out;
-  -webkit-transition: top 0.2s ease-in-out;
+	
 }
 
 .progress-stick {
@@ -129,7 +156,11 @@ export default {
 
 /*component css*/
 .subheadline {
-	margin-bottom: 65px;
+	margin-bottom: 15px;
+}
+
+.progress-bar-margin {
+  margin-bottom: 65px;
 }
 
 .signup-input {
@@ -138,6 +169,10 @@ export default {
 
 .signup-content {
 	text-align: left;
+}
+
+.step-container {
+  margin-top: 65px;
 }
 
 @media screen and (max-width: 1024px) {
