@@ -7,6 +7,7 @@ import membershipDetails from '@/components/static_pages/membershipDetails'
 import pageStatic from '@/components/static_pages/pageStatic'
 import { store } from '@/store/store/'
 import opportunityBoard from '@/components/opportunities/opportunityBoard'
+import notFoundComponent from '@/components/notFoundComponent'
 import firebaseApp from '@/firebase/init'
 
 //lazy loading signUp
@@ -28,7 +29,7 @@ const router = new Router({
         return {x: 0, y: 0};
     },
     routes: [
-        { path: '/', name: 'landing', component: landing },
+        { path: '/', redirect: '/signup' },
         { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
         { path: '/about/:page', name: 'terms', component: pageStatic},
         { path: '/profiles/:id', name: 'profiles', component: showProfile, props: true},
@@ -46,7 +47,7 @@ const router = new Router({
          //    } 
     	},
         { path: '/search', name: 'searchResults', component: searchResults},
-        { path: '*', reidrect: '/'}
+        { path: '*', name: 'notFound', component: notFoundComponent}
     ]
 })
 

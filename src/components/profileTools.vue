@@ -75,6 +75,7 @@ export default {
       // console.log('auth', this.authorizedUser, this.profileId)
 
       if(this.authorizedUser) {
+        this.component = 'message'
         return this[this.profileType + 'AuthTools']
       } else {
         if(this.profileToolData !== null && this.profileToolData !== undefined) {
@@ -83,6 +84,7 @@ export default {
           ToolNames.forEach(toolName => {
             toolSet.push(this.tools[toolName])
           })
+          this.component = toolSet[0].component
           return toolSet
         } else {
           return null
