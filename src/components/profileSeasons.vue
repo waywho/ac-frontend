@@ -60,7 +60,12 @@ export default {
   },
   computed: {
     currentProductions: function () {
-      return this.currentSeason.productions
+      if(this.currentSeason) {
+        return this.currentSeason.productions
+      } else {
+        return null
+      }
+      
     }
   },
   methods: {
@@ -86,8 +91,11 @@ export default {
     }
   },
   created() {
-    this.currentSeason = this.profileSeasons[Object.keys(this.profileSeasons)[0]]
-    this.currentProduction = this.currentSeason.productions[0]
+    if (this.profileSeasons) {
+        this.currentSeason = this.profileSeasons[Object.keys(this.profileSeasons)[0]]
+        this.currentProduction = this.currentSeason.productions[0]
+    }
+
   }
 }
 </script>

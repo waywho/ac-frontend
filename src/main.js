@@ -2,23 +2,20 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
 import { store } from './store/store'
 import vueMoment from 'vue-moment'
 import 'chart.js'
 import VueMediaEmbed from 'vue-media-embed'
 import 'hchs-vue-charts'
 import Vuex from 'vuex'
-import firebase from 'firebase'
-import 'firebase/database'
-import 'firebase/auth'
-import 'firebase/storage'
 import VueChatScroll from 'vue-chat-scroll';
+import router from '@/router'
+import firebaseApp from '@/firebase/init';
 
 Vue.use(VueMediaEmbed, { store });
 Vue.use(VueCharts);
 Vue.use(require('vue-moment'));
-Vue.use(firebase);
+Vue.use(firebaseApp);
 Vue.use(VueChatScroll);
 
 Vue.config.productionTip = false
@@ -84,12 +81,6 @@ new Vue({
   template: '<App/>',
   components: { App },
   created() {
-  	firebase.initializeApp({
-	  	apiKey: 'AIzaSyBj0LSNuwTZNyD1BKZxwYQE62n9CpOT3E0',
-		authDomain: 'artist-center.firebaseapp.com',
-		databaseURL: 'https://artist-center.firebaseio.com',
-		projectId: 'artist-center',
-		storageBucket: 'artist-center.appspot.com'
-	})
+
   }
 })

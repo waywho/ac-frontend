@@ -1,7 +1,7 @@
 <template>
 	<div class="">
 
-    <p v-if="profileType === 'company'">{{ profileDetails.role | capitalize }} Opera Company based in {{ profileDetails.country }} |<br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
+    <p v-if="profileType === 'company'">{{ profileDetails.role | capitalize }} based in {{ profileDetails.country }} |<br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
 
 		<p v-if="profileType === 'artist'">{{ profileDetails.role | capitalize }} based in {{ profileDetails.city }}, {{ profileDetails.province }}  {{ profileDetails.country }} <br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
 

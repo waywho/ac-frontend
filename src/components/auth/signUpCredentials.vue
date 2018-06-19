@@ -1,6 +1,6 @@
 <template>
   <form class="signup-form" v-on:submit.prevent="onSignUp">
-  	<input type="text" class="signup-input" name="profileEmail" placeholder="Email Address" v-model="credentials.email" @input="$emit('update:email', credentials.email)" @focus="clearMessage"/>
+  	<input type="email" class="signup-input" name="profileEmail" placeholder="Email Address" v-model="credentials.email" @input="$emit('update:email', credentials.email)" @focus="clearMessage"/>
   	<input type="password" class="signup-input" name="profilePassword" placeholder="Password with 6 or more characters" v-model="credentials.password" @focus="clearMessage"/>
     <input type="password" class="signup-input" name="confirmPassword" placeholder="Confirm Password" v-model="credentials.confirmPassword" @focus="clearMessage"/>
     <div class="inline-checkbox signup-input">
@@ -36,7 +36,10 @@ export default {
         password: null,
         confirmPassword: null
       },
-      messaging: null,
+      messaging: {
+        message: null,
+        messageType: null
+      },
     }
   },
   computed: {
@@ -53,10 +56,11 @@ export default {
   },
   methods: {
     onSignUp: function() {
-      console.log(this.comparePasswords)
+      // console.log(this.comparePasswords)
       if (this.comparePasswords) {
         this.messageShow = false;
-        this.messaging = null
+        this.messaging.message = null
+        this.messaging.messageType = null
         this.$store.dispatch('signUserUp', this.credentials)
           .then(() => {        
           }, 
@@ -67,16 +71,19 @@ export default {
       // saveData(1, this.credentials)
       } else {
         if (this.password === null) {
-          this.messaging = {message: "You need a password", messageType: 'warning'}
+          this.messaging.message = "You need a password"
+          this.messaging.messageType = 'warning'
           this.messageShow = true
         } else {
-          this.messaging = {message: "Passwords do not match", messageType: 'warning'}
+          this.messaging.message = "Passwords do not match"
+          this.messaging.messageType = 'warning'
           this.messageShow = true
         }
       }
     },
     clearMessage() {
-      this.messaging = null
+      this.messaging.message = null
+      this.messaging.messageType = null
       this.messageShow = false
     }
   },

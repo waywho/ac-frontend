@@ -24,6 +24,8 @@ import opportunityFilter from './opportunityFilters';
 import countriesList from 'countries-list';
 import Velocity from 'velocity-animate';
 import 'velocity-animate/velocity.ui';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 // import axios from 'axios'
 
 export default {
@@ -116,7 +118,9 @@ export default {
 		}
 	},
 	created() {
-		this.$store.dispatch('resetToken').then(() => {
+
+		if(this.$store.getters.currentUser.idToken) {
+			this.$store.dispatch('resetToken').then(() => {
 			console.log('reset token!')
 			oppAxios.get('opportunities.json', {
 	  			params: {
@@ -132,13 +136,18 @@ export default {
 	  			this.loading = false
 	  		})
 
-		}).catch(error => {
-			this.$router.push("/")
-		})
+			}).catch(error => {
+				this.$router.push("/")
+			})
 
-		this.opportunityTypes = this.$store.state.opportunityTypes
-		this.categories = Object.keys(this.$store.state.categorySubcategories)
-		this.paymentTypes = this.$store.state.paymentTypes
+			this.opportunityTypes = this.$store.state.opportunityTypes
+			this.categories = Object.keys(this.$store.state.categorySubcategories)
+			this.paymentTypes = this.$store.state.paymentTypes
+		} else {
+			alert('Please sign in')
+			this.$router.push("/")
+		}
+		
 	},
 	mounted() {
 	  	this.$nextTick(function() {

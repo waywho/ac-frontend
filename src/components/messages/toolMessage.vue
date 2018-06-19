@@ -66,8 +66,9 @@
 import currentUserMixin from '@/mixins/currentUserMixin';
 import avatarMixin from '@/mixins/avatarMixin';
 import message from './message';
-import firebase from 'firebase/app';
-import 'firebase/database';
+// import firebase from 'firebase/app';
+// import 'firebase/database';
+import firebaseApp from '@/firebase/init';
 import _ from 'lodash';
 
 export default {
@@ -120,7 +121,7 @@ export default {
   	},
   	getMemberships: function(chatArray) {
   		// console.log('i am getting memberships')
-  		var chatMembershipRef = firebase.database().ref("chatMemberships")
+  		var chatMembershipRef = firebaseApp.database().ref("chatMemberships")
   		Promise.all(
   			chatArray.map(chat => {
   				return chatMembershipRef.child(chat.id).once('value', snapshot => {
@@ -153,7 +154,7 @@ export default {
   		})[0]
   	},
   	getChatPartner: function(userID) {
-  		var usersRef = firebase.database().ref("users").child(userID)
+  		var usersRef = firebaseApp.database().ref("users").child(userID)
   		usersRef.on("value", snapshot => {
   			// console.log(snapshot.val())
   			this.chatee = snapshot.val()
@@ -172,7 +173,7 @@ export default {
   		
   		if(this.chats) {
   			// check if there is already a thread
-  			var chatThreadRef = firebase.database().ref("threads")
+  			var chatThreadRef = firebaseApp.database().ref("threads")
 			let chatID = _.findKey(this.chatMemberships, function(o) { return o[user.id] })
 			// console.log('chat id', chatID)
 			if (chatID) {
@@ -194,7 +195,7 @@ export default {
 
   	},
   	getMessages: function (currentChatID) {
-  		var chatThreadRef = firebase.database().ref("threads").child(currentChatID)
+  		var chatThreadRef = firebaseApp.database().ref("threads").child(currentChatID)
 
   		chatThreadRef.once("value", snapshot => {
   			var chatThread = snapshot.val();
@@ -206,7 +207,7 @@ export default {
   	},
   	sendMessage: function() {
   		this.initialMessage = null
-  		var databaseRef = firebase.database().ref();
+  		var databaseRef = firebaseApp.database().ref();
   		var chatKey, messageUpdates
 
  		if(this.currentChat.id === null || this.currentChat.id === undefined) {
@@ -235,7 +236,7 @@ export default {
   				if(error) {
   					console.log(error)
   				} else {
-  					firebase.database().ref("threads").child(chatKey).push().update(newThread, error => {
+  					firebaseApp.database().ref("threads").child(chatKey).push().update(newThread, error => {
   						if(error) {
   							console.log(error)
   						} else {
@@ -278,14 +279,14 @@ export default {
   		if(this.userSearch.length > 2) {
 	  		this.chatsLoading = true
 	  		var userArray = []
-	  		var usersRef = firebase.database().ref("users")
+	  		var usersRef = firebaseApp.database().ref("users")
 
 	  		usersRef.orderByChild("firstName")
 	  			.startAt(this.userSearch.toLowerCase().trim())
 	  			.endAt(this.userSearch.toLowerCase().trim() + "\uf8ff")
 	  			.once("value", snapshot => {
-	  			// console.log('firebase', snapshot.val())
-	  			// console.log('firebase num', snapshot.numChildren())
+	  			// console.log('firebaseApp', snapshot.val())
+	  			// console.log('firebaseApp num', snapshot.numChildren())
 	  			if(snapshot.numChildren() > 0) {
 					userArray = Object.values(snapshot.val())
 				}
@@ -322,8 +323,8 @@ export default {
   	}
   },
   created() {
-  	var chatRef = firebase.database().ref(`chats/${this.$store.getters.currentUser.id}`)
-  	var membershipRef = firebase.database().ref("chatMemberships")
+  	var chatRef = firebaseApp.database().ref(`chats/${this.$store.getters.currentUser.id}`)
+  	var membershipRef = firebaseApp.database().ref("chatMemberships")
   	let lastChildKey
   	// console.log(chatRef.key)
 

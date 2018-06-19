@@ -21,7 +21,9 @@ html, body {
   	background-color: #f9f9f9;
   	line-height: $base-line;
   	overflow-x: hidden;
+  	overflow-y: scroll;
   	-webkit-overflow-scrolling: touch;
+  	-webkit-transform: translateZ(0px);
   	left: 0px;
 }
 

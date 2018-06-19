@@ -3,7 +3,7 @@
     <div class="header-inner">
       <ul class="non-list header-items">
         <li class="logo">
-          <router-link to="/"><img src='../../assets/images/artistcenter-logo.png' alt="artistcenter logo" /></router-link>
+          <router-link to="/"><img :src="require('@/assets/images/artistcenter-logo.png')" alt="artistcenter logo" /></router-link>
         </li>
         
         <li class="search header-item-space" id="search-element">
@@ -44,9 +44,10 @@ import notifications from '@/components/notifications'
 import notificationBubble from '@/components/notificationBubble'
 import { mixin as clickaway } from 'vue-clickaway'
 import currentUser from '@/mixins/currentUserMixin';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/database';
+// import firebase from 'firebase/app';
+// import 'firebase/auth';
+// import 'firebase/database';
+import firebaseApp from '@/firebase/init';
 import _ from 'lodash';
 
 
@@ -70,13 +71,13 @@ export default {
   },
   methods: {
     getNotifications: function() {
-      var notificationRef = firebase.database().ref('notifications').child(this.profileId)
+      var notificationRef = firebaseApp.database().ref('notifications').child(this.profileId)
        notificationRef.once('value', snapshot => {
         console.log(snapshot.val())
           var keys = Object.keys(snapshot.val() || {})
           this.lastKey = keys[keys.length-1]
 
-          firebase.database().ref('notificationViews/' + this.profileId).set(this.lastKey)
+          firebaseApp.database().ref('notificationViews/' + this.profileId).set(this.lastKey)
 
           this.notificationList = _.orderBy(Object.values(snapshot.val()), ['created'], ['desc']);
           this.notificationAlert = false;
@@ -97,14 +98,18 @@ export default {
   },
   created() {
     if(this.authorizedUser) {
-      var notificationRef = firebase.database().ref('notifications').child(this.profileId)
+      var notificationRef = firebaseApp.database().ref('notifications')
+      if(notifcationRef) {
+        notificationRef = notificationRef.child(this.profileId)
 
+      }
+      
       if(this.lastKey) {
         notificationRef.orderByKey().startAt(this.lastKey).on('child_added', snapshot => {
           this.notificationAlert = true
         })
       } else {
-        firebase.database().ref('notificationViews').child(this.profileId).once("value", snapshot => {
+        firebaseApp.database().ref('notificationViews').child(this.profileId).once("value", snapshot => {
           this.lastKey = snapshot.val()
           console.log(this.lastKey)
           if(!snapshot.val()) {

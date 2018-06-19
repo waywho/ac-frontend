@@ -1,11 +1,11 @@
 <template>
-  <div  id="main-app">
+  <div id="main-app">
     <app-menu :class="['app-menu', {'menu-open': isActive}]" :style="menuStyle" v-on:toggleMenu="menuToggle($event)"></app-menu>
     <div id="app-inner">
-      <app-sign-in v-if="showSignInModal" @close="showSignInModal = false"></app-sign-in>
       <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive" :profile-id="currentUser.id"></app-header>
-      <router-view class="main-body" @scroll="handleScroll"/>
+      <router-view class="main-body"></router-view>
       <app-footer></app-footer>
+      <app-sign-in v-if="showSignInModal" @close="showSignInModal = false"></app-sign-in>
     </div>
   </div>
 </template>
@@ -68,6 +68,9 @@ export default {
     }
   },
   methods: {
+    logScroll: function(e) {
+      console.log("scrool", e)
+    },
     handleScroll: function(e) {
        var currentScrollPosition = e.srcElement.scrollTop;
        // console.log(e)
@@ -89,12 +92,18 @@ export default {
     }
   },
   created() {
-    document.body.addEventListener('scroll', this.handleScroll);
+    // console.log(document.documentElement)
+    var scrollDoc = document.getElementById("app-inner")
+    console.log(scrollDoc)
+    // .addEventListener('scroll', this.handleScroll);
+
+
     // document.body.addEventListener('scroll', console.log('listenToScroll'));
     this.$store.dispatch('tryAutoSignIn');
   },
   destroyed() {
     document.body.removeEventListener('scroll', this.handleScroll);
+
     window.removeEventListener('resize', this.getWindowWidth);
   },
   mounted() {

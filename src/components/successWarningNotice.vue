@@ -16,7 +16,7 @@ export default {
   },
   computed: {
   	messageState () {
-  		if(this.messaging.message !== null && this.messaging.message !== undefined) {
+  		if(this.messaging !== null && this.messaging.message !== null && this.messaging.message !== undefined) {
   			return this.messaging
   		} else {
   			return this.$store.getters.stateMessage

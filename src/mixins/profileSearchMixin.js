@@ -1,5 +1,4 @@
-import firebase from 'firebase/app';
-import 'firebase/database';
+import firebaseApp from '@/firebase/init';
 
 export default {
 	data() {
@@ -13,7 +12,7 @@ export default {
 		getUsers: function() {
 	  		if(this.profileSearch.length > 2) {
 		  		var userArray = []
-		  		var usersRef = firebase.database().ref("users")
+		  		var usersRef = firebaseApp.database().ref("users")
 
 		  		usersRef.orderByChild("firstName")
 		  			.startAt(this.profileSearch.toLowerCase().trim())

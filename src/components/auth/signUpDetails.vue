@@ -3,13 +3,20 @@
   	<h3>Profile Details</h3>
   	<div class="row">
     	<div v-for="(detail, key, index) in details" class="col-xs-12 col-sm-6" :id="key" :key="key">
-        <div v-if="key !== 'descriptions' && key !== 'role'">
+        <div v-if="key !== 'descriptions' && key !== 'role' && key !== 'country'">
       		<label class="strong label-header">{{key | camel-to-space}}</label>
       		<input type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter ' + type +' ' + key" v-model="details[key]" />
         </div>
     		<div v-if="key === 'descriptions'">
           <label class="strong label-header">{{key | camel-to-space}}</label>
           <textarea type="text" class="signup-input" name="name" :placeholder="'Enter ' + type + ' descriptions'" v-model="currentDetails[key]" /></textarea>
+        </div>
+        <div v-if="key === 'country'">
+          <label class="strong label-header">{{key | camel-to-space}}</label>
+          <select class="signup-input" v-model="details[key]">
+            <option disabled selected value>Select a Country</option>
+            <option v-for="country in countries" :value="country">{{country | capitalize}}</option>
+          </select>
         </div>
         <div v-if="type === 'artist' && key === 'role'">
           <label class="strong label-header">{{key | camel-to-space}}</label>
@@ -32,6 +39,8 @@
 </template>
 
 <script>
+import countriesList from 'countries-list';
+import _ from 'lodash';
 
 export default {
   name: 'signUpcurrentDetails',
@@ -53,6 +62,19 @@ export default {
         descriptions: ""
       }
     }
+  },
+  computed: {
+    countries: function() {
+      let countryList = Object.values(countriesList.countries).map(country => {
+        return country.name
+      })
+
+      countryList = _.sortBy(countryList)
+      return countryList
+    }
+  },
+  created() {
+    console.log(countriesList)
   }
 }
 </script>

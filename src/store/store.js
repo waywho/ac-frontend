@@ -1,9 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import firebase from 'firebase/app';
-import 'firebase/database';
-import 'firebase/auth';
-import 'firebase/storage';
+// import firebase from 'firebase/app';
+// import 'firebase/database';
+// import 'firebase/auth';
+// import 'firebase/storage';
+import firebaseApp from '@/firebase/init';
 // import authAxios from '../axios-auth.js';
 import firebaseAxios from '@/axios/axios-firebase.js';
 import router from '../router';
@@ -69,7 +70,7 @@ export const store = new Vuex.Store({
 		},
 		resetToken({commit, dispatch}) {
 			return new Promise((resolve, reject) => {
-				firebase.auth().onAuthStateChanged(function(user) {
+				firebaseApp.auth().onAuthStateChanged(function(user) {
 					if (user) {				
 						user.getIdToken(true).then(idToken => {
 							const now = new Date()
@@ -88,7 +89,7 @@ export const store = new Vuex.Store({
 		reAuthorizeUser({commit, dispatch, state}, idToken) {
 			return new Promise((resolve, reject) => {
 
-				firebase.auth().onAuthStateChanged(function(user) {
+				firebaseApp.auth().onAuthStateChanged(function(user) {
 					if (user) {
 						console.log('reauthorized user', user)					
 						user.getIdToken(true).then(idToken => {
@@ -114,7 +115,7 @@ export const store = new Vuex.Store({
 		signUserUp({commit, dispatch}, payload) {
 			return new Promise((resolve, reject) => {
 
-				firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+				firebaseApp.auth().createUserWithEmailAndPassword(payload.email, payload.password)
 					.then(cred => {
 						// console.log('sign up', user)
 						cred.user.getIdToken(true).then(idToken => {
@@ -154,7 +155,7 @@ export const store = new Vuex.Store({
 
 		},
 		sendVerificationEmail({commit, dispatch}, payload) {
-			var user = firebase.auth().currentUser;
+			var user = firebaseApp.auth().currentUser;
 
 			return new Promise((resolve, reject) => {
 				user.sendEmailVerification().then(() => {
@@ -172,7 +173,7 @@ export const store = new Vuex.Store({
 
 		},
 		resetPasswordEmail({commit, dispatch, state}, payload) {
-			var auth = firebase.auth()
+			var auth = firebaseApp.auth()
 			return new Promise((resolve, reject) => {
 				auth.sendPasswordResetEmail(payload.email).then(() => {
 					commit('setMessage', {
@@ -193,9 +194,9 @@ export const store = new Vuex.Store({
 		},
 		signUserIn({commit, dispatch}, payload) {
 			return new Promise((resolve, reject) => {
-				firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+				firebaseApp.auth().signInWithEmailAndPassword(payload.email, payload.password)
 					.then(cred => {
-						// console.log('current user', firebase.auth().currentUser)
+						// console.log('current user', firebaseApp.auth().currentUser)
 						console.log('sign in', cred.user)
 						cred.user.getIdToken(true).then(idToken => {
 							// console.log('signed in token', idToken)
@@ -234,7 +235,7 @@ export const store = new Vuex.Store({
 		signOut({commit}) {
 			return new Promise((resolve, reject) => {
 				console.log('signout')
-					firebase.auth().signOut().then(() => {
+					firebaseApp.auth().signOut().then(() => {
 					commit('clearAuthData')
 					localStorage.removeItem('artistCenter')
 					resolve()
@@ -282,13 +283,15 @@ export const store = new Vuex.Store({
 		},
 		createUser({commit, dispatch, state}, payload) {
 			console.log('creating user', payload)
+			var notificationKey = firebaseApp.database().ref('notifications').child(payload.user.id).push().key
 			let user = {
 				['/profiles/' + payload.user.id]: payload.user,
-				['users/' + payload.user.id]: payload.user,
+				['/users/' + payload.user.id]: payload.user,
+				['/notifications/' + payload.user.id + '/' + notificationKey]: {action: "profile created", "created": Date.now(), name: "Artist Center", image: "https://firebasestorage.googleapis.com/v0/b/artist-center-production.appspot.com/o/users%2Fj0uKacM5oJNkemmn81Cqu5KWhPz1%2Fj0uKacM5oJNkemmn81Cqu5KWhPz1avatar.png?alt=media&token=a45188cb-5099-4bf8-852e-6ff159eb647f"},
 			}
 
 			return new Promise((resolve, reject) => {
-				firebase.database().ref().update(user, error => {
+				firebaseApp.database().ref().update(user, error => {
 					if(error) {
 						console.log(error)
 						reject(error)
@@ -326,6 +329,9 @@ export const store = new Vuex.Store({
 						['users/' + payload.userId + '/country']: payload.data.details.country,
 						['users/' + payload.userId + '/role']: payload.data.details.role
 					}
+
+					dispatch('sendWelcomeMessage', {user: {id: payload.userId, name: payload.data.details.name}})
+
 					break;
 				default: 
 					var data = {['profiles' + '/' + payload.userId + '/' + dataKey]: payload.data[dataKey]}
@@ -350,7 +356,7 @@ export const store = new Vuex.Store({
 
 
 			// console.log(payload.data)
-			// firebase.database().ref('profiles/' + payload.userId).update(payload.data)
+			// firebaseApp.database().ref('profiles/' + payload.userId).update(payload.data)
 			// 	.then(
 			// 		function(data) {
 			// 			// console.log(data)
@@ -361,11 +367,57 @@ export const store = new Vuex.Store({
 			// 		console.log(error)
 			// 	)
 		},
+		sendWelcomeMessage({commit, dispatch, state}, payload) {
+			// auto send a welcome message
+					var databaseRef = firebaseApp.database().ref();
+					let chatKey = databaseRef.child("chatMemberships").push().key;
+					let chatData = {['chats/' + payload.user.id + "/" + chatKey ]: {
+			  				'chatee': {
+			  					name: "Artist Center",
+			  					avatarURL: "https://firebasestorage.googleapis.com/v0/b/artist-center-production.appspot.com/o/users%2Fj0uKacM5oJNkemmn81Cqu5KWhPz1%2Fj0uKacM5oJNkemmn81Cqu5KWhPz1avatar.png?alt=media&token=a45188cb-5099-4bf8-852e-6ff159eb647f"
+			  				},
+							lastMessage: `Hello ${payload.user.name}, welcome to Artist Center! Please make yourself at home and explore!`,
+							sender: "Artist Center",
+							timestamp: Date.now()
+							},
+							['chats/' + "j0uKacM5oJNkemmn81Cqu5KWhPz1" + "/" + chatKey ]: {
+								'chatee': {
+				  					name: payload.user.name,
+				  					avatarURL: null
+				  				},
+							lastMessage: `Hello ${payload.user.name}, welcome to Artist Center! Please make yourself at home and explore!`,
+							sender: "Artist Center",
+							timestamp: Date.now()
+							}
+						}
+						chatData['chatMemberships/' + chatKey] = { 
+  							[payload.user.id]: true,
+  							"j0uKacM5oJNkemmn81Cqu5KWhPz1": true
+  						}
+  					var newThread = {
+						content: `Hello ${payload.user.name}, welcome to Artist Center! Please make yourself at home and explore!`,
+						sender: payload.user.name,
+						timestamp: Date.now()
+					}
+  					databaseRef.update(chatData, error => {
+		  				if(error) {
+		  					console.log(error)
+		  				} else {
+		  					firebaseApp.database().ref("threads").child(chatKey).push().update(newThread, error => {
+		  						if(error) {
+		  							console.log(error)
+		  						}
+		  					})
+		  					
+		  				}
+		  			})
+		},
 		getUserProfileOnce({commit, dispatch, state}, payload) {
 			return new Promise((resolve, reject) => {
-				firebase.database().ref("/profiles/" + payload.userId).once('value', snapshot => {
+				firebaseApp.database().ref("/profiles/" + payload.userId).once('value', snapshot => {
 					console.log(snapshot.val())
 					commit('setCurrentUserProfile', snapshot.val())
+					dispatch('setLocalStorage');
 					resolve(snapshot.val())
 				})
 								
@@ -377,9 +429,10 @@ export const store = new Vuex.Store({
 		},
 		getUserProfile({commit, dispatch, state}, payload) {
 			return new Promise((resolve, reject) => {
-				firebase.database().ref("/profiles/" + payload.userId).on('value', snapshot => {
+				firebaseApp.database().ref("/profiles/" + payload.userId).on('value', snapshot => {
 					console.log(snapshot.val())
 					commit('setCurrentUserProfile', snapshot.val())
+					dispatch('setLocalStorage');
 					resolve(snapshot.val())
 				})
 								
@@ -398,7 +451,7 @@ export const store = new Vuex.Store({
 			payload.data['auth'] = state.idToken
 			//add season name
 			return new Promise((resolve, reject) => {
-				firebase.storage().ref('users').child(state.userId + '/seasons/' + payload.seasonId + '/'+ payload.productionName + ext).put(payload.data)
+				firebaseApp.storage().ref('users').child(state.userId + '/seasons/' + payload.seasonId + '/'+ payload.productionName + ext).put(payload.data)
 					.then(fileData => {
 						console.log(fileData)
 						fileData.ref.getDownloadURL().then(downloadURL => {
@@ -424,7 +477,7 @@ export const store = new Vuex.Store({
 			// payload.data['auth'] = state.idToken
 
 			return new Promise((resolve, reject) => {
-				var uploadImageTask = firebase.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
+				var uploadImageTask = firebaseApp.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
 					.then( fileData => {
 						console.log(fileData)
 						fileData.ref.getDownloadURL().then(downloadURL => {
@@ -533,7 +586,7 @@ export const store = new Vuex.Store({
 			})
 
 
-			// firebase.database().ref('tools/' + payload.userId).child(payload.toolName).update(payload.data)
+			// firebaseApp.database().ref('tools/' + payload.userId).child(payload.toolName).update(payload.data)
 			// 	.then(
 			// 		function(data) {
 			// 			// console.log(data)
@@ -552,7 +605,7 @@ export const store = new Vuex.Store({
 			// console.log(token)
 
 			return new Promise((resolve, reject) => {
-				firebase.database().ref('toolsAuthorized/' + payload.userId).on('value', snapshot => {
+				firebaseApp.database().ref('toolsAuthorized/' + payload.userId).on('value', snapshot => {
 					console.log(snapshot.val());
 					commit('setUserTools', snapshot.val())
 					dispatch('setLocalStorage')
@@ -621,7 +674,7 @@ export const store = new Vuex.Store({
 						
 						if (payload.images.length !== null) {
 
-							var userStorage = firebase.storage().ref('users');
+							var userStorage = firebaseApp.storage().ref('users');
 							var imagePromises = []
 							
 							payload.images.forEach(imageFile => {
@@ -702,9 +755,9 @@ export const store = new Vuex.Store({
 		},
 		createSeason({commit, dispatch, state}, payload) {
 			console.log(payload)
-			let seasonRef = firebase.database().ref("seasons").child(state.userId)
+			let seasonRef = firebaseApp.database().ref("seasons").child(state.userId)
 			let seasonKey = seasonRef.push().key
-			let databaseRef = firebase.database().ref();
+			let databaseRef = firebaseApp.database().ref();
 
 			let seasonUpdates = {
 				['seasons/' + state.userId + '/' + seasonKey]: payload.season,
@@ -793,7 +846,7 @@ export const store = new Vuex.Store({
 			})
 		},
 		updateSeason({commit, state}, payload) {
-			let databaseRef = firebase.database().ref();
+			let databaseRef = firebaseApp.database().ref();
 			let seasonUpdates = {}
 
 			for(var key in payload.season) {
@@ -816,7 +869,7 @@ export const store = new Vuex.Store({
 			})
 		},
 		updateProduction({commit, dispatch, state}, payload) {
-			let databaseRef = firebase.database().ref();
+			let databaseRef = firebaseApp.database().ref();
 			let seasonUpdates = {
 				['seasons/' + state.userId + '/' + payload.seasonId  + '/productions/' + payload.productionIndex]: payload.production,
 				['profiles/' + state.userId + '/seasons/' + payload.seasonId + '/productions/' + payload.productionIndex]: payload.production

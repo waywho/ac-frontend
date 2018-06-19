@@ -3,10 +3,10 @@
 		<div v-if="loading">
 			<div class="profile-banner">
 				<div class="profile-banner-assets">
-					<div class="profile-cover" :style="{'background-image': 'url('+ coverURL +')'}">
+					<div class="profile-cover" :style="{'background-image': 'url('+ coverCurrentURL +')'}">
 					</div>
 					<div class="profile-avatar-wrap" >
-						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarURL +')'}">
+						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarCurrentURL +')'}">
 						</div>
 					</div>
 				</div>
@@ -16,7 +16,7 @@
 			<div class="profile-banner">
 				<div class="profile-banner-assets">
 
-					<div class="profile-cover" :style="{'background-image': 'url('+ coverURL +')'}">
+					<div class="profile-cover" :style="{'background-image': 'url('+ coverCurrentURL +')'}">
 						<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
 					 		<i class="fa fa-camera" aria-hidden="true"></i><small>Update Cover Photo</small>
 						</div>
@@ -24,7 +24,7 @@
 					</div>
 
 					<div class="profile-avatar-wrap" >
-						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarURL +')'}">
+						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarCurrentURL +')'}">
 
 							<svg height="100%" width="100%">
 								<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
@@ -85,8 +85,8 @@ export default {
 		return {
 			profileId: this.id,
 			displayProfile: null,
-			avatarURL: require("../assets/images/avatar-holder.png"),
-			coverURL: require("../assets/images/cover-holder.jpg"),
+			avatarCurrentURL: require("../assets/images/avatar-holder.png"),
+			coverCurrentURL: require("../assets/images/cover-holder.jpg"),
 			avatar: null,
 			cover: null,
 			loading: true,
@@ -156,11 +156,11 @@ export default {
 			this.displayProfile = this.$store.getters.profile
 			// console.log('avatar', this.displayProfile.avatarURL)
 			if (this.displayProfile.avatarURL !== null && this.displayProfile.avatarURL !== undefined && this.displayProfile.avatarURL.length > 0) {  
-				this.avatarURL = this.displayProfile.avatarURL
+				this.avatarCurrentURL = this.displayProfile.avatarURL
 			}
 			
 			if (this.displayProfile.coverURL !== null && this.displayProfile.coverURL !== undefined && this.displayProfile.coverURL.length > 0) { 
-				this.coverURL = this.displayProfile.coverURL
+				this.coverCurrentURL = this.displayProfile.coverURL
 			}
 
 			this.loading = false;
