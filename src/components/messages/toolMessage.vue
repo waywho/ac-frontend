@@ -375,7 +375,7 @@ export default {
 	flex-basis: 53%;
 	background-color: #fff;
 	margin-right: 15px;
-	padding-left: 100px;
+	padding-left: 28px;
 }
 
 
@@ -469,10 +469,11 @@ export default {
 	font-weight: bold;
 }
 
-@media all and (min-width: 46rem) {
+@media all and (min-width: $bp-small) {
 	.message-sidepanel {
 		width: 100%;
 		flex-basis: auto;
+		padding-left: 100px;
 	}
 
 	.message-window {

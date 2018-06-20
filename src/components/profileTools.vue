@@ -41,7 +41,13 @@ export default {
   mixins: [currentUser],
   data () { 
     return {
-      profileToolData: null,
+      profileToolData: {
+        medias: null,
+        calendar: null,
+        portfolio: null,
+        message: null,
+        opportunity: null
+      },
       show: true,
       component: 'calendar',
       artistAuthTools: [
@@ -221,8 +227,14 @@ export default {
      order: 1;
   }
 
+  .toolbox-public {
+    width: 20%;
+    padding-right: 0rem;
+     order: 2;
+  }
+
   .tool-panel-auth {
-    width: 67%;
+    width: 70%;
     order: 2;
   }
 
@@ -232,11 +244,6 @@ export default {
     order: 2;
   }
 
-  .toolbox-public {
-    width: 20%;
-    padding-right: 0rem;
-     order: 2;
-  }
 }
 
 </style>

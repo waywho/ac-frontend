@@ -58,6 +58,31 @@ export default{
 			fileReader.readAsDataURL(file)
 
 			this[imageField].imageFile = file
+		},
+		onMediaFilePicked(event) {
+			console.log(event)
+			const file = event.target.files[0]
+
+			if(file.size > 5000000) {
+				alert("Sorry, the image is too big to upload.")
+				return
+			}
+			let filename = file.name
+			// console.log(filename)
+			if (filename.lastIndexOf('.') <= 0) {
+				return alert('Please add a file with valid extension')
+			}
+			const fileReader = new FileReader()
+			fileReader.addEventListener('load', () => {
+				this.imageURL = fileReader.result
+			})
+			fileReader.readAsDataURL(file)
+
+			this.imageFile = file
+			let newData = {}
+			newData['image-gallery'] = this.imageFile
+
+			this.$store.dispatch('saveMediaImage', {userId: this.$store.getters.currentUser.id, data: newData} )
 		}
 	}
 }

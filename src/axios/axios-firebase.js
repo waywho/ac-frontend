@@ -1,7 +1,10 @@
 import axios from 'axios'
 
 const instance = axios.create({
-	baseURL: 'https://artist-center-production.firebaseio.com'
+	//production
+	// baseURL: 'https://artist-center-production.firebaseio.com'
+	//dve
+	baseURL: 'https://artist-center.firebaseio.com'
 })
 
 // instance.defaults.headers.common['SOMETHING'] = 'something'
