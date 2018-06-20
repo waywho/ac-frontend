@@ -1,37 +1,33 @@
 <template>
 	<div class="post-section">
-		<div v-if="authorizedUser" class="post-box col-sm-offset-3 col-sm-9">
-			<div class="row">
-				<div class="col-xs-2 row center-xs">
-					<div class="avatar-border avatar-medium user-avatar">
-			  			<img :src="currentUserAvatar" />	
-			      	</div>
-				</div>
-				<div class="col-xs-9">
-					<textarea v-model="post.content" rows="6"></textarea>
-					<div class="row">
-						<div v-if="imageURLs">
-			          		<div class="multi-image-container">
-			          			<div v-for="image in imageURLs" class="image-in-row thumbnail">
-			          				<img v-bind:src="image" />
-			          			</div>
-			          		</div>
-		          		</div>
+		<div v-if="authorizedUser" class="post-box">
+			<div class="avatar-border avatar-medium">
+	  			<img :src="currentUserAvatar" />	
+	      	</div>
+
+			<div class="comment-box-container">
+				<textarea class="comment-box" v-model="post.content" rows="6"></textarea>
+			
+				<div v-if="imageURLs" class="row image-row">
+	          		<div class="multi-image-container">
+	          			<div v-for="image in imageURLs" class="image-in-row thumbnail">
+	          				<img v-bind:src="image" />
+	          			</div>
 	          		</div>
-					<div class="row between-sm">
-						<div class="col-sm-8 add-image" v-on:click="onPickFile('postImage')">
-							<i class="fa fa-picture-o is-darkgray" aria-hidden="true"></i>
-							<span class="smaller is-darkgray" >Add image</span>
-							<input v-if="authorizedUser" type="file" ref="postImage" style="display: none" accept="image/*" @change="onPostFilePicked($event, 'cover')" />
-						</div>
-						<div class="col-sm-4 end-sm col-xs-4 end-xs">
-							<button v-on:click="addPost">POST</button>
-						</div>
-					</div>
+	      		</div>
+          		
+				
+				<div class="add-image" v-on:click="onPickFile('postImage')">
+					<i class="fa fa-picture-o is-darkgray" aria-hidden="true"></i>
+					<span class="smaller is-darkgray" >Add image</span>
+					<input v-if="authorizedUser" type="file" ref="postImage" style="display: none" accept="image/*" @change="onPostFilePicked($event, 'cover')" />
 				</div>
+				<button v-on:click="addPost" class="post-button">POST</button>
+				
+				
 			</div>
 		</div>
-		<div id="post-masonry" class="col-xs-12 col-sm-offset-3 col-sm-9 col-md-offset-3 col-md-8">
+		<div id="post-masonry">
 			<div v-for="(post, index) in displayPosts" class="post-tile" :key="index">
 				<div class="post-header">
 					<span class="name is-golden strong">{{post.name}}</span>
@@ -161,44 +157,59 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
+@import '../styles/style-variables';
 
 /*post comment box*/
 
-.user-avatar {
-	margin-top: 20px;
-}
-
 .post-section {
-	height: 100%;
 	margin-bottom: 70px;
 }
 
 .post-box {
 	background: white;
-	padding-top: 35px;
-	padding-bottom: 35px;
-	margin-bottom: 26px;
+	display: flex;
+	padding: 35px 28px;
+	margin-bottom: 24px;
+	width: auto;
 }
 
-.post-box textarea {
-	max-width: 95%;
-	margin-bottom: 36px;
-	border: 2px solid #d4d4d4;
+.avatar-border {
+	vertical-align: top;
+}
+
+.comment-box-container {
+	flex-grow: 2;
+	flex-basis: auto;
+	margin-left: 10px;
+	display: inline-flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 0px 5px 5px 5px;
+}
+
+.comment-box {
+	width: 100%;
+	flex-basis: auto;
+	margin-bottom: 25px;
+}
+
+.image-row {
+	margin-bottom: 25px;
 }
 
 /*post masonry*/
 
 #post-masonry {
-	column-count: 2;
-	column-gap: 23px;
+	column-count: 1;
+	column-gap: 0px;
 }
 
 .post-tile {
 	background-color: white;
 	display: inline-block;
 	margin: 0 0 23px;
-	width: 100%;
+	width: auto;
 	padding: 45px 25px;
 }
 
@@ -209,7 +220,6 @@ export default {
 .post-header {
 	margin-bottom: 30px;
 }
-
 
 .post-image {
 	margin-bottom: 30px;
@@ -252,7 +262,7 @@ export default {
 }
 
 .post-icons {
-	margin-bottom: 25px;
+	// margin-bottom: 25px;
 }
 
 .comment-input-container {
@@ -307,11 +317,19 @@ export default {
 }
 
 
-@media screen and (max-width: 599px) {
+@media all and (min-width: $bp-med) {
+	.post-box {
+		float: right;
+		width: 75%;
+		max-width: 900px;
+	}
 
 	#post-masonry {
-		column-count: 1;
-		column-gap: 0px;
+		float: right;
+		width: 75%;
+		max-width: 900px;
+		column-count: 2;
+		column-gap: 15px;
 		padding: 0px;
 	} 
 

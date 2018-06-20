@@ -126,6 +126,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100%;
   height: auto !important;
+  width: auto !important;
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: 100px auto 460px;
@@ -152,7 +153,7 @@ export default {
 }
 
 .nav-up {
-  top: -100px !important;
+  top: -163px !important;
 }
 
 .app-menu {
@@ -170,9 +171,10 @@ export default {
   right: 0px !important;
 }
 
-@media screen and (max-width: 46rem) {
+@media all and (min-width: $bp-med) {
   .nav-up {
-    top: -163px !important;
+    top: -100px !important;
+    
   }
 }
 

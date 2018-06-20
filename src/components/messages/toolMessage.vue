@@ -156,6 +156,7 @@ export default {
   		})[0]
   	},
   	getChatPartner: function(userID) {
+  		this.warningActive = false
   		console.log(userID)
   		this.chatee = null
   		var usersRef = firebaseApp.database().ref("users").child(userID)
@@ -395,10 +396,8 @@ export default {
 }
 
 #sender-search {
-	max-width: 95%;
+	max-width: 90%;
 	margin-bottom: 15px;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 .senders-window {
@@ -501,7 +500,7 @@ export default {
 }
 
 .chatee-details {
-	margin-left: 15px;
+	margin-left: 10px;
 }
 
 .isActive {
@@ -521,12 +520,13 @@ export default {
 
 	.message-tool-panel {
 		flex-direction: row;
-
 	}
 
 	.message-sidepanel {
 		width: 50%;
+		height: $tool-panel-height;
 		margin-right: 15px;
+		margin-bottom: 0px;
 		flex-basis: auto;
 		height: auto;
 		padding-left: $body-padding-large;
