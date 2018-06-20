@@ -134,7 +134,8 @@ blockquote {
 
 // Inline
 time, cite, small, figcaption {
-	font-size: 87.5%;
+	font-size: $font-size-small;
+	line-height: $base-line-small;
 }
 cite {
     opacity: .6;

@@ -1,5 +1,5 @@
 <template>
-  <div class="message-panel">
+  <div class="message-tool-panel">
 	  	<div class="message-sidepanel">
 	  		<h2>Messages</h2>
 	  		<input type="search" id="sender-search" class="small" placeholder="search profiles" v-on:keyup="getUsers" v-model="userSearch" @input="hideChat" />
@@ -9,23 +9,24 @@
 	  			
 
   				<p v-if="!showChat && searchResultMessage" class="warning" key="resultsWarning"><small>{{searchResultMessage}}</small></p>
+	  			
 	  			<div v-if="!showChat && !chatsLoading" v-for="(user, index) in userResults" class="sender" :key="user.id" v-on:click="startMessage(user)">
-	  				<div class="avatar-box avatar avatar-small">
+	  				<div class="avatar-box avatar-border avatar-medium">
 				      	<img :src="userAvatar(user.avatarURL)"  />
 					</div>
 				    <div class="sender-name">
-				    	<b>{{ user.name}}</b><br />
-				    	<span class="smaller is-silver medium">{{user.lastMessage}}</span>
+				    	<b><small>{{ user.name}}</small></b><br />
+				    	<span class="smaller is-silver medium last-message">{{user.lastMessage}}</span>
 				    </div>
 	  			</div>
 
 	  			<div v-if="showChat && !chatsLoading" v-for="(chat, index) in chats" :class="['sender', {'active-chat': currentChat.id === chat.id}]" :key="chat.id" v-on:click="startChat(chat)">
-	  				<div class="avatar-box avatar avatar-small">
+	  				<div class="avatar-box avatar-border avatar-medium">
 				      	<img :src="userAvatar(chat.chatee.avatarURL)" />
 					</div>
 				    <div class="sender-name">
-				    	<span :class="chat.status">{{ chat.chatee.name }}</span><br />
-				    	<span class="smaller is-silver medium">{{chat.lastMessage}}</span>
+				    	<span :class="chat.status"><b><small>{{ chat.chatee.name }}</small></b></span><br />
+				    	<span class="smaller is-silver medium last-message">{{chat.lastMessage}}</span>
 				    </div>
 	  			</div>
 	
@@ -39,11 +40,11 @@
 		  		</div>
 		  		<div v-if="!messageLoading" class="message-loading" key="messageBody">
 			  		<div class="message-header">
-			  			<div class="avatar-box" v-if="chatee">
-						      	<img :src="userAvatar(chatee.avatarURL)" class="avatar-small" />
+			  			<div class="avatar-box avatar-border avatar-medium" v-if="chatee">
+						      	<img :src="userAvatar(chatee.avatarURL)" class="" />
 						</div>
-						<div v-if="chatee">
-							<span class="strong">{{ chatee.name}}</span><br />
+						<div v-if="chatee" class="chatee-details">
+							<span :class="['strong', {'warning-text': warningActive }]">{{ chatee.name}}</span><br />
 							<span class="smaller">{{ chatee.roleType }}</span>
 						</div>
 					</div>
@@ -55,7 +56,7 @@
 			  	</div>
 		 	</transition>
 			<div class="message-input-container">
-				<textarea type="text" id="message-input" placeholder="message" v-model="inputMessage" rows="4"></textarea>
+				<textarea type="text" id="message-input" placeholder="Write message" v-model="inputMessage" rows="4"></textarea>
 				<button @click="sendMessage">send</button>
 			</div>
 		</div>
@@ -94,7 +95,8 @@ export default {
 		inputMessage: null,
 		initialMessage: null,
 		chatMemberships: {},
-		searchResultMessage: null
+		searchResultMessage: null,
+		warningActive: false
     }
   },
   props: {
@@ -154,10 +156,20 @@ export default {
   		})[0]
   	},
   	getChatPartner: function(userID) {
+  		console.log(userID)
+  		this.chatee = null
   		var usersRef = firebaseApp.database().ref("users").child(userID)
   		usersRef.on("value", snapshot => {
-  			// console.log(snapshot.val())
-  			this.chatee = snapshot.val()
+  			console.log(snapshot.val())
+  			if(snapshot.val() === null) {
+  				this.warningActive = true
+  				this.chatee = {
+  					name: "This user is no longer available"
+  				}
+  			} else {
+  				this.chatee = snapshot.val()
+  			}
+  			
   		})
   	},
   	startMessage: function(user) {
@@ -364,25 +376,82 @@ export default {
 <style scoped lang="scss">
 @import '../../styles/style-variables.scss';
 
-.message-panel {
+.message-tool-panel {
+	height: auto;
 	min-height: 100%;
 	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
 	background-color: $color-body;
 }
 
 .message-sidepanel {
-	flex-basis: 53%;
+	width: auto;
+	height: auto;
+	flex-basis: auto;
 	background-color: #fff;
-	margin-right: 15px;
-	padding-left: 28px;
+	margin-bottom: 15px;
+	padding: 0px $body-padding-small 15px;
 }
 
+#sender-search {
+	max-width: 95%;
+	margin-bottom: 15px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.senders-window {
+	width: auto;
+	height: auto;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	padding-bottom: 10px;
+	overflow-x: scroll;
+	-webkit-overflow-scrolling: touch;
+  	-webkit-transform: translateZ(0px);
+}
+
+.sender {
+	height: 100%;
+	min-height: 110px;
+	width: 100%;
+	min-width: 100px;
+	display: flex;
+	border-radius: 10px;
+	padding: 10px 25px;
+	margin-right: 5px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	text-align: center;
+}
+
+.avatar-box {
+	min-height: 41px;
+	margin-bottom: 5px;
+	// display: inline-flex;
+	// justify-content: center;
+	// align-items: center;
+	// margin-right: 15px;
+	// margin-left: 10px;
+}
+
+.last-message {
+	display: none;
+}
+
+.sender:hover, .active-chat {
+	background: #ecddba;
+	color: white;
+}
 
 .message-window {
 	// border: 1px solid #dddcdc;
 	background-color: #fff;
-	height: 100%;
+	height: $tool-panel-height;
 	flex-basis: 60%;
 }
 
@@ -420,47 +489,18 @@ export default {
 	margin-bottom: 5px;
 }
 
-.senders-window {
-	overflow-y: scroll;
-	height: 430px;
-}
-
-.sender {
-	height: 75px;
-	width: 100%;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	cursor: pointer;
-}
-
-#sender-search {
-	max-width: 95%;
-	margin-bottom: 15px;
-	margin-right: 15px;
-}
-
-
-.sender:hover, .active-chat {
-	background: #ecddba;
-	color: white;
-}
 
 .initial-message {
 	text-align: center;
 }
 
-.avatar-box {
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	margin-right: 15px;
-	margin-left: 10px;
-}
-
 .sender-name {
 	display: inline-block;
 	font-size: $font-size-small;
+}
+
+.chatee-details {
+	margin-left: 25px;
 }
 
 .isActive {
@@ -469,15 +509,58 @@ export default {
 	font-weight: bold;
 }
 
+.warning-text {
+	color: #f39166;
+}
+
 @media all and (min-width: $bp-small) {
+	.last-message {
+		display: block;
+	}
+
+	.message-tool-panel {
+		flex-direction: row;
+
+	}
+
 	.message-sidepanel {
-		width: 100%;
+		width: 50%;
+		margin-right: 15px;
 		flex-basis: auto;
-		padding-left: 100px;
+		height: auto;
+		padding-left: $body-padding-large;
+		padding-right: 0px;
+	}
+
+	.senders-window {
+		height: 430px;
+
+		flex-direction: column;
+		justify-content: flex-start;
+		overflow-y: scroll;
+		-webkit-overflow-scrolling: touch;
+  		-webkit-transform: translateZ(0px);
+	}
+
+	.sender {
+		min-height: 75px;
+		padding: 15px 15px;
+		display: flex;
+		margin-right: 5px;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		cursor: pointer;
+		text-align: left;
+	}
+
+	.avatar-box {
+		margin-right: 20px;
+		margin-bottom: 0px;
 	}
 
 	.message-window {
-		width: 100%;
+		width: 50%;
 		flex-basis: auto;
 	}
 }

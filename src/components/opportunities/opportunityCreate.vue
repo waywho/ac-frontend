@@ -159,7 +159,7 @@ export default {
 .opportunity-next {
   background: #f6f3ed;
   cursor: pointer;
-  height: 582px;
+  height: $tool-panel-height;
   display: flex;
   justify-content: center;
   align-items: center;

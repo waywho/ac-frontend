@@ -152,7 +152,7 @@ export default {
 
 .tool-panel-public, .tool-panel-auth {
   width: 100%;
-  height: 582px;
+  height: $tool-panel-height;
   flex-basis: auto;
   min-height: 100%;
   background-color: white;
@@ -218,8 +218,8 @@ export default {
 
 @media all and (min-width: $bp-med) {
   .profile-tools {
-    height: 582px;
-    max-height: 582px;
+    height: $tool-panel-height;
+    max-height: $tool-panel-height;
   }
 
   .tool-panel-public {

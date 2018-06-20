@@ -4,7 +4,7 @@
   		<div class="message-text smaller">
   		{{ message.content || message.lastMessage }}
   		</div>
-  		<span class="smaller">{{ dateObject | moment("MM/DD/YYYY hh:mm")}}</span>
+  		<span class="tiny">{{ dateObject | moment("MM/DD/YYYY hh:mm")}}</span>
   	</div>
   </div>
 </template>
