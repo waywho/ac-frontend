@@ -466,16 +466,13 @@ export const store = new Vuex.Store({
 
 		},
 		saveProfileImages({commit, dispatch, state}, payload) {
-			console.log(payload)
+			// console.log(payload)
 			const filename = Object.keys(payload.data)[0]
 			// console.log(filename)
 			const imageName = payload.data[filename].name
 			const ext = imageName.slice(imageName.lastIndexOf('.'))
-
 			// console.log(ext)
-
 			// payload.data['auth'] = state.idToken
-
 			return new Promise((resolve, reject) => {
 				var uploadImageTask = firebaseApp.storage().ref('users').child(payload.userId + '/' + payload.userId + filename + ext).put(payload.data[filename])
 					.then( fileData => {
@@ -509,6 +506,44 @@ export const store = new Vuex.Store({
 						reject(error)
 						return console.log(error)
 					})
+			})
+		},
+		saveMediaImage({commit, dispatch, state}, payload) {
+			console.log(payload)
+			const filename = Object.keys(payload.data)[0]
+			// console.log(filename)
+			const imageName = payload.data[filename].name
+			const ext = imageName.slice(imageName.lastIndexOf('.'))
+
+			return new Promise((resolve, reject) => {
+				firebaseApp.storage().ref('users').child(payload.userId + "/gallery/" + payload.userId + filename + ext ).put(payload.data[filename])
+					.then(fileData => {
+						fileData.ref.getDownloadURL().then(downloadURL => {
+							let mediaData = {
+								host: "Image Gallery",
+								source: downloadURL,
+								type: "image"
+							}
+
+							firebaseApp.database().ref("toolsAuthorized").child(payload.userId).child("medias").push(mediaData)
+							firebaseApp.database().ref("toolsPublic").child(payload.userId).child("medias").push(mediaData)
+							dispatch('getUserTools', {userId: payload.userId})
+							resolve()
+						}).catch(error => {
+							console.log(error)
+						})
+					})
+			})
+
+		},
+		updateUserMedia({commit, dispatch, state}, payload) {
+			return Promise.all([
+				firebaseApp.database().ref("toolsAuthorized").child(payload.userId).child("medias").push(payload.data),
+				firebaseApp.database().ref("toolsPublic").child(payload.userId).child("medias").push(payload.data)
+			]).then(res => {
+				dispatch('getUserTools', {userId: payload.userId})
+			}).catch(error => {
+				console.log(error)
 			})
 		},
 		createUserTools({commit, dispatch, state}, payload) {
@@ -606,7 +641,8 @@ export const store = new Vuex.Store({
 
 			return new Promise((resolve, reject) => {
 				firebaseApp.database().ref('toolsAuthorized/' + payload.userId).on('value', snapshot => {
-					console.log(snapshot.val());
+					console.log('changed!', snapshot.val());
+
 					commit('setUserTools', snapshot.val())
 					dispatch('setLocalStorage')
 					resolve(snapshot.val())

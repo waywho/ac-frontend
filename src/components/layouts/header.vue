@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     getNotifications: function() {
-      var notificationRef = firebaseApp.database().ref('notifications').child(this.profileId)
+      var notificationRef = firebaseApp.database().ref('notifications/' + this.profileId)
        notificationRef.once('value', snapshot => {
         console.log(snapshot.val())
           var keys = Object.keys(snapshot.val() || {})
@@ -98,11 +98,7 @@ export default {
   },
   created() {
     if(this.authorizedUser) {
-      var notificationRef = firebaseApp.database().ref('notifications')
-      if(notifcationRef) {
-        notificationRef = notificationRef.child(this.profileId)
-
-      }
+      var notificationRef = firebaseApp.database().ref('notifications/' + this.profileId)
       
       if(this.lastKey) {
         notificationRef.orderByKey().startAt(this.lastKey).on('child_added', snapshot => {

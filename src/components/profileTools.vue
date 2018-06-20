@@ -41,7 +41,13 @@ export default {
   mixins: [currentUser],
   data () { 
     return {
-      profileToolData: null,
+      profileToolData: {
+        medias: null,
+        calendar: null,
+        portfolio: null,
+        message: null,
+        opportunity: null
+      },
       show: true,
       component: 'calendar',
       artistAuthTools: [
@@ -75,6 +81,7 @@ export default {
       // console.log('auth', this.authorizedUser, this.profileId)
 
       if(this.authorizedUser) {
+        this.component = 'message'
         return this[this.profileType + 'AuthTools']
       } else {
         if(this.profileToolData !== null && this.profileToolData !== undefined) {
@@ -83,6 +90,7 @@ export default {
           ToolNames.forEach(toolName => {
             toolSet.push(this.tools[toolName])
           })
+          this.component = toolSet[0].component
           return toolSet
         } else {
           return null
@@ -219,8 +227,14 @@ export default {
      order: 1;
   }
 
+  .toolbox-public {
+    width: 20%;
+    padding-right: 0rem;
+     order: 2;
+  }
+
   .tool-panel-auth {
-    width: 67%;
+    width: 70%;
     order: 2;
   }
 
@@ -230,11 +244,6 @@ export default {
     order: 2;
   }
 
-  .toolbox-public {
-    width: 20%;
-    padding-right: 0rem;
-     order: 2;
-  }
 }
 
 </style>
