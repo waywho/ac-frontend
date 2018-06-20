@@ -431,6 +431,7 @@ export default {
 
 .avatar-box {
 	min-height: 41px;
+	min-width: 41px;
 	margin-bottom: 5px;
 	// display: inline-flex;
 	// justify-content: center;
@@ -500,7 +501,7 @@ export default {
 }
 
 .chatee-details {
-	margin-left: 25px;
+	margin-left: 15px;
 }
 
 .isActive {
