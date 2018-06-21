@@ -396,8 +396,10 @@ export default {
 }
 
 #sender-search {
-	max-width: 90%;
+	max-width: 95%;
 	margin-bottom: 15px;
+	margin-right: auto;
+	margin-left: auto;
 }
 
 .senders-window {
@@ -457,7 +459,7 @@ export default {
 
 .message-loading {
 	padding: 24px 24px;
-	height: 75%;
+	height: 72%;
 }
 
 .message-header {
@@ -475,7 +477,7 @@ export default {
 
 .message-input-container {
 	// border-top: 1px solid #dddcdc;
-	height: 25%;
+	height: 28%;
 	padding: 14px 24px;
 	text-align: right;
 }
@@ -486,7 +488,7 @@ export default {
 
 #message-input {
 	max-width: 100%; 
-	margin-bottom: 5px;
+	margin-bottom: 15px;
 }
 
 
@@ -535,12 +537,17 @@ export default {
 
 	.senders-window {
 		height: 430px;
-
 		flex-direction: column;
 		justify-content: flex-start;
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch;
   		-webkit-transform: translateZ(0px);
+	}
+
+	#sender-search {
+		width: 90%;
+		margin-right: 0px;
+		margin-bottom: 0px;
 	}
 
 	.sender {

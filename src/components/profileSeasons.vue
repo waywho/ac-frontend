@@ -1,18 +1,17 @@
 <template>
-  <div class="seasons row">
-      <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 title-row row">
-        <ul v-for="(season, key) in profileSeasons" class="season-list">
-          <li class="season-list-li"><span class="selection selection-text-vertical">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
+  <div class="seasons">
+      <div class="title-row">
+        <ul v-for="(season, key) in profileSeasons" class="non-list season-list">
+          <li class="season-list-li"><span class="selection selection-text">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
         </ul>
         <div class="season-heading"> 
-          <h2 class="inline-header season-title">Company Seasons</h2>
+          <h2 class="season-title">Company Seasons</h2>
           <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonAdd">add</span>
-         
         </div>
       </div>
       
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 row bottom-xs slide">
-        <div v-for="(production, index) in currentProductions" :key="index" class="col-xs-10 col-sm-5 col-md-5 col-lg-5 production-block" @click="viewProduction(production)">
+      <div class="production-row slide">
+        <div v-for="(production, index) in currentProductions" :key="index" class="production-block" @click="viewProduction(production)">
           <div class="production-image">
             <img :src="production.imageURL | imageProcess('season')" />
           </div>
@@ -106,50 +105,73 @@ export default {
 
 .seasons {
 	min-height: 180px;
-}
-
-.production-row {
-  overflow: scroll;
-}
-
-.option-selections .text-button {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
 .title-row {
+  flex-basis: auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   min-height: 100px;
   margin-right: 10px;
 }
 
-.inline-header {
-	display: inline;
-  margin-bottom: 0px;
-}
-
 .season-heading {
-  order: 2;
+  flex-basis: auto;
+  width: 100%;
+  order: 1;
   margin-bottom: 1rem;
 }
 
 .season-list {
-  order: 1;
-  margin-left: 0px;
+  order: 2;
   margin-bottom: 0px;
 }
 
-.season-list li {
-  list-style-type: none;
-}
-
-.selection-text-vertical {
+.season-title, .selection {
   display: inline-block;
+  margin-right: 0.2rem;
+  margin-bottom: 0px;
 }
 
-.text-button {
-  margin-left: 8px;
+.season-edit {
+  visibility: hidden;
+}
+
+.season-heading:hover .season-edit, .season-list-li:hover .season-edit {
+  visibility: visible;
+}
+
+.season-list-li {
+  font-size: 18px;
+  height: 1.75em;
+  transition: all 0.1s ease-out;
+  -webkit-transition: all 0.1s ease-out;
+}
+
+.season-list-li:hover .selection {
+  font-size: 1.125em;
+  line-height: 1.5em;
+  vertical-align: baseline;
+}
+
+.production-row {
+  display: flex;
+  width: auto;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+}
+
+.production-block {
+  display: inline-flex;
+  flex-grow: 1;
+  flex-basis: auto;
+  width: auto;
+  margin-right: 35px;
+  cursor: pointer;
+  padding-left: 0px;
 }
 
 .production-image {
@@ -162,12 +184,6 @@ export default {
 .production-image img {
   height: 100%;
   width: auto;
-}
-
-.production-block {
-  margin-right: 25px;
-  cursor: pointer;
-  padding-left: 0px;
 }
 
 .production-block:hover h3 {
@@ -185,24 +201,29 @@ export default {
   margin-bottom: 10px;
 }
 
-.season-edit {
-  visibility: hidden;
-}
 
-.season-heading:hover .season-edit, .season-list-li:hover .season-edit {
-  visibility: visible;
-}
 
-@media screen and (max-width: 46rem) {
-  .title-row {
-    justify-content: flex-start;
+@media all and (min-width: $bp-med) {
+  .seasons {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
   }
+
+  .title-row {
+    justify-content: flex-end;
+    width: 305px;
+    min-width: 305px;
+    margin-right: 65px;
+  }
+
   .season-heading {
-    order: 1;
+    margin-bottom: 0px;
+    order: 2;
   }
 
   .season-list {
-    order: 2;
+    order: 1;
   }
 }
 </style>

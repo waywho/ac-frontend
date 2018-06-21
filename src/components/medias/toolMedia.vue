@@ -2,8 +2,8 @@
   <div class="media">
     <div class="player-panel">
       <h2>Media</h2>
-      <div class="selection slide">
-      <div v-for="host in mediaHosts" v-on:click="mediaHost = host" :class="['selection-text', 'media-selection', {'selection-text-active': mediaHost === host }]">
+      <div class="media-selection slide">
+        <div v-for="host in mediaHosts" v-on:click="mediaHost = host" :class="['selection', 'selection-text', {'selection-text-active': mediaHost === host }]">
           <span class="strong">{{host}}</span>
       </div>
   	</div>
@@ -124,9 +124,11 @@ export default {
   padding: 0px $body-padding-small;
 }
 
-.selection {
+.media-selection {
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  align-item: flex-end;
 }
 
 #media-panel {
@@ -135,10 +137,6 @@ export default {
   background-color: #fff;
   padding: 0px $body-padding-small 16px;
   vertical-align: top;
-}
-
-.media-selection {
-	height: 35px;
 }
 
 .media-window {
@@ -179,7 +177,7 @@ export default {
     margin-right: 15px;
   }
 
-  .selection {
+  .media-selection {
     flex-direction: column;
     min-width: 140px;
     flex-basis: 100%;

@@ -121,7 +121,6 @@ export default {
 @import './styles/global';
 
 #app-inner {
-  font-family: 'Raleway', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100%;
@@ -136,8 +135,8 @@ export default {
     "footer";
   grid-gap: 0px 0px;
   width: 100%;
-  min-width: 320px;
-  max-width: 1680px;
+  min-width: $app-min-width;
+  max-width: $app-max-width;
   margin: auto;
   z-index: 1;
 }

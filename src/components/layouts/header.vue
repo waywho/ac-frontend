@@ -1,7 +1,7 @@
 <template>
   <div id="header">
     <div class="header-inner">
-      <ul class="non-list header-items">
+      <ul class="non-list header-items header-items-left">
         <li class="logo">
           <router-link to="/"><img :src="require('@/assets/images/artistcenter-logo.png')" alt="artistcenter logo" /></router-link>
         </li>
@@ -11,7 +11,7 @@
         </li>
       </ul>
 
-      <ul class="non-list header-items">
+      <ul class="non-list header-items header-items-right">
         
         <li v-if="signedIn" class="notification-icon" v-on:click="getNotifications">
           <app-notification-bubble v-if="notificationAlert" class="notification-bubble"></app-notification-bubble>
@@ -71,18 +71,21 @@ export default {
   },
   methods: {
     getNotifications: function() {
-      var notificationRef = firebaseApp.database().ref('notifications/' + this.profileId)
-       notificationRef.once('value', snapshot => {
-        console.log(snapshot.val())
-          var keys = Object.keys(snapshot.val() || {})
-          this.lastKey = keys[keys.length-1]
+      this.showNotificatons = !this.showNotifications;
 
-          firebaseApp.database().ref('notificationViews/' + this.profileId).set(this.lastKey)
+      
+         var notificationRef = firebaseApp.database().ref('notifications/' + this.profileId)
+         notificationRef.once('value', snapshot => {
+          console.log(snapshot.val())
+            var keys = Object.keys(snapshot.val() || {})
+            this.lastKey = keys[keys.length-1]
 
-          this.notificationList = _.orderBy(Object.values(snapshot.val()), ['created'], ['desc']);
-          this.notificationAlert = false;
-          this.showNotificatons = true;
-      })
+            firebaseApp.database().ref('notificationViews/' + this.profileId).set(this.lastKey)
+
+            this.notificationList = _.orderBy(Object.values(snapshot.val()), ['created'], ['desc']);
+            this.notificationAlert = false;  
+        })
+      
     },
     away: function() {
       this.showNotificatons = false;
@@ -138,14 +141,15 @@ export default {
   z-index: 998;
   grid-area: header;
   width: 100%;
-  height: $header-height;
+  max-width: $app-max-width;
+  min-width: $app-min-width;
+  height: $header-height-mobile;
   transition: top 0.2s ease-in-out, left 1s ease-in-out;
   -webkit-transition: top 0.2s ease-in-out, left 1s ease-in-out;
 }
 
 .header-inner {
-  padding-left: 100px;
-  padding-right: 100px;
+  padding: 0px $body-padding-small;
   display: flex;
   width: 100%;
   height: $header-height;
@@ -161,17 +165,27 @@ export default {
 .logo {
   // height: 57px;
   display: inline-block;
-  flex-basis: 40%;
+  flex-basis: auto;
+  width: 65%;
 }
 
 .header-items {
   display: inline-flex;
-  justify-content: space-between;
+  width: auto;
+  flex-basis: auto;
   align-items: center;
 }
 
-.search {
-  width: 250px;
+.header-items-left {
+  justify-content: flex-start;
+}
+
+.header-items-right {
+  justify-content: flex-end;
+}
+
+#search-element {
+   display: none;
 }
 
 .header-avatar {
@@ -197,16 +211,18 @@ export default {
   position: absolute;
   z-index: 9990;
   top: -8px;
-  right: -8px;
+  right: 15px;
 }
 
 .logo img {
-  width: 100px;
+  width: 75px;
 }
 
 .header-item-space {
-    margin: 0px 30px 0px 30px;
+  margin: 0px 20px 0px 20px;
 }
+
+
 
 .avatar img {
   width: 100%;
@@ -237,85 +253,90 @@ export default {
 }
 
 .app-notification {
+  height: auto;
+  max-height: 500px;
   z-index: 999;
   background-color: $color-tile;
-  width: 237px;
+  width: 100%;
   position: absolute;
-  right: 225px;
-  top: 90px;
-  padding: 30px 0.5rem;
+  right: 0px;
+  top: $header-height-mobile;
+  padding: 30px $body-padding-small;
 }
 
 .app-notification:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 94%;
-  width: 0;
-  height: 0;
-  border: 15px solid transparent;
-  border-bottom-color: $color-tile;
-  border-top: 0;
-  margin-left: -15px;
-  margin-top: -15px;
-}
-
-.xs-search {
   display: none;
 }
 
+.xs-search {
+  display: block;
+  width: 100%;
+  padding: 0px $body-padding-small;
+  height: $header-search-height-mobile;
+}
 
 
-@media screen and (max-width: 46rem) {
+
+@media all and (min-width: $bp-med) {
   .logo {
-    flex-basis: 65%;
+    flex-basis: 40%;
+  }
+  
+  .logo img {
+    width: 100px;
+  }
+  .xs-search {
+    display: none;
   }
 
-  .logo img {
-    width: 75px;
-  }
 
   #header {
-    height: $header-height-mobile;
+    height: $header-height;
   }
 
   .header-inner {
-    padding: 0px 28px;
+    padding: 0px $body-padding-large;
   }
 
   .header-items {
     flex-basis: 25%;
   }
 
-  .xs-search {
-    display: block;
-    width: 100%;
-    padding: 0px 52px;
-    height: $header-search-height-mobile;
-  }
-
   #search-element {
-    display: none;
+    display: block;
+    width: 250px;
   }
 
   .header-item-space {
-    margin: 0px 20px 0px 20px;
+      margin: 0px 30px 0px 30px;
   }
-
 
 
   .notification-bubble {
-    right: 15px;
+    right: -8px;
   }
+
   .app-notification {
-    width: 100%;
-    top: $header-height-mobile;
-    right: 0px;
-    padding-left: 14px;
+    width: 237px;
+    max-height: 300px;
+    top: 90px;
+    right: 225px;
+    padding: 15px $body-padding-small;
   }
 
   .app-notification:after {
-    display: none;
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 94%;
+    width: 0;
+    height: 0;
+    border: 15px solid transparent;
+    border-bottom-color: $color-tile;
+    border-top: 0;
+    margin-left: -15px;
+    margin-top: -15px;
   }
 }
 

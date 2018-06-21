@@ -4,7 +4,7 @@
       <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="profileToolData"></component>
     </keep-alive>
     <div :class="[authorizedUser ? 'toolbox-auth' : 'toolbox-public']">
-      <div v-for="tool in profileTools" @click="component = tool.component" :class="['toolbox-tile', 'is-lightgray', {'active-tool': component === tool.component}]">
+      <div v-for="tool in profileTools" @click="component = tool.component" :class="['is-lightgray', {'active-tool': component === tool.component}, [tool.component !== null ? 'toolbox-tile' : 'toolbox-tile-not-active']]">
         <img v-if="!tool.name" :src="tool.icon" />
         <i v-else :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i><div>{{tool.name}}</div>
       </div>
@@ -52,20 +52,20 @@ export default {
       component: 'calendar',
       artistAuthTools: [
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
-        { name: null, component: '', icon: '', icon: require('@/assets/images/artistcenter-logo.png')},
+        { name: null, component: null, icon: '', icon: require('@/assets/images/artistcenter-logo.png')},
         { name: 'calendar', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
         { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' },
-        { name: null, component: '', icon: '', icon: ''}
+        { name: null, component: null, icon: '', icon: ''}
       ],
       companyAuthTools: [
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
         
-        { name: null, component: '', icon: '', icon: require('@/assets/images/artistcenter-logo.png')},
+        { name: null, component: null, icon: '', icon: require('@/assets/images/artistcenter-logo.png')},
         { name: 'calendar', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Opportunity', component: 'opportunity', icon: 'fa-address-book-o'},
         { name: 'Media', component: 'medias', icon: 'fa-play-circle' },        
-        { name: null, component: '', icon: '', icon: ''}
+        { name: null, component: null, icon: '', icon: ''}
       ],
       tools: {
         'calendar': { name: 'calendar', component: 'calendar', icon: 'fa-calendar' },
@@ -185,7 +185,7 @@ export default {
   grid-gap: 1rem 1rem;
 }
 
-.toolbox-tile {
+.toolbox-tile, .toolbox-tile-not-active  {
   height: 100%;
   padding: 50px 25px;
   display: inline-flex;
@@ -193,7 +193,15 @@ export default {
   align-items: center;
   justify-content: center;
   background: white;
-  cursor: pointer;
+}
+
+.toolbox-tile {
+   cursor: pointer;
+}
+
+.toolbox-tile-not-active {
+  pointer-events: none;
+  cursor: default;
 }
 
 .toolbox-tile img {
@@ -210,6 +218,11 @@ export default {
       .active-tool  {
   background-color: $color-lightgold;
   color: white;
+}
+
+.toolbox-tile-not-active:hover {
+  background-color: white !important;
+  color: $color-lightgray !important;
 }
 
 .active-tool i {
