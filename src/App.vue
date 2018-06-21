@@ -1,5 +1,5 @@
 <template>
-  <div id="main-app">
+  <div id="app">
     <app-menu :class="['app-menu', {'menu-open': isActive}]" :style="menuStyle" v-on:toggleMenu="menuToggle($event)"></app-menu>
     <div id="app-inner">
       <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive" :profile-id="currentUser.id"></app-header>
@@ -92,14 +92,13 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch('tryAutoSignIn');
     // console.log(document.documentElement)
-    var scrollDoc = document.getElementById("app-inner")
+    var scrollDoc = document.body.addEventListener('scroll', this.handleScroll);
     console.log(scrollDoc)
     // .addEventListener('scroll', this.handleScroll);
-
-
     // document.body.addEventListener('scroll', console.log('listenToScroll'));
-    this.$store.dispatch('tryAutoSignIn');
+   
   },
   destroyed() {
     document.body.removeEventListener('scroll', this.handleScroll);
@@ -141,7 +140,7 @@ export default {
   z-index: 1;
 }
 
-#main-app {
+#app {
   transition: left 0.8s ease-in-out;
   -webkit-transition: left 0.8s ease-in-out;
 }

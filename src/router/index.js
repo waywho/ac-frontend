@@ -72,7 +72,7 @@ const router = new Router({
 // })
 
 router.afterEach((to, from) => {
-  document.getElementById('main-app').scrollIntoView()
+  document.getElementById('app').scrollIntoView()
 })
 
 

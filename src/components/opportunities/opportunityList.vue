@@ -1,5 +1,5 @@
 <template>
-	<div  class="col-xs-12 col-md-10 col-lg-10">
+	<div  class="col-xs-12 col-md-10 col-lg-10 opportunity-board">
   		<h3>Opportunity Board Search Results</h3>
   		<b class="is-golden">{{opportunityNum}} Matches Found</b>
   		<p>Based on your selected criteria, opportunities are listed below. Click on the opportunities to apply</p>
@@ -119,9 +119,15 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
+
+.opportunity-board {
+	position: relative;
+}
+
 .opportunity-list {
 	max-height: 800px;
 	min-height: 200px;
+	position: relative;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
