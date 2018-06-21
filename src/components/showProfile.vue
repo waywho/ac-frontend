@@ -182,6 +182,7 @@ export default {
 
 .profile-account {
 	width: auto;
+	position: relative;
 	max-width: $app-max-width;
   	min-width: $app-min-width;
 }
@@ -323,6 +324,7 @@ circle {
 }
 
 .profile-section {
+	position: relative;
 	background-color: white;
 	padding: 50px 30px 28px $body-padding-small;
 	margin: 0px 0px 24px 0px;
