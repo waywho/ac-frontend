@@ -400,7 +400,7 @@ export default {
 }
 
 .senders-window {
-	width: auto;
+	width: 100%;
 	height: auto;
 	display: flex;
 	flex-direction: row;
@@ -544,7 +544,7 @@ export default {
 	#sender-search {
 		width: 90%;
 		margin-right: 0px;
-		margin-bottom: 0px;
+		margin-left: 0px;
 	}
 
 	.sender {

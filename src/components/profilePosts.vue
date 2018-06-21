@@ -241,8 +241,9 @@ export default {
 }
 
 .multi-image-container {
+	width: auto;
 	display: flex;
-	overflow-x: auto;
+	overflow-x: scroll;
 	flex-wrap: nowrap;
 	-webkit-overflow-scrolling: touch;
 	-ms-overflow-style: -ms-autohiding-scrollbar;

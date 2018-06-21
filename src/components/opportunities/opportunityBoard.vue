@@ -180,6 +180,7 @@ export default {
 	padding: 0px 40px 40px;
 	margin: 0px 0px 24px 0px;
 	text-align: left;
+	height: 100%;
 }
 
 </style>
