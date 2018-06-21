@@ -4,8 +4,7 @@
 			<input :id="connection.name" type='checkbox' :value="connection.id" @click="sendConnection($event.target.value)" />
 	       	<label :for="connection.name"><span></span></label>
 
-			<div class="avatar-medium connection-avatar">
-				<img v-bind:src="connection.img" :alt="connection.firstName + connection.lastName + ' photo'" />
+			<div class="avatar avatar-medium connection-avatar" :style="{'background-image': 'url('+ connection.avatarURL +')'}" :title="connection.name + ' avatar photo'">
 			</div>
 			<div class="name strong small">{{ connection.name }}</div>
 			<div class="place tiny">{{connection.city}} {{connection.province}}</div>

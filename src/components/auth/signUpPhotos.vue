@@ -6,7 +6,7 @@
   	<div class="image-uploader">
   		<div class="uploadbox" v-on:click="onPickFile('avatarInput')">
           <div class="upload-avatar" v-if="avatarCurrentURL !== null" >
-          <img  :src="avatarCurrentURL" alt="uploaded cover" />
+          <img  :src="avatarCurrentURL" alt="uploaded avatar image" />
           </div>
           <div class="upload-avatar" v-if="avatarCurrentURL === null">
   				  <i class="fa fa-user-o fa-4x is-white" aria-hidden="true"></i>        
@@ -18,7 +18,7 @@
 
    		<div class="uploadbox" v-on:click="onPickFile('coverInput')">
         <div class="upload-cover" v-if="coverCurrentURL !== null">
-          <img :src="coverCurrentURL" alt="uploaded cover" />
+          <img :src="coverCurrentURL" alt="uploaded cover image" />
         </div>
   			<div v-if="coverCurrentURL === null" class="upload-avatar avatar-with-padding">
           <img :src="require('@/assets/images/cover-icon.png')" alt="cover icon" />

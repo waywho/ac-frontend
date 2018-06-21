@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-  	<div class="avatar-border avatar-larger">
+  	<div class="avatar-icon-border">
   		<i class="fa fa-check is-golden" aria-hidden="true"></i>
   	</div><br />
   	<h3 class="is-golden">Sent Successfully</h3>
@@ -26,7 +26,12 @@ export default {
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
 
-.avatar-larger i {
+.avatar-icon-border {
+  width: 150px;
+  height: 150px;
+}
+
+.avatar-icon-border i {
 	font-size: 70px;
 }
 </style>

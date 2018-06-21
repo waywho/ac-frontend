@@ -2,9 +2,7 @@
 	<div class="audition-candidates">
 		<div class="row slide row-container">
 			<div v-for="auditionee in auditionees" class="auditionee-tile col-lg-3 col-md-4 col-sm-4 col-xs-4">
-				<div class="avatar-large">
-						<img v-bind:src="auditionee.img" />
-				</div>
+				<div class="avatar avatar-large" :style="{'background-image': 'url('+ auditionee.img +')'}" :title="auditionee.name + ' avatar'">	</div>
 				<div class="tile-text">
 					<span class="name">{{ auditionee.firstName}} {{ auditionee.lastName }}</span><br />
 					<span class="role">{{ auditionee.city }}, {{ auditionee.province}}</span>

@@ -128,7 +128,7 @@ export default {
   width: auto !important;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 100px auto 460px;
+  grid-template-rows: $header-height-mobile auto 460px;
   grid-template-areas:
     "header"
     "main"
@@ -171,6 +171,9 @@ export default {
 }
 
 @media all and (min-width: $bp-med) {
+  #app-inner {
+    grid-template-rows: $header-height auto 460px;
+  }
   .nav-up {
     top: -100px !important;
     

@@ -1,9 +1,10 @@
 <template>
 	<div class="post-section">
 		<div v-if="authorizedUser" class="post-box">
-			<div class="avatar-border avatar-medium">
-	  			<img :src="currentUserAvatar" />	
-	      	</div>
+			<div class="avatar-border">
+				<avatar  :image-source="currentUserAvatar" :border="true" :size="'medium'" :name="$store.getters.profile.details.name"></avatar>
+			</div>
+
 
 			<div class="comment-box-container">
 				<textarea class="comment-box" v-model="post.content" rows="6"></textarea>
@@ -54,6 +55,7 @@
 <script>
 import currentUserMixin from '../mixins/currentUserMixin'
 import profileImagesMixin from '../mixins/profileImagesMixin'
+import avatar from '@/components/avatar'
 import avatarMixin from '../mixins/avatarMixin'
 import _ from 'lodash';
 
@@ -62,6 +64,9 @@ export default {
   props: {
   	name: String,
     profileId: String
+  },
+  components: {
+  	'avatar': avatar
   },
   mixins: [currentUserMixin, profileImagesMixin, avatarMixin],
   data () {

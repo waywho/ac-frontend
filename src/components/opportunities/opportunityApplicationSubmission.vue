@@ -12,9 +12,8 @@
 		</div>
 		<a target="_blank" :href="profile.profile_url" alt="profile url">
 			<div class="candidate-tile" >
-				<div class="avatar-border avatar-medium applicant-avatar">
-	        		<img :src="profile.avatar_url | imageProcess('avatar')" />
-	        	</div>
+				<avatar :image-source="profile.avatar_url" :border="true" :size="'medium'" :name="profile.name"></avatar>
+				
 				<div class="candidate-details">
 					<div class="candidate-name strong is-golden">{{profile.name}}</div>
 	        	<div class="small">{{profile.role}}</div>
@@ -29,6 +28,7 @@
 
 <script>
 import successWarningNotice from '@/components/successWarningNotice'
+import avatar from '@/components/avatar';
 
 export default {
   name: 'opportunityApplicationSubmission',
@@ -38,7 +38,8 @@ export default {
   	messaging: Object
   },
   components: {
-  	successWarningNotice
+  	successWarningNotice,
+  	avatar
   },
   data () {
     return {

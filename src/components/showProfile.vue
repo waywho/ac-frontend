@@ -2,10 +2,10 @@
 	<div class="profile-account">
 		<div v-if="loading">
 			<div class="profile-banner">
-				<div class="profile-banner-assets">
+				<div class="profile-banner-inner">
 					<div class="profile-cover" :style="{'background-image': 'url('+ coverCurrentURL +')'}">
 					</div>
-					<div class="profile-avatar-wrap" >
+					<div class="profile-avatar-container" >
 						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarCurrentURL +')'}">
 						</div>
 					</div>
@@ -14,7 +14,7 @@
 		</div>
 		<div v-if="profile">	
 			<div class="profile-banner">
-				<div class="profile-banner-assets">
+				<div class="profile-banner-inner">
 
 					<div class="profile-cover" :style="{'background-image': 'url('+ coverCurrentURL +')'}">
 						<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
@@ -23,10 +23,10 @@
 						<input v-if="authorizedUser" type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
 					</div>
 
-					<div class="profile-avatar-wrap" >
+					<div class="profile-avatar-container" >
 						<div class="profile-avatar" :style="{'background-image': 'url('+ avatarCurrentURL +')'}">
 
-							<svg height="100%" width="100%">
+							<svg height="316px" width="316px">
 								<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
 							</svg>
 							
@@ -180,6 +180,12 @@ export default {
 // 	grid-area: main;
 // }
 
+.profile-account {
+	width: auto;
+	max-width: $app-max-width;
+  	min-width: $app-min-width;
+}
+
 circle {
   fill: transparent;
   stroke: $color-gold;
@@ -203,7 +209,7 @@ circle {
 	height: 100%;
 }
 
-.profile-banner-assets {
+.profile-banner-inner {
 	box-sizing: border-box;
 	display: block;
 	height: 573px;
@@ -217,7 +223,7 @@ circle {
 }
 
 .profile-cover {
-	width: 100%;
+	width: auto;
 	background-color: white;
 	height: 434px;
 	overflow: hidden;    
@@ -251,8 +257,9 @@ circle {
 	visibility: visible;
 }
 
-.profile-avatar-wrap {
+.profile-avatar-container {
 	height: 316px;
+	display: block;
 	position: absolute;
 	top: 45%;
 	left: 0;
@@ -265,6 +272,8 @@ circle {
 	border-radius: 50%;
 	height: 316px;
 	width: 316px;
+	min-height: 316px;
+	min-width: 316px;
 	margin: 0 auto;
 	background-position: center;
     background-repeat: no-repeat;
@@ -301,10 +310,12 @@ circle {
 	visibility: visible;
 }
 
-.profile-options {
-	display: inline-block;
-	transform: translateX(-130px);
-}
+
+// .profile-options-xs {
+//     margin: 125px;
+//     display: block;
+//     text-align: center;
+// }
 
 .profile-banner-text {
 	text-align: center;
@@ -313,7 +324,7 @@ circle {
 
 .profile-section {
 	background-color: white;
-	padding: 40px 30px 40px 100px;
+	padding: 50px 30px 28px $body-padding-small;
 	margin: 0px 0px 24px 0px;
 }
 
@@ -321,31 +332,18 @@ circle {
 	margin: 0px 0px 24px 0px;
 }
 
-/*for phone-only*/
 
-@media screen and (max-width: 46rem) {
-	.profile-account {
-		width: 100%;
-	}
+@media all and (min-width: $bp-med) {
 
 	.profile-section {
 		width: 100%;
-		padding: 50px 28px 28px 28px;
-		margin: 0px 0px 24px 0px;
+		padding: 40px $body-padding-small 40px $body-padding-large;
 	}
 
-	.profile-options-xs {
-	    margin: 125px;
-	    display: block;
-	    text-align: center;
-  	}
-
-	.slide {
-		overflow-x: auto;
-		flex-wrap: nowrap;
-		-webkit-overflow-scrolling: touch;
-	  	-ms-overflow-style: -ms-autohiding-scrollbar;
-	}
+	// .profile-options {
+	// 	display: inline-block;
+	// 	transform: translateX(-130px);
+	// }
 
 }
 

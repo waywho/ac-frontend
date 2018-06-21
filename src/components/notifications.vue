@@ -1,13 +1,15 @@
 <template>
   <div class="notifications">
   	<h3 class="xs-visible sm-hide is-golden">Notifications</h3>
-  	<div v-for="note in notificationDetails" class="note row smaller middle-xs middle-sm" v-html="note">
+  	<div v-for="note in notificationList" class="note">
+        <avatar class="note-avatar" :image-source="note.image" :border="false" :name="note.name" :size="'small'"></avatar>
+        <div class="note-details"><span class='is-golden'>{{note.name}}</span> {{note.action}}</div>
   	</div>
   </div>
 </template>
 
 <script>
-
+import avatar from '@/components/avatar'
 export default {
   name: 'notifications',
   props: {
@@ -19,15 +21,7 @@ export default {
       
     }
   },
-  computed: {
-  	notificationDetails: function() {
-  		var notes = [];
-  		this.notificationList.forEach((note) => {
-  			notes.push("<div class='col-xs-3 col-sm-3 avatar-small note-avatar'><img src='"+ note.image +"' /></div><div class='col-xs-9 col-sm-9'><span class='is-golden'>"+ note.name + "</span> " + note.action + "</div>")
-  		})
-  		return notes;
-  	}
-  },
+  components: {'avatar': avatar},
   created () {
     
   }
@@ -38,21 +32,42 @@ export default {
 <style lang="scss" scoped>
 @import '../styles/style-variables';
 
+.notifications h3 {
+  margin-top: 0px;
+  margin-bottom: 25px;
+}
+
 .note {
-	height: 58px;
-	padding: 0px 0px;
+	padding: 10px 0px;
 	margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.xs-visible {
+  display: block;
 }
 
 .note:hover {
 	background-color: #f7edd4; 
 }
 
-
-@media screen and (max-width: 46rem) {
-  .note {
-  	font-size: $font-size;
-  	height: 117px;
-  }
+.note-avatar {
+  margin-right: 1rem;
 }
+
+.note-details {
+  font-size: $font-size;
+}
+
+@media all and (min-width: $bp-med) {
+  .sm-hide {
+    display: none;
+  }
+
+  .note-details {
+    font-size: $font-size-smaller;
+}
+}
+
 </style>

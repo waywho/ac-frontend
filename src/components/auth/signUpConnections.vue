@@ -27,8 +27,7 @@
         <input :id="connection.id" type='checkbox' :value="connection" v-model="connectionRequests" />
             <label><span></span></label>
 
-        <div class="avatar-medium connection-avatar">
-          <img v-bind:src="connection.avatarURL" :alt="connection.name + ' photo'" />
+        <div class="avatar-medium connection-avatar" :style="{'background-image': 'url('+ connection.avatarURL +')'}" :title="connection.name + ' avatar image'">
         </div>
         <div class="name strong small">{{ connection.name }}</div>
         <div class="place tiny">{{connection.city}} {{connection.province}}</div>

@@ -5,11 +5,11 @@
   			<div class="section-title">
 	  			<img src='../assets/images/artistprofile-icon.png' alt="artist profile results icon" class="result-icon" /><span class="medium large">People</span>
   			</div>
-  			<div v-for="profile in artistProfiles" class="result-item row middle-xs middle-sm between-xs between-sm" @click='showProfile(profile.id)'>
-  				<div class="avatar avatar-medium">
-  					<img :src="userAvatar(profile.avatarURL)" :alt="profile.name + 'avatar'" />
-  				</div>
-  				<div class="col-xs col-sm">
+  			<div v-for="profile in artistProfiles" class="result-item" @click='showProfile(profile.id)'>
+          <div class="avatar-box">
+           <avatar :image-source="profile.avatarURL" :border="true" :size="'medium'" :name="profile.name"></avatar>
+         </div>
+  				<div class="profile-details">
   					<div class="medium">{{profile.name}}</div>
   					<div class="smaller"><span class="is-golden role">{{profile.role}}</span> in {{profile.city}}, {{profile.province}} </div>
   				</div>
@@ -18,11 +18,11 @@
   			<div class="section-title">
 	  			<img src='../assets/images/companyprofile-icon.png' alt="artist profile results icon" class="result-icon" /><span class="medium large">Company</span>
   			</div>
-  			<div v-for="profile in companyProfiles" class="result-item row middle-xs middle-sm between-xs between-sm" @click='showProfile(profile.id)'>
-  				<div class="avatar avatar-medium">
-  					<img :src="userAvatar(profile.avatarURL)" :alt="profile.name + 'avatar'" />
-  				</div>
-  				<div class="col-xs col-sm">
+  			<div v-for="profile in companyProfiles" class="result-item" @click='showProfile(profile.id)'>
+          <div class="avatar-box">
+  				  <avatar :image-source="profile.avatarURL" :border="true" :size="'medium'" :name="profile.name"></avatar>
+          </div>
+  				<div class="">
   					<div class="medium">{{profile.name}}</div>
   					<div class="smaller"><span class="is-golden role">{{profile.companyType}}</span> company in {{profile.city}}, {{profile.province}} </div>
   				</div>
@@ -33,7 +33,7 @@
 
 <script>
 import profileSearchMixin from '@/mixins/profileSearchMixin';
-import avatarMixin from '@/mixins/avatarMixin';
+import avatar from '@/components/avatar'
 
 export default {
   name: 'searchesults',
@@ -53,7 +53,8 @@ export default {
   		});
   	}
   },
-  mixins: [profileSearchMixin, avatarMixin],
+  components: {avatar},
+  mixins: [profileSearchMixin],
   created() {
   	this.getUsers()
   },
@@ -70,18 +71,20 @@ export default {
 @import '../styles/style-variables';
 
 .search-results {
-	width: 859px;
+	width: 90%;
+  max-width: 859px;
 	margin: 35px auto 50px;
 }
 
 .search-results-inner {
 	width: 100%;
+  max-width: 800px;
 	background: white;
-	padding: 1px 58px 58px;
+	padding: 1px $body-padding-small;
 }
 
 .search-heading {
-	width: 100%;
+	width: 92%;
 	text-align: right;
 }
 
@@ -100,13 +103,19 @@ export default {
 }
 
 .result-item {
-	width: 100%;
+  height: auto;
+	width: auto;
 	background-color: $color-tile;
 	margin-bottom: 10px;
-	height: 58px;
+  padding: 0.5rem 1rem;
 	display: flex;
-	padding: 0px 10px;
+  align-items: center;
+  justify-content: flex-start;
 	cursor: pointer;
+}
+
+.avatar-box {
+  margin-right: 25px;
 }
 
 .user-plus-icon {

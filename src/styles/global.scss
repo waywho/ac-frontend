@@ -87,83 +87,8 @@ div {
 	color: $color-darkred;
 }
 
-.avatar-border {
-	border-radius: 50%;
-	border: solid 3px $color-gold;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-	z-index: 2;
-}
-
-.avatar-border-thicker {
-	border-radius: 50%;
-	border: solid 5px $color-gold;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-	z-index: 2;
-}
-
-.avatar {
-	border-radius: 50%;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-	z-index: 2;
-}
-
-.avatar img, .avatar-border img {
-	margin: 0 auto;
-	border-radius: 50%;
-	width: 100%;
-	z-index: 1;
-}
-
-.avatar-larger {
-	height: 119px;
-	width: 119px;
-	min-height: 119px;
-	min-width: 119px;
-}
-
-.avatar-large {
-	height: 98px;
-	width: 98px;
-	min-height: 98px;
-	min-width: 98px;
-}
-
-.avatar-medium {
-	height: 41px;
-	width: 41px;
-	min-height: 41px;
-	min-width: 41px;
-}
-
-.avatar-small {
-	height: 35px;
-	width: 35px;
-	min-height: 35px;
-	min-width: 35px;
-}
 
 
-.avatar-smaller {
-	height: 35px;
-	width: 35px;
-	min-height: 35px;
-	min-width: 35px;
-}
-
-.note-avatar {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
 
 .button-fa {
 	cursor: pointer;
@@ -234,6 +159,14 @@ button:hover, .button:hover {
 // 	height: 21px;
 // }
 
+.avatar-icon-border {
+  border: 10px solid $color-gold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto auto;
+}
 
 .selection {
 	margin-bottom: 0.5rem;
@@ -747,8 +680,6 @@ input:checked + .slider:before {
 		display: none;
 	}
 
-	.note-avatar img {
-		width: 69px;
-	}
+
   
 }

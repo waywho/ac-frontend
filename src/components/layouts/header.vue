@@ -19,9 +19,7 @@
         </li>
         <li v-if="signedIn" class="header-avatar header-item-space">
           <router-link :to="'/profiles/' + this.profileId">
-            <div class="avatar-border avatar-small " >
-                <img :src="currentUserAvatar" alt="user avatar" />
-            </div>
+              <avatar :image-source="currentUserAvatar" :border="true" :size="'small'" :name="$store.getters.profile.details.name"></avatar>
           </router-link>
         </li>
         <li v-if="!signedIn" class='header-item-space sign-in-item' id="show-modal" v-on:click="showSignIn()">Sign in</li>
@@ -42,8 +40,10 @@
 import menuMixin from '@/mixins/menuMixin'
 import notifications from '@/components/notifications'
 import notificationBubble from '@/components/notificationBubble'
+import avatar from '@/components/avatar';
 import { mixin as clickaway } from 'vue-clickaway'
 import currentUser from '@/mixins/currentUserMixin';
+
 // import firebase from 'firebase/app';
 // import 'firebase/auth';
 // import 'firebase/database';
@@ -54,7 +54,8 @@ import _ from 'lodash';
 export default {
   components: {
     'app-notifications': notifications,
-    'app-notification-bubble': notificationBubble
+    'app-notification-bubble': notificationBubble,
+    'avatar': avatar
   },
   props: {
     isActive: Boolean,
@@ -321,7 +322,7 @@ export default {
     max-height: 300px;
     top: 90px;
     right: 225px;
-    padding: 15px $body-padding-small;
+    padding: 15px 15px;
   }
 
   .app-notification:after {

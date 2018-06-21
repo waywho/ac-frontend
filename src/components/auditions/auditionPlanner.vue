@@ -19,8 +19,7 @@
   			<h4>Candidates</h4>
   				<div class="candidates-row slide">
 		  			<div v-for="(candidate, index) in currentAudition.invitedCandidates" class="candidate-tile" v-on:click="auditionee = candidate; auditioneeIndex = index">
-		  				<div class="avatar avatar-small candidate-avatar">
-		  					<img :src="candidate.img">
+		  				<div class="avatar avatar-small candidate-avatar" :style="{'background-image': 'url('+ candidate.avatarURL +')'}" :title="candidate.name + ' avatar'">
 						  </div>
 						  <div class="candidate-details">
 							   <span class="small candidate-name strong">{{candidate.firstName}} {{candidate.lastName}}</span>

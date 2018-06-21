@@ -11,9 +11,7 @@
   				<p v-if="!showChat && searchResultMessage" class="warning" key="resultsWarning"><small>{{searchResultMessage}}</small></p>
 	  			
 	  			<div v-if="!showChat && !chatsLoading" v-for="(user, index) in userResults" class="sender" :key="user.id" v-on:click="startMessage(user)">
-	  				<div class="avatar-box avatar-border avatar-medium">
-				      	<img :src="userAvatar(user.avatarURL)"  />
-					</div>
+	  				<avatar class="avatar-box" :image-source="user.avatarURL" :border="true" :size="'medium'" :name="user.name"></avatar>
 				    <div class="sender-name">
 				    	<b><small>{{ user.name}}</small></b><br />
 				    	<span class="smaller is-silver medium last-message">{{user.lastMessage}}</span>
@@ -21,9 +19,8 @@
 	  			</div>
 
 	  			<div v-if="showChat && !chatsLoading" v-for="(chat, index) in chats" :class="['sender', {'active-chat': currentChat.id === chat.id}]" :key="chat.id" v-on:click="startChat(chat)">
-	  				<div class="avatar-box avatar-border avatar-medium">
-				      	<img :src="userAvatar(chat.chatee.avatarURL)" />
-					</div>
+	  				<avatar class="avatar-box" :image-source="chat.chatee.avatarURL" :border="true" :size="'medium'" :name="chat.chatee.name"></avatar>
+	  
 				    <div class="sender-name">
 				    	<span :class="chat.status"><b><small>{{ chat.chatee.name }}</small></b></span><br />
 				    	<span class="smaller is-silver medium last-message">{{chat.lastMessage}}</span>
@@ -40,9 +37,7 @@
 		  		</div>
 		  		<div v-if="!messageLoading" class="message-loading" key="messageBody">
 			  		<div class="message-header">
-			  			<div class="avatar-box avatar-border avatar-medium" v-if="chatee">
-						      	<img :src="userAvatar(chatee.avatarURL)" class="" />
-						</div>
+			  			<avatar v-if="chatee" class="avatar-box" :image-source="chatee.avatarURL" :border="true" :size="'medium'" :name="chatee.name"></avatar>
 						<div v-if="chatee" class="chatee-details">
 							<span :class="['strong', {'warning-text': warningActive }]">{{ chatee.name}}</span><br />
 							<span class="smaller">{{ chatee.roleType }}</span>
@@ -67,6 +62,7 @@
 import currentUserMixin from '@/mixins/currentUserMixin';
 import avatarMixin from '@/mixins/avatarMixin';
 import message from './message';
+import avatar from '@/components/avatar';
 // import firebase from 'firebase/app';
 // import 'firebase/database';
 import firebaseApp from '@/firebase/init';
@@ -76,6 +72,7 @@ export default {
   name: 'messageTool',
   components: {
   	'message': message,
+  	'avatar': avatar
   },
   mixins: [currentUserMixin, avatarMixin],
   data () {
