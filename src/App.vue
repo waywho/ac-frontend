@@ -94,8 +94,9 @@ export default {
   created() {
     this.$store.dispatch('tryAutoSignIn');
     // console.log(document.documentElement)
-    var scrollDoc = document.body.addEventListener('scroll', this.handleScroll);
-    console.log(scrollDoc)
+    document.body.addEventListener('scroll', this.handleScroll);
+    // var doc = window
+    // console.log(doc)
     // .addEventListener('scroll', this.handleScroll);
     // document.body.addEventListener('scroll', console.log('listenToScroll'));
    
@@ -147,11 +148,10 @@ export default {
 
 .main-body {
   grid-area: main;
-  -webkit-overflow-scrolling: touch;
 }
 
 .nav-up {
-  top: -163px !important;
+  top: -163px;
 }
 
 .app-menu {

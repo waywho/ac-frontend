@@ -87,7 +87,8 @@ export default {
   height: 100%;
   max-height: 751px;
   margin: 0px auto;
-  padding: 79px 74px;
+  padding: 45px $body-padding-small;
+  
   background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
@@ -115,9 +116,9 @@ export default {
 }
 
 
-@media screen and (max-width: 48rem) {
+@media all and (min-width: $bp-med) {
   .modal-container {
-    padding: 79px 42px;
+    padding: 79px 74px;
   }
 }
 </style>

@@ -182,7 +182,6 @@ export default {
 
 .profile-account {
 	width: auto;
-	position: relative;
 	max-width: $app-max-width;
   	min-width: $app-min-width;
 }

@@ -99,6 +99,10 @@ export const store = new Vuex.Store({
 							resolve({idToken: idToken, expires: expirationDate})
 						}).catch(error => {
 							console.log(error)
+							commit('setMessage', {
+								message: error.message,
+								messageType: 'warning'
+							});
 							reject(error)
 						})
 					} else {
@@ -167,6 +171,10 @@ export const store = new Vuex.Store({
 					resolve()
 				}).catch((error) => {
 					console.log(error)
+					commit('setMessage', {
+						message: error.message,
+						messageType: 'warning'
+					});
 					reject(error)
 				})
 			}) 
@@ -294,6 +302,10 @@ export const store = new Vuex.Store({
 				firebaseApp.database().ref().update(user, error => {
 					if(error) {
 						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						reject(error)
 					} else {
 						dispatch('getUserProfileOnce', {userId: payload.user.id}).then(res => {
@@ -349,6 +361,10 @@ export const store = new Vuex.Store({
 						resolve(res)
 					}).catch(error => {
 						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						reject(error);
 					})
 			})
@@ -402,10 +418,18 @@ export const store = new Vuex.Store({
   					databaseRef.update(chatData, error => {
 		  				if(error) {
 		  					console.log(error)
+		  					commit('setMessage', {
+								message: error.message,
+								messageType: 'warning'
+							});
 		  				} else {
 		  					firebaseApp.database().ref("threads").child(chatKey).push().update(newThread, error => {
 		  						if(error) {
 		  							console.log(error)
+		  							commit('setMessage', {
+										message: error.message,
+										messageType: 'warning'
+									});
 		  						}
 		  					})
 		  					
@@ -423,6 +447,10 @@ export const store = new Vuex.Store({
 								
 			}).catch(error => {
 				console.log(error);
+				commit('setMessage', {
+					message: error.message,
+					messageType: 'warning'
+				});
 				reject(error);
 			})
 
@@ -438,6 +466,10 @@ export const store = new Vuex.Store({
 								
 			}).catch(error => {
 				console.log(error);
+				commit('setMessage', {
+					message: error.message,
+					messageType: 'warning'
+				});
 				reject(error);
 			})
 
@@ -460,6 +492,10 @@ export const store = new Vuex.Store({
 						
 					}).catch(error => {
 						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						return reject(error)
 					})
 			})
@@ -499,12 +535,20 @@ export const store = new Vuex.Store({
 										path: imageURL})
 								}).catch(error => {
 									console.log(error)
+									commit('setMessage', {
+										message: error.message,
+										messageType: 'warning'
+									});
 								 	return reject(error)
 								})
 						})
 					}).catch(error => {
-						reject(error)
-						return console.log(error)
+						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
+						return reject(error)
 					})
 			})
 		},
@@ -531,6 +575,10 @@ export const store = new Vuex.Store({
 							resolve()
 						}).catch(error => {
 							console.log(error)
+							commit('setMessage', {
+								message: error.message,
+								messageType: 'warning'
+							});
 						})
 					})
 			})
@@ -544,6 +592,10 @@ export const store = new Vuex.Store({
 				dispatch('getUserTools', {userId: payload.userId})
 			}).catch(error => {
 				console.log(error)
+				commit('setMessage', {
+					message: error.message,
+					messageType: 'warning'
+				});
 			})
 		},
 		createUserTools({commit, dispatch, state}, payload) {
@@ -558,8 +610,13 @@ export const store = new Vuex.Store({
 						dispatch('getUserTools', {userId: payload.userId})
 						resolve(res)
 					}).catch(error => {
+						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						reject(error)
-						console.log(error)})				
+					})				
 			})
 
 		},
@@ -610,14 +667,19 @@ export const store = new Vuex.Store({
 					.then(res => {
 						console.log('updated tools', res)
 						commit('setMessage', {
-							message: 'Updated Tools Successfully',
+							message: 'Tools updated successfully',
 							messageType: 'success'
 						});
 						dispatch('getUserTools', {userId: payload.userId})
 						resolve(res)
 					}).catch(error => {
+						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						reject(error)
-						console.log(error)})				
+					})				
 			})
 
 
@@ -630,6 +692,10 @@ export const store = new Vuex.Store({
 			// 	).catch(
 			// 		error => 
 			// 		console.log(error)
+					// commit('setMessage', {
+					// 	message: error.message,
+					// 	messageType: 'warning'
+					// });
 			// 	)
 		},
 		getUserTools({commit, dispatch, state}, payload) {
@@ -649,6 +715,11 @@ export const store = new Vuex.Store({
 				})
 			}).catch(error => {
 					console.log(error)
+					commit('setMessage', {
+						message: error.message,
+						messageType: 'warning'
+					});
+					reject(error)
 			})
 		},
 		getProfileTools({commit, state}, payload) {
@@ -659,8 +730,12 @@ export const store = new Vuex.Store({
 						// console.log('tools', res)
 						resolve(res)
 					}).catch(error => {
-						reject(error)
-						console.log(error)
+						console.log(error);
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
+						reject(error);
 					})				
 			})
 
@@ -694,8 +769,15 @@ export const store = new Vuex.Store({
 						});
 						resolve(res)
 					}).catch(error => {
+						
+						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						reject(error)
-						console.log(error)})				
+
+					})				
 			})
 
 	
@@ -742,13 +824,23 @@ export const store = new Vuex.Store({
 								.then(imageURLData => {
 									imageURLData.data['postId'] = res.data.name
 									resolve(imageURLData)
-								}).catch(error => console.log(error))
-
+								}).catch(error => {
+									console.log(error)
+									commit('setMessage', {
+										message: error.message,
+										messageType: 'warning'
+									});
+								})
 							})				
 						}
 					}).catch(error => {
+						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						reject(error)
-						console.log(error)})					
+					})					
 			})
 
 		},
@@ -760,6 +852,11 @@ export const store = new Vuex.Store({
 						resolve(res)
 					}).catch(error => {
 						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
+						reject(error)
 					})
 				})
 		},
@@ -772,8 +869,12 @@ export const store = new Vuex.Store({
 						// console.log('posts', res)
 						resolve(res)
 					}).catch(error => {
-						reject(error)
 						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
+						reject(error)
 					})
 			})
 		},
@@ -784,8 +885,13 @@ export const store = new Vuex.Store({
         		.then(res => {
 					resolve(res)
 				}).catch(error => {
-					reject(error)
 					console.log(error)
+					commit('setMessage', {
+						message: error.message,
+						messageType: 'warning'
+					});
+					reject(error)
+					
 				})
 			})
 		},
@@ -814,6 +920,10 @@ export const store = new Vuex.Store({
 
 			 				}).catch(error => {
 			 					console.log(error)
+			 					commit('setMessage', {
+									message: error.message,
+									messageType: 'warning'
+								});
 			 					return error
 			 				})
 			 		} else {
@@ -858,6 +968,10 @@ export const store = new Vuex.Store({
 			 		databaseRef.update(fullData, error => {
 						if(error) {
 							console.log(error)
+							commit('setMessage', {
+								message: error.message,
+								messageType: 'warning'
+							});
 							reject(error)
 						} else {
 							console.log(seasonUpdates)
@@ -876,8 +990,13 @@ export const store = new Vuex.Store({
 				 .then(res => {
 				 	resolve(res)
 				 }).catch(error => {
-				 	reject(error)
 				 	console.log(error)
+				 	commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
+				 	reject(error)
+				 	
 				 })
 			})
 		},
@@ -896,6 +1015,10 @@ export const store = new Vuex.Store({
 				databaseRef.update(seasonUpdates).then(error => {
 					if(error) {
 						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						reject(error)
 					} else {
 						resolve()
@@ -922,6 +1045,10 @@ export const store = new Vuex.Store({
 
 	 				}).catch(error => {
 	 					console.log(error)
+	 					commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 	 					return error
 	 				})
 			}
@@ -930,6 +1057,10 @@ export const store = new Vuex.Store({
 				databaseRef.update(seasonUpdates).then(error => {
 					if(error) {
 						console.log(error)
+						commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
 						return reject(error)
 					} else {
 						return resolve()

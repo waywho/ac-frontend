@@ -1,19 +1,19 @@
 <template>
   <div class="portfolio">
-
-    <button @click="showPortfolioForm = true" class="portfolio-edit">{{portfolioPresent ? 'Edit' : 'Create'}} Portfolio</button>
+    <h2>Portfolio</h2><span v-if="portfolioPresent && authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span><br />
+    <button v-if="!portfolioPresent && authorizedUser" @click="showPortfolioForm = true" class="portfolio-edit">Create Portfolio</button>
     <keep-alive>
       <portfolio-form v-if="showPortfolioForm" v-bind:portfolio="currentPortfolio" @close="showPortfolioForm = false" @updatePortfolio="portfolioUpdate($event)"></portfolio-form>
     </keep-alive>
   	
-    <div v-if="!portfolioPresent">Please create your portfolio</div>
+    <div v-if="!portfolioPresent && authorizedUser">Please create your portfolio</div>
 
-      <h5 v-if="currentPortfolio.biography" class="is-golden">Biography</h5>
+      <h4 v-if="currentPortfolio.biography" class="is-golden inline-heading first-heading">Biography</h4><span v-if="currentPortfolio.biography && authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
       <div class="row">
         <div class="col-xs col-sm small">{{currentPortfolio.biography}}</div>
       </div>
 
-	  	<h5 v-if="fullOperaRoles" class="is-golden">Opera Roles</h5>
+	  	<h4 v-if="fullOperaRoles" class="is-golden inline-heading">Opera Roles</h4><span v-if="fullOperaRoles && authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
 	  	<div v-for="role in fullOperaRoles" class="row between-xs between-sm">
 	  		<div class="col-xs col-sm small text-left">{{role.role}}</div>
         <div class="col-xs col-sm small">{{role.opera}} <span v-if="role.composer">| {{role.composer}}</span></div>
@@ -21,7 +21,7 @@
         <div class="col-xs col-sm small text-right"><span class="year-inner">{{role.year}}</span></div>
 	  	</div>
 
-      <h5 v-if="scenesCovers" class="is-golden">Scenes and Covers</h5>
+      <h4 v-if="scenesCovers" class="is-golden inline-heading">Scenes and Covers</h4><span v-if="scenesCovers && authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
       <div v-for="role in scenesCovers" class="row between-xs between-sm">
         <div class="col-xs col-sm small text-left">{{role.role}}</div>
         <div class="col-xs col-sm small">{{role.opera}} <span v-if="role.composer">| {{role.composer}}</span></div>
@@ -29,7 +29,7 @@
         <div class="col-xs col-sm small text-right"><span class="year-inner">{{role.year}}</span></div>
       </div>
 
-      <h5 v-if="currentPortfolio.concertAndOratorios" class="is-golden">Concert and Oratorios</h5>
+      <h4 v-if="currentPortfolio.concertAndOratorios" class="is-golden inline-heading">Concert and Oratorios</h4><span v-if="currentPortfolio.concertAndOratorios && authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
         <div v-for="concert in currentPortfolio.concertAndOratorios" class="row between-xs between-sm">
           <div  class="col-xs col-sm small">{{concert.role}}</div>
           <div class="col-xs col-sm small">{{concert.work}} <span v-if="concert.composer">| {{concert.composer}}</span></div>
@@ -37,19 +37,19 @@
         </div>
 
 
-      <h5 v-if="currentPortfolio.trainingAndEducations" class="is-golden">Training and Education</h5>
+      <h4 v-if="currentPortfolio.trainingAndEducations" class="is-golden inline-heading">Training and Education</h4><span v-if="currentPortfolio.trainingAndEducations &&authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
         <li v-for="line in currentPortfolio.trainingAndEducations" class="cv-line small">
           {{Object.values(line).join(", ")}}
         </li>
 
-  		<h5 v-if="currentPortfolio.competitionAwardScholarships" class="is-golden">Competition, Awards, and Scholarships</h5>
+  		<h4 v-if="currentPortfolio.competitionAwardScholarships" class="is-golden inline-heading">Competition, Awards, and Scholarships</h4><span v-if="currentPortfolio.competitionAwardScholarships && authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
   		<ul>
   			<li v-for="line in currentPortfolio.competitionAwardScholarships" class="cv-line small">
   				{{Object.values(line).join(", ")}}
   			</li>
   		</ul>
 
-      <h5 v-if="currentPortfolio.skills" class="is-golden">Skills</h5>
+      <h4 v-if="currentPortfolio.skills" class="is-golden inline-heading">Skills</h4><span v-if="currentPortfolio.skills && authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
       <div class="row">
         <div class="col-xs col-sm small">{{currentPortfolio.skills}}</div>
       </div>
@@ -63,6 +63,7 @@
 
 <script>
 import portfolioForm from './portfolioForm'
+import currentUserMixin from '@/mixins/currentUserMixin'
 
 export default {
   name: 'portfolioTool',
@@ -73,6 +74,7 @@ export default {
   components: {
     'portfolio-form': portfolioForm
   },
+  mixins: [currentUserMixin],
   data () {
     return {
       currentPortfolio: null,
@@ -81,10 +83,10 @@ export default {
   },
   computed: {
     portfolioPresent: function() {
-      if (this.currentPortfolio === null || this.currentPortfolio === undefined || Object.keys(this.currentPortfolio).length === 0) {
-        return false
-      } else {
+      if (this.currentPortfolio !== null && this.currentPortfolio !== undefined && Object.keys(this.currentPortfolio).length > 0) {
         return true
+      } else {
+        return false
       }
     },
     scenesCovers: function() {
@@ -143,12 +145,17 @@ export default {
 @import '../../styles/style-variables';
 
 .portfolio {
-  padding-top: 40px;
-  padding-left: 100px;
-  padding-bottom: 40px;
+  padding: 40px $body-padding-small;
 	height: 476px;
+  min-height: 476px;
 	overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
+}
+
+.portfolio h2 {
+  display: inline-block;
+  margin-top: 0rem;
+  margin-right: 1rem;
 }
 
 .year-inner {
@@ -158,6 +165,22 @@ export default {
 .portfolio-edit {
   float: right;
   margin-right: 20px;
+}
+
+
+.inline-heading {
+  margin-right: 1rem;
+}
+
+.first-heading {
+  margin-top: 0px;
+}
+
+
+@media all and (min-width: $bp-med) {
+  .portfolio {
+    padding-left: $body-padding-large;
+  }
 }
 
 </style>

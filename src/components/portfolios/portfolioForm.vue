@@ -6,90 +6,84 @@
 		<div slot='body'>
 			<label for="biography" class="strong label-header">Edit Biography</label>
 			<textarea id="biography" v-model="biography" placeholder="please enter your biography"></textarea>
-      <div class="row reverse middle-xs middle-sm form-utilities">
-        <div class='col-xs-2 col-sm-2'>
-          <button @click="updateProfileTools('biography', 'portfolio')" class="form-button">save</button>
-        </div>
-        <success-warning-notice  v-if="messageShow['biography']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+      <div class="button-row">
+        <success-warning-notice  v-show="messageShow['biography']" :class="'warning-message'"></success-warning-notice>
+        <button @click="updateProfileTools('biography', 'portfolio')" class="form-button">save</button>
       </div>
 
 			
 			<label class="strong label-header second-header">Opera Roles</label>
 			<span class="smaller is-lightgray">Enter repertoire information</span>
-			<div v-for="(role, index) in operaRoles" class="row opera-role middle-xs middle-sm">
-				<div v-for="(value, key) in role" class="col-xs-12 col-sm-6 input-space">
-					<input v-if="key !== 'scenesOrCovers'" :id="key" v-model="operaRoles[index][key]" :placeholder="key | camel-to-space" />
+			<div v-for="(role, index) in operaRoles" :key="index + 'operaRoles'" class="row opera-role middle-xs middle-sm">
+				<div v-for="(value, key, ind) in role" :key="ind + key" class="col-xs-12 col-sm-6 input-space">
+					<input v-if="key !== 'scenesOrCovers'" :id="key" :key="index" v-model="operaRoles[index][key]" :placeholder="key | camel-to-space" />
           <div class="inline-checkbox">
-            <input v-if="key === 'scenesOrCovers'" type="checkbox" id="scenes" v-model="operaRoles[index].scenesOrCovers">
-            <label v-if="key === 'scenesOrCovers'" for="scenes"><span></span>Scenes or Covers</label>
+            <input v-if="key === 'scenesOrCovers'" type="checkbox" :id="index + 'scenes' " :key="ind + 'scenes'" v-model="operaRoles[index][key]">
+            <label v-if="key === 'scenesOrCovers'" :for="index + 'scenes'" :key="ind + 'sceneLabel'"><span></span>Scenes or Covers</label>
           </div>
 				</div>
-				<div @click="removeFields(index, 'operaRoles')" class="smaller is-golden add-role col-xs-12 col-sm-12 text-right">remove <i class="fa fa-minus" aria-hidden="true"></i></div>
+				<div class="smaller is-golden col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'operaRoles')">remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
 			</div>
 			<span @click="addFields('role', 'operaRoles')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
-      <div class="row reverse middle-xs middle-sm form-utilities">
-        <div class='col-xs-2 col-sm-2'>
-			     <button @click="updateProfileTools('operaRoles', 'portfolio')" class="form-button">save</button>
-          </div>
-        <success-warning-notice  v-if="messageShow['operaRoles']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+      <div class="button-row">
+        <success-warning-notice  v-if="messageShow['operaRoles']" :class="'warning-message'"></success-warning-notice>
+        <button @click="updateProfileTools('operaRoles', 'portfolio')" class="form-button">save</button>
       </div>
 
 			<label class="strong label-header second-header">Concert and Oratorio</label>
 			<span class="smaller is-lightgray">Enter repertoire information</span>
-			<div v-for="(concert, index) in concertAndOratorios" class="row opera-role">
-				<div v-for="(value, key) in concert" class="col-xs-12 col-sm-6 input-space">
-						<input :id="key" v-model="concertAndOratorios[index][key]" :placeholder="key | camel-to-space" />
+
+			<div v-for="(concert, index) in concertAndOratorios" :key="index + 'concertAndOratorios'" class="row opera-role">
+				<div v-for="(value, key, ind) in concert" :key="ind + key" class="col-xs-12 col-sm-6 input-space">
+						<input :id="key + index" :key="ind + key" v-model="concertAndOratorios[index][key]" :placeholder="key | camel-to-space" />
 				</div>
-				<div @click="removeFields(index, 'concertAndOratorios')" class="smaller is-golden add-role col-xs-12 col-sm-12 text-right">remove <i class="fa fa-minus" aria-hidden="true"></i></div>
+				<div class="smaller is-golden col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'concertAndOratorios')" >remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
 			</div>
+
 			<span @click="addFields('concert', 'concertAndOratorios')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
-      <div class="row reverse middle-xs middle-sm form-utilities">
-        <div class='col-xs-2 col-sm-2'>
-			     <button @click="updateProfileTools('concertAndOratorios', 'portfolio')" class="form-button">save</button>
-           </div>
-        <success-warning-notice  v-if="messageShow['concertAndOratorios']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+      <div class="button-row">
+           <success-warning-notice  v-if="messageShow['concertAndOratorios']" :class="'warning-message'"></success-warning-notice>
+         <button @click="updateProfileTools('concertAndOratorios', 'portfolio')" class="form-button">save</button>
       </div>
 
 			<label class="strong label-header second-header">Training and Education</label>
 			<span class="smaller is-lightgray">Enter information</span>
-			<div v-for="(training, index) in trainingAndEducations" class="row opera-role">
-				<div v-for="(value, key) in training" class="col-xs-12 col-sm-6 input-space">
-						<input :id="key" v-model="trainingAndEducations[index][key]" :placeholder="key | camel-to-space" />
+
+			<div v-for="(training, index) in trainingAndEducations" :key="index + 'trainingAndEducations'" class="row opera-role">
+				<div v-for="(value, key, ind) in training" :key="ind + key" class="col-xs-12 col-sm-6 input-space">
+						<input :id="key + index" :key="ind + key" v-model="trainingAndEducations[index][key]" :placeholder="key | camel-to-space" />
 				</div>
-				<div @click="removeFields(index, 'trainingAndEducations')" class="smaller is-golden add-role col-xs-12 col-sm-12 text-right">remove <i class="fa fa-minus" aria-hidden="true"></i></div>
+				<div class="smaller is-golden col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'trainingAndEducations')">remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
 			</div>
+
 			<span @click="addFields('training', 'trainingAndEducations')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
-			<div class="row reverse middle-xs middle-sm form-utilities">
-        <div class='col-xs-2 col-sm-2'>
-          <button @click="updateProfileTools('trainingAndEducations', 'portfolio')" class="form-button">save</button>
-        </div>
-        <success-warning-notice  v-if="messageShow['trainingAndEducations']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+			<div class="button-row">
+        <success-warning-notice  v-if="messageShow['trainingAndEducations']" :class="'warning-message'"></success-warning-notice>
+           <button @click="updateProfileTools('trainingAndEducations', 'portfolio')" class="form-button">save</button>
       </div>
 
 			<label class="strong label-header second-header">Competitions, Awards and Scholarships</label>
 			<span class="smaller is-lightgray">Enter information</span>
-			<div v-for="(award, index) in competitionAwardScholarships" class="row opera-role">
-				<div v-for="(value, key) in award" class="col-xs-12 col-sm-6 input-space">
-						<input :id="key" v-model="competitionAwardScholarships[index][key]" :placeholder="key | camel-to-space" />
+
+			<div v-for="(award, index) in competitionAwardScholarships" :key="index + 'competitionAwardScholarships'" class="row opera-role">
+				<div v-for="(value, key, ind) in award" :key="ind + key" class="col-xs-12 col-sm-6 input-space">
+						<input :id="key + index" :key="ind + key" v-model="competitionAwardScholarships[index][key]" :placeholder="key | camel-to-space" />
 				</div>
-				<div @click="removeFields(index, 'competitionAwardScholarships')" class="smaller is-golden add-role col-xs-12 col-sm-12 text-right">remove <i class="fa fa-minus" aria-hidden="true"></i></div>
+				<div class="smaller is-golden col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'competitionAwardScholarships')" >remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
 			</div>
+
 			<span @click="addFields('award', 'competitionAwardScholarships')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
-			<div class="row reverse middle-xs middle-sm form-utilities">
-        <div class='col-xs-2 col-sm-2'>
-          <button @click="updateProfileTools('competitionAwardScholarships', 'portfolio')" class="form-button">save</button>
-        </div>
-        <success-warning-notice  v-if="messageShow['competitionAwardScholarships']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+			<div class="button-row">
+        <success-warning-notice  v-if="messageShow['competitionAwardScholarships']" :class="'warning-message'"></success-warning-notice>
+           <button @click="updateProfileTools('competitionAwardScholarships', 'portfolio')" class="form-button">save</button>
       </div>
 
 
-			<label for="skills" class="strong label-header second-header">Edit Skills</label>
-			<textarea id="skills" v-model="skills" placeholder="please enter your skills, eg. languages, dance, instruments"></textarea>
-      <div class="row reverse middle-xs middle-sm form-utilities">
-        <div class='col-xs-2 col-sm-2'>
-			    <button @click="updateProfileTools('skills')" class="form-button">save</button>
-        </div>
-        <success-warning-notice  v-if="messageShow['skills']" :class="'col-xs-4 col-sm-4'"></success-warning-notice>
+			<label for="skills" class="strong label-header second-header">Skills</label>
+			<textarea id="skills" v-model="portfolio.skills" placeholder="please enter your skills, eg. languages, dance, instruments"></textarea>
+      <div class="button-row">
+        <success-warning-notice  v-if="messageShow['skills']" :class="'warning-message'"></success-warning-notice>
+        <button @click="updateProfileTools('skills', 'portfolio')" class="form-button">save</button>
       </div>
 		</div>
 
@@ -116,7 +110,7 @@ export default {
   data () {
     return {
       messageShow: {
-        biography: false,
+        biography: true,
         operaRoles: false,
         concertAndOratorios: false,
         trainingAndEducations: false,
@@ -190,7 +184,7 @@ export default {
   		Object.keys(sections).forEach((sectionKey) => {
   			if(this.portfolio[sectionKey] !== null && this.portfolio[sectionKey] !== undefined) {
   				this[sectionKey] = this.portfolio[sectionKey]
-  				this[sectionKey].push(portfolioFields[sections[sectionKey]])
+  				// this[sectionKey].push(portfolioFields[sections[sectionKey]])
   			} else {
   				this[sectionKey].push(portfolioFields[sections[sectionKey]])
   			}
@@ -211,6 +205,7 @@ export default {
 .portfolio-header {
 	text-align: left !important;
 	color: $color-darkgray;
+  margin-top: 0px;
 }
 
 .portfolio-line {
@@ -222,7 +217,7 @@ export default {
 }
 
 .second-header {
-	margin-top: 66px;
+	margin-top: 40px;
 }
 
 .input-space {
@@ -235,6 +230,9 @@ export default {
 	margin-bottom: 5px;
 }
 
+.fa-minus, .fa-plus {
+  margin-left: 0.2rem;
+}
 .opera-role {
 	border-bottom: 1px solid $color-lightgray;
 }
@@ -246,6 +244,20 @@ export default {
 .form-button {
   max-width: 30px;
   max-height: 70px;
+  margin-left: 10px;
+}
+
+.warning-message {
+  flex-grow: 2;
+  max-width: 230px;
+}
+
+.button-row {
+  margin-top: 25px;
+  display: flex;
+  flex-direct: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 </style>
