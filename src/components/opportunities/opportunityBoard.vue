@@ -8,7 +8,6 @@
   	<keep-alive>
   		<component :is="component" class="opportunity-section col-xs-12 col-md-10 col-lg-10" :continents="continents" :countries="countries" :opportunity-types="opportunityTypes" :categories="categories" :subcategories="subcategories" :payment-types="paymentTypes" :selected-sort="selectedSort" :loading="loading" :opportunities="opportunities" @subcategory-change="changeSubcategories" @country-change="changeCountries" @apply-filter="filterApply" @apply-sort="sortApply" @filter-component="component = $event"></component>
   	</keep-alive>
-  		
 
   	<opportunity-list v-if="windowWidth >= 414" class="opportunity-section" :opportunities="opportunities" :loading="loading" :selected-sort="selectedSort" @apply-sort="sortApply"></opportunity-list>
   			
@@ -117,35 +116,52 @@ export default {
 	 		})
 		}
 	},
+	beforeRouteEnter (to, from, next) {
+	  next(vm => {
+	    // access to component instance via `vm`
+	    console.log('beforeRouteEnter')
+	    let user = vm.firebaseApp.auth().currentUser
+        if(user) {
+            console.log('user')
+            // user signed in proceed
+            next()
+
+        } else {
+            console.log('no user')
+            //no user signed in redirect to signin
+            next("/")
+        }
+	  })
+	},
 	created() {
 
 		if(this.$store.getters.currentUser.idToken) {
 			this.$store.dispatch('resetToken').then(() => {
 			console.log('reset token!')
-			oppAxios.get('opportunities.json', {
-	  			params: {
-	  				idToken: this.$store.getters.currentUser.idToken,
-	  				page: 1
-	  			}
-	  		}).then(res => {
-	  			// console.log(res)
-	  			this.opportunities = res.data
-	  			this.loading = false
-	  		}).catch(error => {
-	  			console.log(error)
-	  			this.loading = false
-	  		})
+				oppAxios.get('opportunities.json', {
+		  			params: {
+		  				idToken: this.$store.getters.currentUser.idToken,
+		  				page: 1
+		  			}
+		  		}).then(res => {
+		  			// console.log(res)
+		  			this.opportunities = res.data
+		  			this.loading = false
+		  		}).catch(error => {
+		  			console.log(error)
+		  			this.loading = false
+		  		})
 
-			}).catch(error => {
-				this.$router.push("/")
-			})
+				}).catch(error => {
+					this.$router.push("/")
+				})
 
 			this.opportunityTypes = this.$store.state.opportunityTypes
 			this.categories = Object.keys(this.$store.state.categorySubcategories)
 			this.paymentTypes = this.$store.state.paymentTypes
 		} else {
-			alert('Please sign in')
-			this.$router.push("/")
+			// alert('Please sign in')
+			// this.$router.push("/")
 		}
 		
 	},

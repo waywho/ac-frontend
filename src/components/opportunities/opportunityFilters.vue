@@ -122,7 +122,7 @@ export default {
       this.selectedFilters.region = 'all'
       this.selectedFilters.country = 'all'
       this.selectedFilters.opportunity_type = 'all'
-      this.selectedFilters.paymentType = 'all'
+      this.selectedFilters.payment_type = 'all'
     }
   }
 }
