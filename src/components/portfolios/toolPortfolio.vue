@@ -169,6 +169,7 @@ export default {
 
 
 .inline-heading {
+  margin-top: 45px;
   margin-right: 1rem;
 }
 
