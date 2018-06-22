@@ -190,7 +190,6 @@ export default {
 }
 
 .header-avatar {
-  position: relative;
   cursor: pointer;
 }
 

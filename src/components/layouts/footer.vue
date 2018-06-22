@@ -8,27 +8,27 @@
 	  	</div>
 	  	<div class="col-sm-12 col-xs-12 row between-xs">
 	 		<div class="col-sm-12 col-xs-12">
-		    	<span class="medium">memberships</span>
+		    	<span class="medium is-midgray">memberships</span>
 		    	<ul>
-		    		<li class="is-lightgray">Adante Artist</li>
-		    		<li class="is-lightgray">Adagio Artist</li>
-		    		<li class="is-lightgray">Company</li>
+		    		<li class="is-lightgray small">Adante Artist</li>
+		    		<li class="is-lightgray small">Adagio Artist</li>
+		    		<li class="is-lightgray small">Company</li>
 		    	</ul>
 		    </div>
 		    <div class="col-sm-12 col-xs-12">
-		    		 <span class="medium">account</span>
+		    		 <span class="medium is-midgray">account</span>
 		    	<ul>
-		    		<li class="is-lightgray">login</li>
-		    		<li class="is-lightgray">settings</li>
-		    		<li class="is-lightgray">contact</li>
+		    		<li class="is-lightgray small">login</li>
+		    		<li class="is-lightgray small">settings</li>
+		    		<li class="is-lightgray small">contact</li>
 		    	</ul>
 		    </div>
 		    <div class="col-sm-12 col-xs-12">
-		    	<span class="medium">socials</span>
+		    	<span class="medium is-midgray">socials</span>
 		    	<ul>
-		    		<li class="is-lightgray">facebook</li>
-		    		<li class="is-lightgray">twitter</li>
-		    		<li class="is-lightgray">instagram</li>
+		    		<li class="is-lightgray small">facebook</li>
+		    		<li class="is-lightgray small">twitter</li>
+		    		<li class="is-lightgray small">instagram</li>
 		    	</ul>
 		    </div>
 		</div>
@@ -47,12 +47,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '../../styles/style-variables';
 #footer {
   background-color: white;
-  padding: 125px 100px 50px 100px;
+  padding: 85px $body-padding-small 20px;
+  
   grid-area: footer;
-  height: 700px;
+  height: 620px;
   width: 100%;
 }
 
@@ -72,15 +74,19 @@ export default {
 	margin: 5px 0px;
 }
 
+#footer li:hover {
+	color: $color-gold;
+}
+
 .footnote {
 	padding: 23px 0px;
 	border-top: 1px solid #706d6c;
-	margin-top: 66px;
+	margin-top: 45px;
 }
 
-@media screen and (max-width: 46rem) {
+@media all and (min-width: $bp-med) {
 	#footer {
-		padding: 85px 25px 40px 25px;
+		padding: 125px $body-padding-small 40px;
 	}
 }
 </style>

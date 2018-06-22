@@ -7,7 +7,7 @@ import membershipDetails from '@/components/static_pages/membershipDetails'
 import pageStatic from '@/components/static_pages/pageStatic'
 import { store } from '@/store/store/'
 import opportunityBoard from '@/components/opportunities/opportunityBoard'
-import notFoundComponent from '@/components/notFoundComponent'
+import notFound from '@/components/notFound'
 import firebaseApp from '@/firebase/init'
 
 //lazy loading signUp
@@ -47,7 +47,7 @@ const router = new Router({
          //    } 
     	},
         { path: '/search', name: 'searchResults', component: searchResults},
-        { path: '*', name: 'notFound', component: notFoundComponent}
+        { path: '*', name: 'notFound', component: notFound}
     ]
 })
 
@@ -76,6 +76,6 @@ router.afterEach((to, from) => {
 })
 
 
-
-export default router
 Vue.use(Router)
+export default router
+

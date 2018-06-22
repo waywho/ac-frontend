@@ -120,10 +120,6 @@ export default {
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
 
-.opportunity-board {
-	position: relative;
-}
-
 .opportunity-list {
 	max-height: 800px;
 	min-height: 200px;

@@ -5,7 +5,7 @@
 
 		<p v-if="profileType === 'artist'">{{ profileDetails.role | capitalize }} based in {{ profileDetails.city }}, {{ profileDetails.province }}  {{ profileDetails.country }} <br class="xs-break" /> <span v-if="dataAvailable(profileDetails.memberships)">| Member of {{ profileDetails.memberships.join(", ") }}</span></p>
 
-    <p>{{profileDetails.descriptions}}</p>
+    <p class="descriptions">{{profileDetails.descriptions}}</p>
 	</div>
 </template>
 
@@ -47,4 +47,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
+.descriptions {
+  width: 90%;
+  margin: auto auto;
+  max-width: 700px;
+}
 </style>

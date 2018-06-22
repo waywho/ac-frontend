@@ -50,12 +50,13 @@ export default {
 @import '../styles/style-variables';
 
 .modal-element {
-  position: absolute;
+  position: fixed;
   z-index: 9997;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
+  margin: 0 auto;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -63,7 +64,7 @@ export default {
 .modal-mask {
   position: fixed;
   z-index: 9998;
-
+  top: 0;
   left: 0;
   width: 100%;
   height: 100%;
@@ -73,7 +74,7 @@ export default {
 }
 
 .modal-wrapper {
-  position: fixed;
+  position: absolute;
 	z-index: 9999;
 	max-width: 750px;
 	width: 90%;
