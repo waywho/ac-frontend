@@ -125,8 +125,8 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100%;
-  height: auto !important;
-  width: auto !important;
+  height: 100% !important;
+  width: 100% !important;
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: $header-height-mobile auto 460px;
