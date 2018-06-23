@@ -52,7 +52,6 @@ export default {
 #footer {
   background-color: white;
   padding: 85px $body-padding-small 20px;
-  
   grid-area: footer;
   height: 620px;
   width: 100%;

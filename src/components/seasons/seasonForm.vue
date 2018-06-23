@@ -10,8 +10,8 @@
                   :productions="productions" 
                   :index="currentProductionIndex"
                   :mode="mode"
+                  :production-mode="productionMode"
                   :messaging="messaging" 
-                  @next-step="nextStep" 
                   @season-save="saveSeason()" 
                   @season-edit="editSeason()"
                   @season-update="updateSeason()"
@@ -66,6 +66,7 @@ export default {
   },
   data () {
     return {
+      productionMode: this.mode,
       messaging: {
         message: null,
         messageType: null
@@ -102,6 +103,7 @@ export default {
     },
     newProduction: function() {
       this.currentProduction = null
+      this.productionMode = 'new'
       this.currentStep = 1
     },
     addSeason: function () {
@@ -112,7 +114,7 @@ export default {
       // alert('save season')
       console.log(this.currentSeason)
 
-      this.$store.dispatch('createSeason', {season: this.currentSeason, productions: this.productions})
+      this.$store.dispatch('createSeason', {season: this.currentSeason})
         .then(res => {
           console.log(res)
           // this.$emit('close')
@@ -142,7 +144,10 @@ export default {
         this.messaging.message = object.name + " production is added"
         this.messaging.messageType = 'success'
       // console.log('before sent', this.currentSeason)
-      this.currentStep = 2
+      this.$store.dispatch('createProduction', {seasonId: this.seasonId, production: object}).then(res => {
+        this.currentStep = 2
+      })
+      
     },
     editProduction: function (index) {
       this.currentProduction = this.productions[index]

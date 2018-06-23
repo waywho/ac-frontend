@@ -51,7 +51,8 @@ export default {
       this.messageShow = false
   		this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
         .then(res => {
-          this.$router.push({name: 'profiles', params: { id: res.uid }})
+          this.$store.dispatch('clearingMessage')
+          this.$router.push({name: 'profiles', params: { profileId: res.uid }})
           this.$emit('close')
         },
           error => {

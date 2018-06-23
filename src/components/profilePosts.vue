@@ -1,6 +1,6 @@
 <template>
-	<div class="post-section">
-		<div v-if="authorizedUser" class="post-box">
+	<div class="post-section" v-if="showComponent">
+		<div v-if="authorizedUser(profileId)" class="post-box">
 			<div class="avatar-border">
 				<avatar  :image-source="currentUserAvatar" :border="true" :size="'medium'" :name="$store.getters.profile.details.name"></avatar>
 			</div>
@@ -21,7 +21,7 @@
 				<div class="add-image" v-on:click="onPickFile('postImage')">
 					<i class="fa fa-picture-o is-darkgray" aria-hidden="true"></i>
 					<span class="smaller is-darkgray" >Add image</span>
-					<input v-if="authorizedUser" type="file" ref="postImage" style="display: none" accept="image/*" @change="onPostFilePicked($event, 'cover')" />
+					<input v-if="authorizedUser(profileId)" type="file" ref="postImage" style="display: none" accept="image/*" @change="onPostFilePicked($event, 'cover')" />
 				</div>
 				<button v-on:click="addPost" class="post-button">POST</button>
 				
@@ -82,12 +82,19 @@ export default {
       },
       imageURLs: [],
       imageFiles: [],
-      comment: null,
+      comment: null
     }
   },
   computed: {
   	displayPosts: function() {
   		return _.orderBy(this.posts, ['timestamp'], ['desc'])
+  	},
+  	showComponent: function() {
+  		if(this.posts !== null && this.posts !== undefined && this.posts.length > 0) {
+  			return true
+  		} else {
+  			return false
+  		}
   	}
   },
   methods: {
@@ -213,8 +220,8 @@ export default {
 .post-tile {
 	background-color: white;
 	display: inline-block;
-	margin: 0 0 23px;
-	width: auto;
+	margin: 0 0 1rem;
+	width: 100%;
 	padding: 45px 25px;
 }
 
@@ -335,7 +342,7 @@ export default {
 		width: 75%;
 		max-width: 900px;
 		column-count: 2;
-		column-gap: 15px;
+		column-gap: 1rem;
 		padding: 0px;
 	} 
 

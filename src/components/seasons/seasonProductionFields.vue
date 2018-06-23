@@ -6,12 +6,13 @@
 	  		<input type="text" id="production-name" v-model="currentProduction.name" @focus="resetMessage" />
 	  	</div>
 	  	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 input-row">
-	  		<label>Production Composer(s)</label>
+	  		<label style="display: inline;">Production Composer(s) </label><span class="smaller">(separated by ",")</span>
 	  		<input type="text" id="produciton-composers" v-model="currentProduction.composers" />
 	  	</div>
 	  	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 input-row">
-		  	<label>Production Image</label>
+		  	
 		  	<input type="file" id="production-image" @change="onOneFilePicked($event, 'currentProduction')"/>
+        <label for="production-image">Production Image</label>
 		</div>
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 input-row">
 			<img v-if="currentProduction.imageURL" :src="currentProduction.imageURL" alt="uploaded image" />
@@ -50,12 +51,13 @@
     </div>
 	</div>
 	<div class="row col-xs-12 col-sm-12 col-md-6 col-lg-6 input-row"><span class="small add-button" @click="addDate('casts')">Add Date</span></div>
+
 	<div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<h5>Creatives</h5>
 	</div>
 	<div class="row">
 		<div v-for="(creative, index) in currentProduction.creatives" :key="index + 'creatives'" class="col-xs-12 col-sm-12 col-md-6 col-lg-6 input-row">
-			<input type="text" :id="'production-creative-role' + index" v-model="creative.role" placeholder="creative role" />
+			<input v-if="creative" type="text" :id="'production-creative-role' + index" v-model="creative.role" placeholder="creative role" />
 			<div class="inline-fields">
 				<input type="text" :id="'production-creative-name' + index" v-model="creative.name" placeholder="name" />
 				<i class="fa fa-minus button-fa is-darkgray small" aria-hidden="true" @click="removeRole(index, 'creatives')"></i>
@@ -86,9 +88,8 @@
     </div>
     <br />
 	
-  	<button class="button-right" v-if="mode !== 'edit'" @click="addProduction">Add Production to Season <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-  	<button class="button-right" v-if="mode !== 'edit'" @click="productionUpdate">Update Production</button>
-    <button class="button-right" v-if="mode === 'edit'" @click="productionEditUpdate">Update Production</button>
+  	<button class="button-right" v-if="productionMode === 'new'" @click="addProduction">Add Production to Season <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+    <button class="button-right" v-if="productionMode === 'edit'" @click="productionEditUpdate">Update Production</button>
     <span class="text-button button-right button-right-margin cancel-button" @click="cancelProduction">Cancel</span>
   </div>
 </template>
@@ -111,7 +112,7 @@ export default {
   		required: false
   	},
   	index: Number,
-    mode: String
+    productionMode: String
   },
   components: {
   	successWarningNotice
@@ -130,7 +131,7 @@ export default {
       productionLocation: null,
      	currentProduction: {
      		name: null,
-     		composers: [],
+     		composers: "",
      		imageURL: null,
      		imageFile: null,
      		description: null,
@@ -199,22 +200,39 @@ export default {
   	},
   	addProduction: function() {
   		if(this.requiredField(this.currentProduction.name)) {
-  			if(this.currentProduction.composers) {
-  			this.currentProduction.composers = this.currentProduction.composers.split(',')
+        let production = this.currentProduction
+  			if(production.composers) {
+  			 production.composers = production.composers.split(',')
 	  		}
-	  		this.currentProduction.creatives = this.currentProduction.creatives.map(creative => {
-	  			if(creative.name === null || creative.name === undefined) {
-	  				return null
-	  			} else {
-	  				return {role: creative.role.toLowerCase(), name: creative.name.toLowerCase()}
-	  			}
+
+	  		let creatives = this.currentProduction.creatives.forEach(creative => {
+          if(creative !== null & creative !== undefined) {
+            if(creative.name !== null && creative.name !== undefined) {
+              return {role: creative.role.toLowerCase(), name: creative.name.toLowerCase()}
+            }
+          }
+	  			
 	  		})
-	  		this.currentProduction.casts = this.currentProduction.casts.map(cast => {
-	  			if(cast.role !== null && cast.role !== undefined && cast.name !== null && cast.name !== undefined) {
-	  				return {role: cast.role.toLowerCase(), name: cast.name.toLowerCase()}
-	  			}
+
+	  		let casts = this.currentProduction.casts.forEach(cast => {
+          if(cast !== null && cast !== undefined) {
+            if(cast.role !== null && cast.role !== undefined && cast.name !== null && cast.name !== undefined) {
+              return {role: cast.role.toLowerCase(), name: cast.name.toLowerCase()}
+            }
+          }
+	  			
 	  		})
-	  		this.$emit('production-add', this.currentProduction)
+
+        console.log('creatives', creatives)
+        console.log('casts', casts)
+        if(creatives !== undefined && creatives.length > 0) {
+          production.creatives = creatives
+        }
+
+        if(casts !== undefined && casts.length > 0) {
+          production.casts = casts
+        }
+ 	  		this.$emit('production-add', production)
   		} else {
   			this.messaging.message = "production name is required"
   			this.messaging.messageType = 'warning'

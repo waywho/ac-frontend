@@ -92,6 +92,7 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch('clearingMessage')
     this.$store.dispatch('tryAutoSignIn');
     // console.log(document.documentElement)
     document.body.addEventListener('scroll', this.handleScroll);

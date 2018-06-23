@@ -6,12 +6,6 @@ export default {
     currentUser() {
       	return this.$store.getters.currentUser
     },
-    authorizedUser() {
-    	if (!this.signedIn) {
-    		return false
-    	};
-			return this.profileId === this.$store.getters.currentUser.id;
-  	},
     currentUserAvatar() {
       if(this.signedIn) {
         var avatarURL = !this.$store.getters.profile ? null : this.$store.getters.profile.avatarURL
@@ -23,6 +17,14 @@ export default {
       } else {
         return require("../assets/images/avatar-holder.png")
       }
+    }
+  },
+  methods: {
+    authorizedUser: function(profileId) {
+      if (!this.signedIn) {
+        return false
+      };
+      return profileId === this.$store.getters.currentUser.id;
     }
   }
 }

@@ -5,7 +5,7 @@
           <h2 >Calendar</h2>
         </div>
         <div class='button-piece'>
-          <button v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'calendar-display' && authorizedUser"><i class="fa fa-plus" ></i> Add</button>
+          <button v-on:click="toggleForm();" aria-hidden="true" v-if="component === 'calendar-display' && authorizedUser(this.profileId)"><i class="fa fa-plus" ></i> Add</button>
           <i class="fa fa-times is-darkgray col-xs col-sm text-right" v-on:click="keepFormAlive()" aria-hidden="true" v-if="component === 'calendar-form'"></i>
         </div>
       </div>

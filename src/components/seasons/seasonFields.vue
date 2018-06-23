@@ -74,7 +74,7 @@ export default {
         this.messaging.message = 'all fields are required!'
         this.showMessage = true
       } else {
-        this.$emit('next-step')
+        this.$emit('season-save')
       }
   	},
     updateSeason: function() {

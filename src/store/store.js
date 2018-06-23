@@ -20,10 +20,10 @@ export const store = new Vuex.Store({
 	strict: false,
 	mutations: {
 		authUser (state, userData) {
-			state.idToken = userData.idToken
-			state.userId = userData.userId
-			state.userEmail = userData.userEmail
-			state.expires = userData.expires
+			state.idToken = userData.idToken;
+			state.userId = userData.userId;
+			state.userEmail = userData.userEmail;
+			state.expires = userData.expires;
 		},
 		setCurrentUserProfile (state, payload) {
 			// console.log('setCurrentUserProfile state', payload)
@@ -33,29 +33,39 @@ export const store = new Vuex.Store({
 			state.idToken = null;
 			state.userId = null;
 			state.currentUserProfile = {};
-			state.currentUserTools = null
+			state.currentUserTools = null;
 			state.userEmail = null;
 			state.expires = null;
 		},
 		setToken (state, payload) {
-			state.idToken = payload.idToken
-			state.expires = payload.expires
+			state.idToken = payload.idToken;
+			state.expires = payload.expires;
 		},
 		setUserTools (state, payload) {
 			state.currentUserTools = payload;
 		},
 		setExpirationDate(state, date) {
-			state.expires = date
+			state.expires = date;
 		},
 		setMessage(state, payload) {
-			state.message = payload.message
-			state.messageType = payload.messageType
+			state.message = payload.message;
+			state.messageType = payload.messageType;
+		},
+		clearMessage(state) {
+			state.message = null;
+			state.messageType = null;
 		},
 		setUserPosts (state, payload) {
-			state.posts = payload
+			state.posts = payload;
+		},
+		addCalendarDate(state, payload) {
+			state.currentUserTools.calendar.push(payload.event)
 		}
 	},
 	actions: {
+		clearingMessage({commit}) {
+			commit('clearMessage')
+		},
 		setLocalStorage({state}) {
 			// console.log('setting Session')
 			let localData = {
@@ -249,6 +259,12 @@ export const store = new Vuex.Store({
 					resolve()
 				})
 			})
+		},
+		tryAutoSignIn2({commit, dispatch}) {
+			if(firebaseApp.auth().currentUser) {
+
+			}
+			// firebaseApp.auth().onAuthStateChanged
 		},
 		tryAutoSignIn({commit, dispatch}) {
 			if (!localStorage.getItem('artistCenter')) {
@@ -779,8 +795,6 @@ export const store = new Vuex.Store({
 
 					})				
 			})
-
-	
 		},
 		createUserProfilePost({commit, state}, payload) {
 			// console.log(payload.userId)
@@ -909,63 +923,7 @@ export const store = new Vuex.Store({
 			console.log(seasonUpdates)
 
 			return new Promise((resolve, reject) => {
-				let imagePromises = payload.productions.map(production => {
-		 		if(production.imageFile !== null && production.imageFile !== undefined) {
-			 			return dispatch('saveProductionImage', {seasonId: seasonKey, productionName: production.name, data: production.imageFile})
-			 				.then(res => {
-			 					console.log(res)
-			 					production.imageURL = res.filepath
-			 					delete production.imageFile
-			 					return production
-
-			 				}).catch(error => {
-			 					console.log(error)
-			 					commit('setMessage', {
-									message: error.message,
-									messageType: 'warning'
-								});
-			 					return error
-			 				})
-			 		} else {
-			 				delete production.imageFile
-			 				return production
-			 		}
-			 		
-		 		})
-
-			 	Promise.all(imagePromises).then(res => {
-			 		console.log(res)
-			 		seasonUpdates['seasons/' + state.userId + '/' + seasonKey]['productions'] = res
-					seasonUpdates['profiles/' + state.userId + '/seasons/'+ seasonKey ]['productions'] = res
-			 		
-			 		let calendarEvents = res.map(production => {
-						return production.dates.map(productionDate => {
-							return { 
-								date: productionDate.date,
-					            start: productionDate.time,
-					            end: '',
-					            title:  production.name,
-					            location: '',
-					            desc: production.description,
-					            type: 'production'	
-        					}
-						})
-			 		})
-
-			 		calendarEvents = _.flatten(calendarEvents)
-
-			 		let calendarData = {
-						['toolsPublic/' + state.userId + '/calendar']: calendarEvents,
-						['toolsAuthorized/' + state.userId + '/calendar']: calendarEvents
-					}
-			 		
-					let fullData = Object.assign(seasonUpdates, calendarData)
-			 		console.log('events', calendarEvents)
-			 		console.log('calendar data', calendarData)
-			 		console.log('full data', fullData)
-			 		console.log('after production update', seasonUpdates)
-
-			 		databaseRef.update(fullData, error => {
+			 		databaseRef.update(seasonUpdates, error => {
 						if(error) {
 							console.log(error)
 							commit('setMessage', {
@@ -974,15 +932,11 @@ export const store = new Vuex.Store({
 							});
 							reject(error)
 						} else {
-							console.log(seasonUpdates)
+							// console.log(seasonUpdates)
 							resolve(seasonUpdates['seasons/' + state.userId + '/' + seasonKey])
 						}
 			 		})
 			 	})
-			})
-		 	
-	 		
-
 		},
 		getSeason({commit, state}, payload) {
 			return new Promise((resolve, reject) => {
@@ -1011,6 +965,11 @@ export const store = new Vuex.Store({
 
 			console.log(seasonUpdates)
 
+			let calendarData = {
+						['toolsPublic/' + state.userId + '/calendar']: calendarEvents,
+						['toolsAuthorized/' + state.userId + '/calendar']: calendarEvents
+					}
+
 			return new Promise((resolve, reject) => {
 				databaseRef.update(seasonUpdates).then(error => {
 					if(error) {
@@ -1026,6 +985,81 @@ export const store = new Vuex.Store({
 				})
 				
 			})
+		},
+		addCalendarDate({commit, dispatch, state}, payload) {
+			var publicToolRef = firebaseApp.database().ref("toolsPublic/" + state.userId)
+			var authorizedToolRef = firebaseApp.database().ref("toolsAuthorized/" + state.userId)
+
+			publicToolsRef.push(payload.event)
+			authorizedToolRef.push(payload.event)
+		},
+		createProduction({commit, dispatch, state}, payload) {
+			var profileSeasonRef = firebaseApp.database().ref("profiles").child(state.userId).child("seasons").child(payload.seasonId)
+			var seasonRef = firebaseApp.database().ref("seasons").child(state.userId).child(payload.seasonId)
+			var productionKey = profileSeasonRef.push().key
+			let production = payload.production
+
+			console.log('production', production)
+
+			if(production.imageFile !== null && production.imageFile !== undefined) {
+			 	dispatch('saveProductionImage', {seasonId: payload.seasonId, productionName: production.name, data: production.imageFile})
+	 				.then(res => {
+	 					console.log(res)
+	 					production.imageURL = res.filepath
+	 					delete production.imageFile
+	 				}).catch(error => {
+	 					console.log(error)
+	 					commit('setMessage', {
+							message: error.message,
+							messageType: 'warning'
+						});
+	 				})
+	 		} else {
+	 			delete production.imageFile
+	 		}
+
+	 		return new Promise((resolve, reject) => {
+	 			profileSeasonRef.child("productions").push(production).catch(error=> {
+	 				commit('setMessage', {
+						message: error.message,
+						messageType: 'warning'
+					});
+	 				reject(error)
+	 			})
+		 		seasonRef.child("productions").push(production).catch(error => {
+		 			commit('setMessage', {
+						message: error.message,
+						messageType: 'warning'
+					});
+		 			reject(error)
+		 		})
+
+		 		let calendarEvents = production.dates.map(productionDate => {
+		 			if(productionDate.date !== null && productionDate !== undefined) {
+		 				return { 
+									date: productionDate.date,
+						            start: productionDate.time,
+						            end: '',
+						            title:  production.name,
+						            location: productionDate.location,
+						            desc: production.description,
+						            type: 'production'	
+	        					}
+		 			}
+		 		})
+								
+
+				calendarEvents.forEach(event => {
+					commit('addCalendarDate', {event: event})
+				})
+
+				var publicCalRef = firebaseApp.database().ref("toolsPublic/" + state.userId).child("calendar")
+				var authorizedCalRef = firebaseApp.database().ref("toolsAuthorized/" + state.userId).child("calendar")
+
+				publicCalRef.set(state.currentUserTools.calendar)
+				authorizedCalRef.set(state.currentUserTools.calendar)
+				resolve()
+		 	})
 		},
 		updateProduction({commit, dispatch, state}, payload) {
 			let databaseRef = firebaseApp.database().ref();
@@ -1073,6 +1107,9 @@ export const store = new Vuex.Store({
 	getters: {
 		currentUser(state) {
 			return { idToken: state.idToken, id: state.userId}
+		},
+		currentUserId(state) {
+			return state.userId
 		},
 		profile(state) {
 			return state.currentUserProfile;

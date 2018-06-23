@@ -32,7 +32,7 @@ const router = new Router({
         { path: '/', redirect: '/signup' },
         { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
         { path: '/about/:page', name: 'terms', component: pageStatic},
-        { path: '/profiles/:id', name: 'profiles', component: showProfile, props: true},
+        { path: '/profiles/:profileId', name: 'profiles', component: showProfile, props: true},
         { path: '/opportunities', name: 'opportunitiesBoard', component: opportunityBoard, meta: {requiresAuth: true}},
         { path: '/signup', name: 'signUp', component: signUp
         	// beforeEnter:(to, from, next) => {
@@ -74,8 +74,6 @@ const router = new Router({
 router.afterEach((to, from) => {
   document.getElementById('app').scrollIntoView()
 })
-
-
 Vue.use(Router)
 export default router
 
