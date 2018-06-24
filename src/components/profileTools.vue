@@ -1,9 +1,9 @@
 <template>
   <div class="profile-tools" v-if="showComponent">
     <keep-alive>
-      <component :is="component" :profile-id="profileId" :class="[authorizedUser(profileId) ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="profileToolData"></component>
+      <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="profileToolData"></component>
     </keep-alive>
-    <div :class="[authorizedUser(profileId) ? 'toolbox-auth' : 'toolbox-public']" :style="gridSpec">
+    <div :class="[authorizedUser ? 'toolbox-auth' : 'toolbox-public']" :style="gridSpec">
       <div v-for="tool in profileTools" @click="component = tool.component" :class="['is-lightgray', {'active-tool': component === tool.component}, [tool.component !== null ? 'toolbox-tile' : 'toolbox-tile-not-active']]">
         <img v-if="!tool.name" :src="tool.icon" />
         <i v-else :class="['fa', tool.icon, 'fa-3x', 'is-lightgray', 'tool-icon']" aria-hidden="true"></i><div>{{tool.name}}</div>
@@ -97,9 +97,9 @@ export default {
       return status
     },
     profileTools() {
-      // console.log('auth', this.authorizedUser(this.profileId), this.profileId)
+      // console.log('auth', this.authorizedUser, this.profileId)
 
-      if(this.authorizedUser(this.profileId)) {
+      if(this.authorizedUser) {
         this.component = 'message'
         return this[this.profileType + 'AuthTools']
       } else if (!this.toolsEmpty) {
@@ -143,7 +143,7 @@ export default {
     },
     gridSpec: function() {
       // console.log('how many tiles', this.profileTools.length)
-      if(this.authorizedUser(this.profileId)) {
+      if(this.authorizedUser) {
         return  "grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;"
       } else if(this.profileTools !== null && this.profileTools.length <= 2 && this.windowWidth <= 768){
         return  "grid-template-columns: 1fr 1fr; grid-template-rows: 1fr;"
@@ -180,7 +180,7 @@ export default {
     }
   },
   created() {
-    if(this.authorizedUser(this.profileId)) {
+    if(this.authorizedUser) {
       // var keys  = Object.keys(this.$store.getters.currentUserTools)
       this.profileToolData = this.$store.getters.currentUserTools 
     } else {

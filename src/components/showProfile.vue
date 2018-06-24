@@ -17,10 +17,10 @@
 			<div class="profile-banner">
 				<div class="profile-banner-inner">
 					<div class="profile-cover" :style="{'background-image': 'url('+ coverCurrentURL +')'}">
-						<div v-if="authorizedUser(profileId)" class="cover-edit" v-on:click="onPickFile('coverInput')">
+						<div v-if="authorizedUser" class="cover-edit" v-on:click="onPickFile('coverInput')">
 					 		<i class="fa fa-camera" aria-hidden="true"></i><small>Update Cover Photo</small>
 						</div>
-						<input v-if="authorizedUser(profileId)" type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
+						<input v-if="authorizedUser" type="file" ref="coverInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'cover')" />
 					</div>
 
 					<div class="profile-avatar-container" >
@@ -30,8 +30,8 @@
 								<circle cx="158px" cy="158px" r="150px" transform="rotate(268 158 158)" />
 							</svg>
 							
-							<div v-if="authorizedUser(profileId)" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><br /><div class="small">Update Photo</div></div>
-							<input v-if="authorizedUser(profileId)" type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
+							<div v-if="authorizedUser" class="avatar-edit" v-on:click="onPickFile('avatarInput')"><i class="fa fa-camera fa-3x" aria-hidden="true"></i><br /><div class="small">Update Photo</div></div>
+							<input v-if="authorizedUser" type="file" ref="avatarInput" style="display: none" accept="image/*" @change="onFilePicked($event, 'avatar')" />
 						</div>
 					</div>
 
@@ -48,7 +48,7 @@
 
 <!-- 			<company-auditions v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id"></company-auditions> -->
 				
-			<profile-posts :profileId="profileId" :name="profile.details.name"></profile-posts>
+			<profile-posts :name="profile.details.name"></profile-posts>
 		</div>
 	</div>
 </template>
@@ -150,10 +150,10 @@ export default {
 	created () {
 		this.loading = true
 		// console.log('do i have data yet?', this.$store.getters.profile)
-		// console.log(this.authorizedUser(this.profileId))
+		// console.log(this.authorizedUser)
 		console.log(this.profileId)
 		console.log('sign in status', this.signedIn)
-		if (this.signedIn && this.authorizedUser(this.profileId)) {
+		if (this.signedIn && this.authorizedUser) {
 			console.log('I am signed in and authorized!', this.signedIn)
 
 			this.displayProfile = this.$store.getters.profile

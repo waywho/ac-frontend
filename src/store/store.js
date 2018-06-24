@@ -874,24 +874,6 @@ export const store = new Vuex.Store({
 					})
 				})
 		},
-		getProfilePosts({commit, state}, payload) {
-			// console.log('disptaching getProfilePosts', state.idToken)
-			return new Promise((resolve, reject) => {
-
-				firebaseAxios.get("/posts/" + payload.profileId + ".json" + '?auth=' + state.idToken)
-					.then(res => {
-						// console.log('posts', res)
-						resolve(res)
-					}).catch(error => {
-						console.log(error)
-						commit('setMessage', {
-							message: error.message,
-							messageType: 'warning'
-						});
-						reject(error)
-					})
-			})
-		},
 		postOpportunity({commit, state}, payload) {
 			return new Promise((resolve, reject) => {
 				oppAxios.post("/opportunities.json", 

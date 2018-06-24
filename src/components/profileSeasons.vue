@@ -2,11 +2,11 @@
   <div class="seasons">
       <div class="title-row">
         <ul v-for="(season, key) in profileSeasons" class="non-list season-list">
-          <li class="season-list-li"><span class="selection selection-text">{{season.name}}</span> <span v-if="authorizedUser(profileId)" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
+          <li class="season-list-li"><span class="selection selection-text">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
         </ul>
         <div class="season-heading"> 
           <h2 class="season-title">Company Seasons</h2>
-          <span v-if="authorizedUser(profileId)" class="smaller text-button season-edit" @click="seasonAdd">add</span>
+          <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonAdd">add</span>
         </div>
       </div>
       
@@ -22,7 +22,7 @@
         </div>
     </div>
         	 
-    <season-form v-if="showSeasonForm === true && authorizedUser(profileId)" @close="showSeasonForm = false" :season="editSeason" :season-id="editSeasonId" :step="editStep" :edit-productions="editProductions" :mode="mode"></season-form >
+    <season-form v-if="showSeasonForm === true && authorizedUser" @close="showSeasonForm = false" :season="editSeason" :season-id="editSeasonId" :step="editStep" :edit-productions="editProductions" :mode="mode"></season-form >
     <production-details v-if="showProduction === true"  :production="currentProduction" :season="currentSeason" @close="showProduction = false"></production-details >
 
   </div>

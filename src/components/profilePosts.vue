@@ -1,6 +1,6 @@
 <template>
-	<div class="post-section" v-if="showComponent">
-		<div v-if="authorizedUser(profileId)" class="post-box">
+	<div class="post-section">
+		<div v-if="authorizedUser" class="post-box">
 			<div class="avatar-border">
 				<avatar  :image-source="currentUserAvatar" :border="true" :size="'medium'" :name="$store.getters.profile.details.name"></avatar>
 			</div>
@@ -21,7 +21,7 @@
 				<div class="add-image" v-on:click="onPickFile('postImage')">
 					<i class="fa fa-picture-o is-darkgray" aria-hidden="true"></i>
 					<span class="smaller is-darkgray" >Add image</span>
-					<input v-if="authorizedUser(profileId)" type="file" ref="postImage" style="display: none" accept="image/*" @change="onPostFilePicked($event, 'cover')" />
+					<input v-if="authorizedUser" type="file" ref="postImage" style="display: none" accept="image/*" @change="onPostFilePicked($event, 'cover')" />
 				</div>
 				<button v-on:click="addPost" class="post-button">POST</button>
 				
@@ -45,7 +45,7 @@
 	          		<div v-else-if="post.imageURLs.length === 1" class="post-image"><img v-bind:src="post.imageURLs" /></div>
 	          	</div>
 	          	<div class="post-icons">
-		          	<i class="fa fa-heart post-icon smaller" aria-hidden="true"></i><span class="icon-count smaller">{{post.likes}}</span>
+		          	<span :class="[post.likes && post.likes[profileId] ? 'is-golden' : '']"><i class="fa fa-heart post-icon smaller" @click="toggleLikes(post.id)" aria-hidden="true"></i><span class="icon-count medium smaller">{{post.likeCount}}</span></span>
 	          	</div>
 			</div>
 		</div>
@@ -57,13 +57,13 @@ import currentUserMixin from '../mixins/currentUserMixin'
 import profileImagesMixin from '../mixins/profileImagesMixin'
 import avatar from '@/components/avatar'
 import avatarMixin from '../mixins/avatarMixin'
+import firebaseApp from '@/firebase/init'
 import _ from 'lodash';
 
 export default {
   name: 'profilePosts',
   props: {
-  	name: String,
-    profileId: String
+  	name: String
   },
   components: {
   	'avatar': avatar
@@ -71,18 +71,19 @@ export default {
   mixins: [currentUserMixin, profileImagesMixin, avatarMixin],
   data () {
     return {
-   	  posts: null,
-      post: {
-      	id: null,
-      	name: this.name,
-      	content: null,
-      	timestamp: null,
-      	likes: 0,
-      	commentCount: 0
-      },
-      imageURLs: [],
-      imageFiles: [],
-      comment: null
+    	profileId: this.$route.params.profileId,
+		posts: null,
+		post: {
+			id: null,
+			name: this.name,
+			content: null,
+			timestamp: null,
+			likeCount: 0,
+			commentCount: 0
+		},
+		imageURLs: [],
+		imageFiles: [],
+		comment: null
     }
   },
   computed: {
@@ -98,6 +99,17 @@ export default {
   	}
   },
   methods: {
+  	getPosts: function() {
+		var postRef = firebaseApp.database().ref("posts").child(this.profileId)
+		postRef.on("value", snapshot => {
+			var postData = snapshot.val()
+				for (let key in postData) {
+					postData[key].id = key;
+				}
+				this.posts = postData
+		})
+
+  	},
   	commentSubmit: function(postId, newComment) {
   		let commentObject = {'postId': postId, 
   			content: newComment, 
@@ -125,8 +137,6 @@ export default {
   				console.log(error)
   			})
   		
-
-  		
   	},
   	addPost: function() {
   		this.post['timestamp'] = new Date();
@@ -149,21 +159,33 @@ export default {
   			}, error => {
   				console.log(error)
   			})
+  	},
+  	toggleLikes: function(postId) {
+  		// console.log(postId)
+		var postRef = firebaseApp.database().ref("posts").child(this.profileId).child(postId)
+		// console.log(this.$store.getters.currentUserId)
+		postRef.transaction(post => {
+			if (post) {
+		      if (post.likes && post.likes[this.$store.getters.currentUserId]) {
+		        post.likeCount--;
+		        post.likes[this.$store.getters.currentUserId] = null;
+		      } else {
+		        post.likeCount++;
+		        if (!post.likes) {
+		          post.likes = {};
+		        }
+		        post.likes[this.$store.getters.currentUserId] = true;
+		      }
+		    }
+
+		    return post;
+		  });
+			
+		
   	}
   },
   created() {
-		this.$store.dispatch('getProfilePosts', {profileId: this.profileId})
-			.then(res => {
-				var postsArray = [];
-				for (let key in res.data) {
-					res.data[key].id = key;
-					postsArray.push(res.data[key])
-				}
-				this.posts = postsArray
-				// console.log(this.posts)
-			}, error => {
-				console.log(error)
-			})
+		this.getPosts()
   }
 }
 </script>
@@ -276,6 +298,7 @@ export default {
 
 .post-icons {
 	// margin-bottom: 25px;
+	cursor: pointer;
 }
 
 .comment-input-container {
