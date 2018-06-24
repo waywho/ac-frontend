@@ -18,7 +18,7 @@
           <i class="fa fa-bell-o" aria-hidden="true"></i>
         </li>
         <li v-if="signedIn" class="header-avatar header-item-space">
-          <router-link :to="'/profiles/' + this.profileId">
+          <router-link :to="'/profiles/' + this.currentUserId">
               <avatar :image-source="currentUserAvatar" :border="true" :size="'small'" :name="$store.getters.profile.details.name"></avatar>
           </router-link>
         </li>
@@ -32,7 +32,7 @@
     <div class="xs-search">
         <input type="search" v-on:keyup.enter="searchResults($event.target.value)" id="xs-search" class="small" placeholder="search profiles" />
     </div>
-    <app-notifications v-if="showNotificatons" :profile-id="profileId" class="app-notification" :notification-list="notificationList" v-on-clickaway="away"></app-notifications>
+    <app-notifications v-if="showNotificatons" :profile-id="currentUserId" class="app-notification" :notification-list="notificationList" v-on-clickaway="away"></app-notifications>
   </div>
 </template>
 
@@ -43,13 +43,9 @@ import notificationBubble from '@/components/notificationBubble'
 import avatar from '@/components/avatar';
 import { mixin as clickaway } from 'vue-clickaway'
 import currentUser from '@/mixins/currentUserMixin';
-
-// import firebase from 'firebase/app';
-// import 'firebase/auth';
-// import 'firebase/database';
 import firebaseApp from '@/firebase/init';
+import { mapGetters } from 'vuex';
 import _ from 'lodash';
-
 
 export default {
   components: {
@@ -58,8 +54,7 @@ export default {
     'avatar': avatar
   },
   props: {
-    isActive: Boolean,
-    profileId: String
+    isActive: Boolean
   },
   mixins: [menuMixin, clickaway, currentUser],
   data() {
@@ -70,18 +65,21 @@ export default {
       lastKey: ""
     }
   },
+  computed: {
+    ...mapGetters(['currentUserId']),
+  },
   methods: {
     getNotifications: function() {
       this.showNotificatons = !this.showNotifications;
 
       
-         var notificationRef = firebaseApp.database().ref('notifications/' + this.profileId)
+         var notificationRef = firebaseApp.database().ref('notifications/' + this.currentUserId)
          notificationRef.once('value', snapshot => {
           console.log(snapshot.val())
             var keys = Object.keys(snapshot.val() || {})
             this.lastKey = keys[keys.length-1]
 
-            firebaseApp.database().ref('notificationViews/' + this.profileId).set(this.lastKey)
+            firebaseApp.database().ref('notificationViews/' + this.currentUserId).set(this.lastKey)
 
             this.notificationList = _.orderBy(Object.values(snapshot.val()), ['created'], ['desc']);
             this.notificationAlert = false;  
@@ -101,15 +99,15 @@ export default {
     }    
   },
   created() {
-    if(this.authorizedUser) {
-      var notificationRef = firebaseApp.database().ref('notifications/' + this.profileId)
+    if(this.signedIn) {
+      var notificationRef = firebaseApp.database().ref('notifications/' + this.currentUserId)
       
       if(this.lastKey) {
         notificationRef.orderByKey().startAt(this.lastKey).on('child_added', snapshot => {
           this.notificationAlert = true
         })
       } else {
-        firebaseApp.database().ref('notificationViews').child(this.profileId).once("value", snapshot => {
+        firebaseApp.database().ref('notificationViews').child(this.currentUserId).once("value", snapshot => {
           this.lastKey = snapshot.val()
           console.log(this.lastKey)
           if(!snapshot.val()) {

@@ -9,15 +9,15 @@ import VueMediaEmbed from 'vue-media-embed'
 import 'hchs-vue-charts'
 import Vuex from 'vuex'
 import VueChatScroll from 'vue-chat-scroll';
-import router from '@/router'
 import firebaseApp from '@/firebase/init';
+import router from '@/router'
+
 
 Vue.use(VueMediaEmbed, { store });
 Vue.use(VueCharts);
 Vue.use(require('vue-moment'));
 Vue.use(firebaseApp);
 Vue.use(VueChatScroll);
-
 Vue.config.productionTip = false
 
 Vue.filter('to-uppercase', function(value) {

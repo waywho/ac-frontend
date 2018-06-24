@@ -28,13 +28,13 @@
         		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 creative">
         			
         			<div v-for="(creative, index) in production.creatives" :key="index" class="row">
-        				<div class="col-xs-6"><b>{{creative.role | capitalize}}</b></div> <div class="col-xs-6">{{creative.name | capitalize}}</div></div>
+        				<div v-if="creative" class="col-xs-6"><b>{{creative.role | capitalize}}</b></div> <div class="col-xs-6">{{creative.name | capitalize}}</div></div>
         			
         		</div>
         		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 cast">
         		
         			<div v-for="(cast, index) in production.casts" :key="index" class="row">
-        				<div class="col-xs-6"><b>{{cast.role | capitalize}}</b></div> <div class="col-xs-6">{{cast.name | capitalize}}</div></div>
+        				<div v-if="cast" class="col-xs-6"><b>{{cast.role | capitalize}}</b></div> <div class="col-xs-6">{{cast.name | capitalize}}</div></div>
         			
         		</div>
         	</div>

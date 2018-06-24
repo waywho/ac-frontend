@@ -37,7 +37,7 @@
         </div>
 
 
-      <h4 v-if="currentPortfolio.trainingAndEducations" class="is-golden inline-heading">Training and Education</h4><span v-if="currentPortfolio.trainingAndEducations &&authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
+      <h4 v-if="currentPortfolio.trainingAndEducations" class="is-golden inline-heading">Training and Education</h4><span v-if="currentPortfolio.trainingAndEducations && authorizedUser" @click="showPortfolioForm = true" class="text-button">Edit</span>
         <li v-for="line in currentPortfolio.trainingAndEducations" class="cv-line small">
           {{Object.values(line).join(", ")}}
         </li>
