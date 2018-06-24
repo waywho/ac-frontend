@@ -351,13 +351,20 @@ circle {
 
 	.profile-section {
 		width: 100%;
-		padding: 40px $body-padding-small 40px $body-padding-large;
+		padding: 40px $body-padding-small 40px $body-padding-small;
 	}
 
 	// .profile-options {
 	// 	display: inline-block;
 	// 	transform: translateX(-130px);
 	// }
+
+}
+
+@media all and (min-width: $bp-large-3) {
+	.profile-section {
+		padding-left: $body-padding-large;
+	}
 
 }
 

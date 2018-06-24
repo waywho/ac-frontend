@@ -308,6 +308,7 @@ export const store = new Vuex.Store({
 		createUser({commit, dispatch, state}, payload) {
 			console.log('creating user', payload)
 			var notificationKey = firebaseApp.database().ref('notifications').child(payload.user.id).push().key
+			payload.user.timestamp = Date.now()
 			let user = {
 				['/profiles/' + payload.user.id]: payload.user,
 				['/users/' + payload.user.id]: payload.user,
@@ -601,21 +602,35 @@ export const store = new Vuex.Store({
 
 		},
 		updateUserMedia({commit, dispatch, state}, payload) {
+			return new Promise((resolve, reject) => {
+				var mediaKey
+				if(payload.delete) {
+					mediaKey = payload.mediaKey
+				} else {
+					var toolAuthRef = firebaseApp.database().ref("toolsAuthorized").child(state.userId).child("medias")
+					var mediaKey = toolAuthRef.push().key
+				}
+				
+				var mediaUpdate = {
+					["toolsAuthorized/" + state.userId + "/medias/" + mediaKey ]: payload.data,
+					["toolsPublic/" + state.userId + "/medias/" + mediaKey ]: payload.data
+				}
 
-			var toolAuthRef = firebaseApp.database().ref("toolsAuthorized").child(payload.userId).child("medias")
-			var mediaKey = toolAuthRef.push().key
-			return Promise.all([
-				toolAuthRef.child(mediaKey).update(payload.data),
-				firebaseApp.database().ref("toolsPublic").child(payload.userId).child("medias").child(mediaKey).update(payload.data)
-			]).then(res => {
-				dispatch('getUserTools', {userId: payload.userId})
-			}).catch(error => {
-				console.log(error)
-				commit('setMessage', {
-					message: error.message,
-					messageType: 'warning'
-				});
+			
+				firebaseApp.database().ref().update(mediaUpdate)
+				.then(res => {
+					dispatch('getUserTools', {userId: state.userId})
+					resolve({key: mediaKey})
+				}).catch(error => {
+					console.log(error)
+					commit('setMessage', {
+						message: error.message,
+						messageType: 'warning'
+					});
+					reject(error)
+				})				
 			})
+
 		},
 		createUserTools({commit, dispatch, state}, payload) {
 			if(!state.idToken) {

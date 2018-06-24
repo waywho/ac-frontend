@@ -60,6 +60,7 @@ export default{
 			this[imageField].imageFile = file
 		},
 		onMediaFilePicked(event) {
+			this.loading = true
 			console.log(event)
 			const file = event.target.files[0]
 
@@ -83,6 +84,9 @@ export default{
 			newData['image-gallery'] = this.imageFile
 
 			this.$store.dispatch('saveMediaImage', {userId: this.$store.getters.currentUser.id, data: newData} )
+				.then(res => {
+					this.loading = false
+				})
 		}
 	}
 }

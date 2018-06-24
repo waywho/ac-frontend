@@ -512,6 +512,8 @@ export default {
 	color: #f39166;
 }
 
+
+
 @media all and (min-width: $bp-small) {
 	.last-message {
 		display: block;
@@ -528,7 +530,7 @@ export default {
 		margin-bottom: 0px;
 		flex-basis: auto;
 		height: auto;
-		padding-left: $body-padding-large;
+		padding-left: $body-padding-small;
 		padding-right: 0px;
 	}
 
@@ -568,5 +570,11 @@ export default {
 		width: 50%;
 		flex-basis: auto;
 	}
+}
+@media all and (min-width: $bp-large-3) {
+	.message-sidepanel {
+		padding-left: $body-padding-large;
+	}
+
 }
 </style>

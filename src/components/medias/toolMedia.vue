@@ -20,10 +20,18 @@
         <input v-else class="small media-input" type="text" name="mediaUrl" :placeholder="'Add ' + sourceInputSuggestion + 'Here'" v-model="mediaURL" v-on:keyup.enter="addMedia($event.target.value)"/>
              
       <div class="media-window">
-        <div v-if="mediaHost === 'Image Gallery'" v-for="(media, index) in filteredMedia" class="media-tile" :key="`media-${index}`">
-          <img :src="media.source" alt="gallery image" />
+        <div class="media-tile">
+        <i v-if="loading" class="fa fa-circle-o-notch fa-spin loading-spinner"></i>
         </div>
-          <vue-media-embed v-if="mediaHost !== 'Image Gallery'" v-for="(media, index) in filteredMedia" :key="index" class="media-tile" :source="media.source" :allow-fullscreen="1"></vue-media-embed>
+        <div v-if="mediaHost === 'Image Gallery' && !loading" v-for="(media, index) in filteredMedia" class="media-tile" :key="`media-${index}`">
+          <img :src="media.source" alt="gallery image" />
+          <span @click="deleteMedia(media.id)" v-show="authorizedUser" class="small text-button delete-button">delete <i class="fa fa-minus" aria-hidden="true"></i></span>
+        </div>
+        
+        <div v-if="mediaHost !== 'Image Gallery' && !loading" v-for="(media, index) in filteredMedia" class="media-tile" :key="index" >
+          <vue-media-embed :source="media.source" :allow-fullscreen="1"></vue-media-embed>
+          <span @click="deleteMedia(media.id)" v-show="authorizedUser" class="small text-button delete-button">delete <i class="fa fa-minus" aria-hidden="true"></i></span>
+        </div>
         
       </div>
       
@@ -35,12 +43,14 @@
 <script>
 import profileToolsMixin from '@/mixins/profileToolsMixin'
 import profileImagesMixin from '@/mixins/profileImagesMixin'
+import currentUserMixin from '@/mixins/currentUserMixin'
+import _ from 'lodash'
 
 export default {
   name: 'mediaTool',
   components: {
   },
-  mixins: [profileToolsMixin, profileImagesMixin],
+  mixins: [profileToolsMixin, profileImagesMixin, currentUserMixin],
   props: {
     profileId: String,
     medias: Object
@@ -52,16 +62,24 @@ export default {
   	  mediaHost: "Youtube",
       mediaURL: null,
       currentMedias: [],
-      prototypeMedias: [],
       image: null,
-      imageFile: null
+      imageFile: null,
+      loading: false
     }
   },
   computed: {
   	filteredMedia: function() {
-  		return this.currentMedias.filter((media) => {
-  			return media.host.match(this.mediaHost);
-  		})
+      if(this.medias) {
+        var mediaArray = []
+        for(var key in this.medias) {
+          if(this.medias[key].host.match(this.mediaHost)) {
+            this.medias[key].id = key
+            mediaArray.push(this.medias[key])
+          }
+        }
+        mediaArray = _.orderBy(mediaArray, ['timestamp'], ['desc'])
+      }
+      return mediaArray
   	},
   	mediaType: function() {
       return this.mediaTypes[this.mediaHost]
@@ -76,6 +94,7 @@ export default {
   },
   methods: {
     addMedia: function(value) {
+      this.loading = true
       let mediaSource
       if (this.mediaHost === 'SoundCloud') {
         mediaSource = "soundcloud://" + this.mediaURL
@@ -85,30 +104,29 @@ export default {
       let mediaObject = {
           type: this.mediaType,
           source: mediaSource,
-          host: this.mediaHost
+          host: this.mediaHost,
+          timestamp: Date.now()
         }
       console.log(mediaObject)
 
-      this.$store.dispatch('updateUserMedia', {userId: this.$store.getters.currentUser.id, toolName: 'medias', data: mediaObject})
-          .then((response) => {
-            this.currentMedias.push(mediaObject)
+      this.$store.dispatch('updateUserMedia', {userId: this.$store.getters.currentUser.id, toolName: 'medias', delete: false, data: mediaObject})
+          .then((res) => {
+            // mediaObject.id = res.key
+            // this.currentMedias.push(mediaObject)
              this.mediaURL = null
+             this.loading = false
         }, error => {console.log(error)});
+    },
+    deleteMedia: function(keyValue) {
+      console.log(keyValue)
+      this.loading = true
+      this.$store.dispatch('updateUserMedia', {mediaKey: keyValue, delete: true, data: null})
+        .then(res => {
+          this.loading = false
+        })
     }
   },
   created() {
-    var mediaArray = []
-    if(this.medias !== null && this.medias !== undefined) {
-      for(var key in this.medias) {
-        this.medias[key].id = key
-        mediaArray.push(this.medias[key])
-      }
-      this.currentMedias = mediaArray
-    } else {
-      this.currentMedias = new Array()
-    }
-    console.log(this.currentMedias)
-    this.prototypeMedias = null
   }
 }
 </script>
@@ -157,6 +175,7 @@ export default {
 }
 
 .media-tile {
+  position: relative;
   width: 100%;
   flex-basis: auto;
   margin: 5px 5px;
@@ -174,6 +193,11 @@ export default {
   margin: 9px auto 10px;
 }
 
+.delete-button {
+  margin-top: 5px;
+  float: right;
+}
+
 @media all and (min-width: $bp-small) {
   .media {
     display: flex;
@@ -187,7 +211,7 @@ export default {
 
   .media-window {
     flex-wrap: wrap;
-    height: 300px;
+    height: 270px;
   }
 
   .media-tile {
@@ -216,7 +240,7 @@ export default {
 
   .media-window {
     flex-direction: row;
-    height: 400px;
+    height: 270px;
   }
 
   .media-tile {

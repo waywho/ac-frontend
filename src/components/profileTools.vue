@@ -1,7 +1,7 @@
 <template>
   <div class="profile-tools" v-if="showComponent">
     <keep-alive>
-      <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="profileToolData"></component>
+      <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="toolData"></component>
     </keep-alive>
     <div :class="[authorizedUser ? 'toolbox-auth' : 'toolbox-public']" :style="gridSpec">
       <div v-for="tool in profileTools" @click="component = tool.component" :class="['is-lightgray', {'active-tool': component === tool.component}, [tool.component !== null ? 'toolbox-tile' : 'toolbox-tile-not-active']]">
@@ -22,6 +22,7 @@ import ticketTool from '@/components/toolTicket';
 import portfolioTool from '@/components/portfolios/toolPortfolio';
 import currentUser from '@/mixins/currentUserMixin';
 import firebaseApp from '@/firebase/init';
+import { mapGetters} from 'vuex';
 
 export default {
   name: 'tools',
@@ -98,7 +99,6 @@ export default {
     },
     profileTools() {
       // console.log('auth', this.authorizedUser, this.profileId)
-
       if(this.authorizedUser) {
         this.component = 'message'
         return this[this.profileType + 'AuthTools']
@@ -158,10 +158,15 @@ export default {
       }
     },
     toolData() {
-      if(this.profileToolData === null && this.profileToolData === undefined) {
-        return
-      }
-      return {[this.component]: this.profileToolData[this.component]}
+      var tools
+      if(this.authorizedUser) {
+          
+          tools = this.$store.getters.currentUserTools
+          // console.log('tools', tools)
+        } else {
+          tools = this.profileToolData
+        }
+      return {[this.component]: tools[this.component]}
     }
   },
   methods: {
@@ -180,17 +185,18 @@ export default {
     }
   },
   created() {
-    if(this.authorizedUser) {
-      // var keys  = Object.keys(this.$store.getters.currentUserTools)
-      this.profileToolData = this.$store.getters.currentUserTools 
-    } else {
+    if(!this.authorizedUser) {
       var toolsRef = firebaseApp.database().ref("toolsPublic")
       toolsRef.child(this.profileId).once("value", snapshot => {
         console.log('get profile tools', snapshot.val())
         // var keys = Object.keys
 
-        this.profileToolData = snapshot.val()
-        console.log(this.profileToolData)
+        var tools = snapshot.val()
+
+        for(var key in tools) {
+          this.profileToolData[key] = tools[key]
+        }
+        // console.log(this.profileToolData)
       }).catch(error => {
         if(error) {
           console.log(error)
@@ -221,6 +227,7 @@ export default {
   display: flex;
   align-items: stretch;
   background-color: $color-body;
+  max-width: 100%;
   width: 100%;
   height: 100%;
   overflow-y: hidden;
@@ -233,6 +240,7 @@ export default {
 
 .tool-panel-public, .tool-panel-auth {
   width: 100%;
+  max-width: 100%;
   height: 100%;
   min-height: 100%;
   flex-basis: auto;
@@ -336,6 +344,39 @@ export default {
     order: 2;
   }
 
+}
+
+@media all and (min-width: $bp-small) {
+  .tool-panel-public {
+     width: 80%;
+     order: 1;
+  }
+  .toolbox-public {
+    grid-template-columns: 1fr; 
+  }
+
+  .toolbox-public {
+    width: 20%;
+    padding-right: 0rem;
+    height:  $tool-panel-height;
+    min-height: $tool-panel-height;
+    min-width: auto;
+    order: 2;
+  }
+
+  .tool-panel-auth {
+    width: 62%;
+    order: 2;
+  }
+
+  .toolbox-auth {
+    width: 36%;
+    padding-right: 0rem;
+    height:  $tool-panel-height;
+    min-height: $tool-panel-height;
+    min-width: auto;
+    order: 2;
+  }
 }
 
 </style>
