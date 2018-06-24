@@ -1,13 +1,13 @@
 <template>
 	<div class="profile-account">
 
-		<success-warning-notice class="top-message" :messaging="messaging"></success-warning-notice>
+		<success-warning-notice v-if="$store.getters.message" class="top-message" :messaging="messaging"></success-warning-notice>
 		<div class="full-profile profile-banner" v-if="loading">
 			<div class="profile-banner-inner">
-				<div class="profile-cover" :style="{'background-image': 'url('+ coverCurrentURL +')'}">
+				<div class="profile-cover" :style="{'background-image': 'url('+ coverHolder +')'}">
 				</div>
 				<div class="profile-avatar-container" >
-					<div class="profile-avatar" :style="{'background-image': 'url('+ avatarCurrentURL +')'}">
+					<div class="profile-avatar" :style="{'background-image': 'url('+ avatarHolder +')'}">
 					</div>
 				</div>
 			</div>
@@ -84,8 +84,8 @@ export default {
 	data() {
 		return {
 			displayProfile: null,
-			avatarCurrentURL: require("../assets/images/avatar-holder.png"),
-			coverCurrentURL: require("../assets/images/cover-holder.jpg"),
+			avatarHolder: require("../assets/images/avatar-holder.png"),
+			coverHolder: require("../assets/images/cover-holder.jpg"),
 			avatar: null,
 			cover: null,
 			loading: true,
@@ -96,8 +96,23 @@ export default {
 		}
 	},
 	computed: {
-		showSeason: function() {
-
+		avatarCurrentURL: function() {
+			if(this.displayProfile) {
+				if(this.displayProfile.avatarURL !== null && this.displayProfile.avatarURL !== undefined) {
+					return this.displayProfile.avatarURL
+				} else {
+					return this.avatarHolder
+				}
+			}
+		},
+		coverCurrentURL: function() {
+			if(this.displayProfile) {
+				if(this.displayProfile.coverURL !== null && this.displayProfile.coverURL !== undefined) {
+					return this.displayProfile.coverURL
+				} else {
+					return this.coverHolder
+				}
+			}
 		},
 		profile: function() {
 			return this.displayProfile
@@ -148,30 +163,7 @@ export default {
 		'$route': 'getProfile'
 	},
 	created () {
-		this.loading = true
-		// console.log('do i have data yet?', this.$store.getters.profile)
-		// console.log(this.authorizedUser)
-		console.log(this.profileId)
-		console.log('sign in status', this.signedIn)
-		if (this.signedIn && this.authorizedUser) {
-			console.log('I am signed in and authorized!', this.signedIn)
-
-			this.displayProfile = this.$store.getters.profile
-			// console.log('avatar', this.displayProfile.avatarURL)
-			if (this.displayProfile.avatarURL !== null && this.displayProfile.avatarURL !== undefined && this.displayProfile.avatarURL.length > 0) {  
-				this.avatarCurrentURL = this.displayProfile.avatarURL
-			}
-			
-			if (this.displayProfile.coverURL !== null && this.displayProfile.coverURL !== undefined && this.displayProfile.coverURL.length > 0) { 
-				this.coverCurrentURL = this.displayProfile.coverURL
-			}
-
-			this.loading = false;
-
-		} else {
-			console.log('not signed in nor not authorized')
-			this.getProfile();
-		}
+		this.getProfile()
 	}
 }
 </script>

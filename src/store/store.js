@@ -601,9 +601,12 @@ export const store = new Vuex.Store({
 
 		},
 		updateUserMedia({commit, dispatch, state}, payload) {
+
+			var toolAuthRef = firebaseApp.database().ref("toolsAuthorized").child(payload.userId).child("medias")
+			var mediaKey = toolAuthRef.push().key
 			return Promise.all([
-				firebaseApp.database().ref("toolsAuthorized").child(payload.userId).child("medias").push(payload.data),
-				firebaseApp.database().ref("toolsPublic").child(payload.userId).child("medias").push(payload.data)
+				toolAuthRef.child(mediaKey).update(payload.data),
+				firebaseApp.database().ref("toolsPublic").child(payload.userId).child("medias").child(mediaKey).update(payload.data)
 			]).then(res => {
 				dispatch('getUserTools', {userId: payload.userId})
 			}).catch(error => {
@@ -737,24 +740,6 @@ export const store = new Vuex.Store({
 					});
 					reject(error)
 			})
-		},
-		getProfileTools({commit, state}, payload) {
-			// console.log('disptaching getProfileTools')
-			return new Promise((resolve, reject) => {
-				firebaseAxios.get("/toolsPublic/" + payload.profileId + ".json")
-					.then(res => {
-						// console.log('tools', res)
-						resolve(res)
-					}).catch(error => {
-						console.log(error);
-						commit('setMessage', {
-							message: error.message,
-							messageType: 'warning'
-						});
-						reject(error);
-					})				
-			})
-
 		},
 		requestConnections({commit, state}, payload) {
 			// user1 makes request to user2 to connect

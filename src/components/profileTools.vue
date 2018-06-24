@@ -35,12 +35,12 @@ export default {
     'portfolio': portfolioTool
   },
   props: {
-    profileId: String,
     profileType: String
   },
   mixins: [currentUser],
   data () { 
     return {
+      profileId: this.$route.params.profileId,
       windowWidth: null,
       profileToolData: {
         medias: null,

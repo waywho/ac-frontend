@@ -23,7 +23,8 @@
         <div v-if="mediaHost === 'Image Gallery'" v-for="(media, index) in filteredMedia" class="media-tile" :key="`media-${index}`">
           <img :src="media.source" alt="gallery image" />
         </div>
-        <vue-media-embed v-if="mediaHost !== 'Image Gallery'" v-for="(media, index) in filteredMedia" class="media-tile" :key="`media-${index}`" :source="media.source" :allow-fullscreen="1"></vue-media-embed>
+          <vue-media-embed v-if="mediaHost !== 'Image Gallery'" v-for="(media, index) in filteredMedia" :key="index" class="media-tile" :source="media.source" :allow-fullscreen="1"></vue-media-embed>
+        
       </div>
       
     </div>
@@ -90,13 +91,19 @@ export default {
 
       this.$store.dispatch('updateUserMedia', {userId: this.$store.getters.currentUser.id, toolName: 'medias', data: mediaObject})
           .then((response) => {
+            this.currentMedias.push(mediaObject)
              this.mediaURL = null
         }, error => {console.log(error)});
     }
   },
   created() {
+    var mediaArray = []
     if(this.medias !== null && this.medias !== undefined) {
-        this.currentMedias = Object.values(this.medias)
+      for(var key in this.medias) {
+        this.medias[key].id = key
+        mediaArray.push(this.medias[key])
+      }
+      this.currentMedias = mediaArray
     } else {
       this.currentMedias = new Array()
     }
@@ -120,7 +127,7 @@ export default {
 .player-panel {
   height: 100%;
   background: #fff;
-  margin-bottom: 24px;
+  margin-bottom: 1rem;
   padding: 0px $body-padding-small;
 }
 
@@ -133,6 +140,7 @@ export default {
 
 #media-panel {
   height: 100%;
+  width: auto;
   margin-left: 7px;
   background-color: #fff;
   padding: 0px $body-padding-small 16px;
@@ -166,19 +174,40 @@ export default {
   margin: 9px auto 10px;
 }
 
-@media all and (min-width: $bp-med) {
+@media all and (min-width: $bp-small) {
   .media {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
   }
 
   .player-panel {
-    padding-left: $body-padding-large;
-    margin-right: 15px;
+    padding-left: $body-padding-small;
+    margin-right: 0px;
+  }
+
+  .media-window {
+    flex-wrap: wrap;
+    height: 300px;
+  }
+
+  .media-tile {
+    width: 100%;
+  }
+
+  #media-panel {
+    flex-basis: auto;
+    width: 100%;
+  }
+}
+
+@media all and (min-width: $bp-med) {
+  .media {
+    display: flex;
+    flex-direction: column;
   }
 
   .media-selection {
-    flex-direction: column;
+    flex-direction: row;
     min-width: 140px;
     flex-basis: 100%;
     width: 100%;
@@ -186,7 +215,8 @@ export default {
   }
 
   .media-window {
-    flex-wrap: wrap;
+    flex-direction: row;
+    height: 400px;
   }
 
   .media-tile {
@@ -199,11 +229,36 @@ export default {
   }
 }
 
-@media all and (min-width: $bp-small) and (max-width: $bp-med) {
+@media all and (min-width: $bp-large-3) {
+  .media {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .player-panel {
+    padding-left: $body-padding-large;
+    margin-right: 15px;
+  }
+
+  .media-selection {
+    flex-direction: column;
+  }
+
   .media-window {
     flex-direction: row;
-    flex-wrap: wrap;
+    height: 400px;
   }
+
+  .media-tile {
+    width: 100%;
+  }
+    #media-panel {
+    flex-basis: auto;
+    width: 100%;
+  }
+}
+
+@media all and (min-width: $bp-xl) {
   .media-tile {
     width: 48%;
   }
