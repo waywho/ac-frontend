@@ -372,7 +372,7 @@ export const store = new Vuex.Store({
 						console.log(res)
 						dispatch('getUserProfileOnce', {userId: payload.userId})
 						commit('setMessage', {
-							message: 'Updated Profile Successfully',
+							message: 'Profile updated successfully',
 							messageType: 'success'
 						});
 						resolve(res)
@@ -701,7 +701,7 @@ export const store = new Vuex.Store({
 					.then(res => {
 						console.log('updated tools', res)
 						commit('setMessage', {
-							message: 'Tools updated successfully',
+							message: 'Updated successfully',
 							messageType: 'success'
 						});
 						dispatch('getUserTools', {userId: payload.userId})

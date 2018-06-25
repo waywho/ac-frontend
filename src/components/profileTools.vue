@@ -108,9 +108,9 @@ export default {
           console.log('tool names', ToolNames)
           let toolSet = []
           ToolNames.forEach(toolName => {
-
-            toolSet.push(this.tools[toolName])
-            
+            if(this.profileToolData[toolName] !== null && this.profileToolData[toolName] !== undefined) {
+              toolSet.push(this.tools[toolName])
+            }
           })
 
           console.log('toolset first', toolSet)
@@ -369,7 +369,7 @@ export default {
   }
 
   .tool-panel-auth {
-    width: 62%;
+    width: 63%;
     order: 2;
   }
 

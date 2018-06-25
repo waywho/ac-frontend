@@ -1,11 +1,13 @@
 <template>
     <div id="app-menu">
-		<div class="menu-close">
-		  <i v-on:click="toggleMenu()" class="fa fa-times fa-2x is-white" aria-hidden="true"></i>
+		<div class="menu-buttons" >
+		  <div class="menu-close"><i v-on:click="toggleMenu()" class="fa fa-times fa-2x is-white" aria-hidden="true"></i></div>
+
+		  <div v-if="signedIn" class="sign-out" v-on:click="signOut();">Sign Out</div>
 		</div>
-		<div class="row between-xs between-sm menu-brand">
-		  	<div v-on:click="toggleMenu()" class="col-sm col-xs large"><router-link to="/">artistcenter.com</router-link></div>
-		  	<span v-if="signedIn" class="col-sm col-xs large sign-out" v-on:click="signOut();">Sign Out</span>
+		<div class="menu-brand">
+		  	<div v-on:click="toggleMenu()" class="large strong">Opportunity. Connect.<span class="is-golden"> Go.</span></div>
+		  	
 		</div>
 		<ul class="menu-list non-list">
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/opportunities">Opportunities</router-link></li>
@@ -13,19 +15,16 @@
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/memberships">Memberships</router-link></li>
 		</ul>
 
-		<div class="medium social-heading">Socials</div>
-		<div class="social-icons">
-			
-			<i class="fa fa-facebook selection-icon-horizontal" aria-hidden="true"></i>
-			
-			<i class="fa fa-twitter selection-icon-horizontal" aria-hidden="true"></i>
-			
-			<i class="fa fa-linkedin selection-icon-horizontal" aria-hidden="true"></i>
-			
-		</div>
-		<div class="is-lightgray">
+		<div class="medium social-heading is-golden"><b>Follow Us</b></div>
+		<ul class="menu-list non-list">
+			<li>facebook</li>
+			<li>twitter</li>
+			<li>instagram</li>
+		</ul>
+		<div class="is-lightgray copy-right-container">
 			<p><router-link to="/about/terms">Terms & Support</router-link></p>
-			<p>@Copyright Artist Center 2017</p>
+			<hr class="copy-right" />
+			<span>@Copyright Artist Center 2017</span>
 		</div>
     </div>
 </template>
@@ -69,14 +68,27 @@ export default {
 	color: $color-gold !important;
 }
 
-.menu-close {
+.menu-buttons {
 	display: flex;
-	cursor: pointer;
 	height: 100px;
+	width: 100%;
 	align-items: center;
+	justify-content: space-between;
+}
+
+.menu-close {
+	cursor: pointer;
 }
 
 .menu-close:hover i {
+	color: $color-gold;
+}
+
+.sign-out {
+	cursor: pointer;
+}
+
+.sign-out:hover {
 	color: $color-gold;
 }
 
@@ -97,6 +109,10 @@ export default {
 	height: 28px;
 }
 
+.connect-go {
+	flex-grow: 2;
+}
+
 .social-links {
 	display: inline-block;
 }
@@ -114,6 +130,14 @@ export default {
 
 .sign-out {
 	cursor: pointer;
+}
+
+.copy-right {
+	border-top: 2px solid white;
+	width: 42px;
+	max-width: 42px;
+	margin-left: 0px;
+	margin-bottom: 0.5rem;
 }
 
 </style>

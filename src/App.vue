@@ -95,7 +95,7 @@ export default {
     },
     getWindowWidth(event) {
       this.windowWidth = document.documentElement.clientWidth;
-      console.log('window width', this.windowWidth)
+      // console.log('window width', this.windowWidth)
     },
     getBrowser() {
       var browser = window.navigator
@@ -140,7 +140,6 @@ export default {
 #app-inner {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 100% !important;
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: $header-height-mobile auto $footer-height;
@@ -149,9 +148,11 @@ export default {
     "main"
     "footer";
   grid-gap: 0px 0px;
+  width: 100% !important;
   min-width: $app-min-width;
   max-width: $app-max-width;
-  margin: auto;
+  margin: 0 auto;
+  padding-bottom: 180px;
   z-index: 1;
 }
 
@@ -174,7 +175,7 @@ export default {
 .app-menu {
   position: fixed;
   height: 100%;
-  background-color: #20201f;
+  background-color: #9c515a; //#20201f;
   color: white;
   z-index: 999;
   transition: right 0.8s ease-in-out;
