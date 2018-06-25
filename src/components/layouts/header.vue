@@ -143,8 +143,8 @@ export default {
   max-width: $app-max-width;
   min-width: $app-min-width;
   height: $header-height-mobile;
-  transition: top 0.2s ease-in-out, left 1s ease-in-out;
-  -webkit-transition: top 0.2s ease-in-out, left 1s ease-in-out;
+  transition: top 0.5s ease-in-out, left 1s ease-in-out;
+  -webkit-transition: top 0.5s ease-in-out, left 1s ease-in-out;
 }
 
 .header-inner {

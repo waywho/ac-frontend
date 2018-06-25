@@ -160,8 +160,11 @@ export default {
     toolData() {
       var tools
       if(this.authorizedUser) {
-          
-          tools = this.$store.getters.currentUserTools
+          if(this.$store.getters.currentUserTools) {
+            tools = this.$store.getters.currentUserTools
+          } else {
+            tools = this.profileToolData
+          }
           // console.log('tools', tools)
         } else {
           tools = this.profileToolData
@@ -229,6 +232,7 @@ export default {
   background-color: $color-body;
   max-width: 100%;
   width: 100%;
+  width: 100vw;
   height: 100%;
   overflow-y: hidden;
   flex-wrap: wrap;

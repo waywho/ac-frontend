@@ -122,6 +122,11 @@ $header-height: 100px !default;
 $header-search-height-mobile: 50px !default;
 $header-height-mobile: $header-height + $header-search-height-mobile !default;
 
+
+//
+
+$footer-height: 640px !default;
+
 // Breakpoints
 $bp-small : 25.88rem;
 $bp-small-2: 29.75rem;

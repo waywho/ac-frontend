@@ -52,16 +52,19 @@ export default {
       if(this.windowWidth >= 500) {
         return {
           width: '400px',
+          'max-width': '400px',
           right: '-400px'
         }
       } else if (this.windowWidth <= 499) {
         return {
           width: this.windowWidth + 'px',
+          'min-width': '320px',
           right: '-' + this.windowWidth + 'px'
         }
       } else {
         return {
           width: this.windowWidth + 'px',
+          'min-width': '320px',
           right: '-' + this.windowWidth + 'px'
         }
       }
@@ -72,10 +75,17 @@ export default {
       console.log("scrool", e)
     },
     handleScroll: function(e) {
-       var currentScrollPosition = e.srcElement.scrollTop;
-       // console.log(e)
-       // console.log('where am i', currentScrollPosition)
-       if (currentScrollPosition > this.scrollPosition && currentScrollPosition > 100) {
+      // this.navPosition = 'nav-up'
+      // setTimeout(() => {
+      //   this.navPosition = ''
+      // }, 1000)
+
+      // setTimeout(() => {
+      //   this.navPosition = 'nav-up'
+      // }, 7000)
+       var currentScrollPosition = e.target.scrollTop;
+       // console.log('currentScrollPosition', currentScrollPosition)
+       if (currentScrollPosition > this.scrollPosition && currentScrollPosition > 50) {
          // console.log('scrolling')
          this.navPosition = 'nav-up';
        } else {
@@ -84,7 +94,12 @@ export default {
       this.scrollPosition = currentScrollPosition;
     },
     getWindowWidth(event) {
-          this.windowWidth = document.documentElement.clientWidth;
+      this.windowWidth = document.documentElement.clientWidth;
+      console.log('window width', this.windowWidth)
+    },
+    getBrowser() {
+      var browser = window.navigator
+      console.log("browser", browser)
     },
     menuToggle: function(msg) {
       this.isActive = !this.isActive;
@@ -94,6 +109,7 @@ export default {
   created() {
     this.$store.dispatch('clearingMessage')
     this.$store.dispatch('tryAutoSignIn');
+    this.getBrowser()
     // console.log(document.documentElement)
     document.body.addEventListener('scroll', this.handleScroll);
     // var doc = window
@@ -124,18 +140,15 @@ export default {
 #app-inner {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100%;
-  height: 100% !important;
   width: 100% !important;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: $header-height-mobile auto 460px;
+  grid-template-rows: $header-height-mobile auto $footer-height;
   grid-template-areas:
     "header"
     "main"
     "footer";
   grid-gap: 0px 0px;
-  width: 100%;
   min-width: $app-min-width;
   max-width: $app-max-width;
   margin: auto;
@@ -145,10 +158,13 @@ export default {
 #app {
   transition: left 0.8s ease-in-out;
   -webkit-transition: left 0.8s ease-in-out;
+  width: 100vw !important;
 }
 
 .main-body {
   grid-area: main;
+  height: 100%;
+  min-height: 100%;
 }
 
 .nav-up {

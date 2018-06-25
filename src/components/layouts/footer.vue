@@ -53,7 +53,8 @@ export default {
   background-color: white;
   padding: 85px $body-padding-small 20px;
   grid-area: footer;
-  height: 620px;
+  height: 100%;
+  min-height: $footer-height;
   width: 100%;
 }
 
