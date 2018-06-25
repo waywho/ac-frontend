@@ -146,8 +146,8 @@ export default {
 
 .portfolio {
   padding: 40px $body-padding-small;
-	height: 476px;
-  min-height: 476px;
+	height: $tool-panel-height;
+  min-height: $tool-panel-height;
 	overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }
