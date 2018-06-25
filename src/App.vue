@@ -99,7 +99,7 @@ export default {
     },
     getBrowser() {
       var browser = window.navigator
-      console.log("browser", browser)
+      // console.log("browser", browser)
     },
     menuToggle: function(msg) {
       this.isActive = !this.isActive;

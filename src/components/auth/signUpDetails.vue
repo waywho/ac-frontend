@@ -7,9 +7,10 @@
       		<label class="strong label-header">{{key | camel-to-space}}</label>
       		<input type="text" class="signup-input" :key="key" :name="key" :placeholder="'Enter ' + type +' ' + key" v-model="details[key]" />
         </div>
-    		<div v-if="key === 'descriptions'">
+    		<div v-if="key === 'descriptions'" class="description-input-kit">
           <label class="strong label-header">{{key | camel-to-space}}</label>
-          <textarea type="text" class="signup-input" name="name" :placeholder="'Enter ' + type + ' descriptions'" v-model="currentDetails[key]" /></textarea>
+          <textarea type="text" class="signup-input" name="name" :placeholder="'Enter ' + type + ' descriptions'" v-model="currentDetails[key]" rows="7" maxlength="160" /></textarea>
+          <span class="smaller word-count is-golden">{{160 - currentDetails.descriptions.length}}</span>
         </div>
         <div v-if="key === 'country'">
           <label class="strong label-header">{{key | camel-to-space}}</label>
@@ -97,9 +98,19 @@ export default {
 	max-width: 100%;
 }
 
-textarea.signup-input {
-	height: 250px;
+.description-input-kit {
+  position: relative;
 }
+
+.word-count {
+  position: absolute;
+  z-index: 2;
+  bottom: 0.5rem;
+  right: 2rem;
+}
+
+
+
 
 .step-container {
 	width: 100%;
