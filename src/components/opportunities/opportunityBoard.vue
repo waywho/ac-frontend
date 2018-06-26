@@ -9,7 +9,7 @@
   		<component :is="component" class="opportunity-section col-xs-12 col-md-10 col-lg-10" :continents="continents" :countries="countries" :opportunity-types="opportunityTypes" :categories="categories" :subcategories="subcategories" :payment-types="paymentTypes" :selected-sort="selectedSort" :loading="loading" :opportunities="opportunities" @subcategory-change="changeSubcategories" @country-change="changeCountries" @apply-filter="filterApply" @apply-sort="sortApply" @filter-component="component = $event"></component>
   	</keep-alive>
 
-  	<opportunity-list v-if="windowWidth >= 414" class="opportunity-section" :opportunities="opportunities" :loading="loading" :selected-sort="selectedSort" @apply-sort="sortApply"></opportunity-list>
+  	<opportunity-list v-if="windowWidth >= 414" class="opportunity-list" :opportunities="opportunities" :loading="loading" :selected-sort="selectedSort" @apply-sort="sortApply"></opportunity-list>
   			
   		
   	</div>
@@ -23,8 +23,7 @@ import opportunityFilter from './opportunityFilters';
 import countriesList from 'countries-list';
 import Velocity from 'velocity-animate';
 import 'velocity-animate/velocity.ui';
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import firebaseApp from '@/firebase/init'
 // import axios from 'axios'
 
 export default {
@@ -191,12 +190,11 @@ export default {
 }
 
 
-.opportunity-section {
+.opportunity-section, .opportunity-list {
 	background-color: white;
 	padding: 0px 40px 40px;
 	margin: 0px 0px 24px 0px;
 	text-align: left;
-	height: 100%;
 }
 
 </style>

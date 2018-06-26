@@ -1,5 +1,5 @@
 <template>
-	<div class="">
+	<div class="filters-panel">
   		<h2 v-if="mode !== 'inputMode'">Personalize Your Opportunities</h2>
   		<p v-if="mode !=='inputMode'">Select your preferences below to filter opportunities.</p>
   		<div class="row filters-panel">
@@ -133,7 +133,6 @@ export default {
 @import '../../styles/style-variables';
 
 .filters-panel {
-  height: 100%;
 }
 
 .options-selector {
@@ -150,5 +149,12 @@ export default {
 
 .message-container {
   height: 30px;
+}
+
+@media all and (min-width: $bp-med) {
+  .options-selector {
+      margin-bottom: 40px;
+  }
+
 }
 </style>

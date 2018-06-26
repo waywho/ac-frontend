@@ -16,7 +16,6 @@ var config = {
 
 // devConfig
 // var config = {
-
 // 	apiKey: 'AIzaSyBj0LSNuwTZNyD1BKZxwYQE62n9CpOT3E0',
 // 	authDomain: 'artist-center.firebaseapp.com',
 // 	databaseURL: 'https://artist-center.firebaseio.com',
