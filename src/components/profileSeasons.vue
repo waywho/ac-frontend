@@ -1,5 +1,5 @@
 <template>
-  <div class="seasons">
+  <div class="seasons" v-if="profileSeasons">
       <div class="title-row">
         <ul v-for="(season, key) in profileSeasons" class="non-list season-list">
           <li class="season-list-li"><span class="selection selection-text">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
@@ -48,16 +48,28 @@ export default {
     return {
       showSeasonForm: false,
       showProduction: false,
-      currentSeason:  null,
       editSeasonId: null,
       editProductions: null,
       editSeason: null,
       editStep: 0,
       mode: 'new',
-      currentProduction: null
     }
   },
   computed: {
+    currentSeason: function() {
+      if (this.profileSeasons) {
+        return this.currentSeason = this.profileSeasons[Object.keys(this.profileSeasons)[0]]
+      } else {
+        return null
+      }
+    },
+    currentProduction: function() {
+      if (this.profileSeasons) {
+        return this.currentProduction = this.currentSeason.productions[0]
+      } else {
+        return null
+      }
+    },
     currentProductions: function () {
       if(this.currentSeason) {
         return this.currentSeason.productions
@@ -90,10 +102,7 @@ export default {
     }
   },
   created() {
-    if (this.profileSeasons) {
-        this.currentSeason = this.profileSeasons[Object.keys(this.profileSeasons)[0]]
-        this.currentProduction = this.currentSeason.productions[0]
-    }
+
 
   }
 }

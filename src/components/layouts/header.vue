@@ -7,7 +7,7 @@
         </li>
         
         <li class="search header-item-space" id="search-element">
-          <input v-on:keyup.enter="searchResults($event.target.value)" type="search" id="search" class="small" placeholder="search profiles" />
+          <input v-on:keyup.enter="searchResults($event.target.value)" v-model="profileSearch" type="search" id="search" placeholder="search profiles" />
         </li>
       </ul>
 

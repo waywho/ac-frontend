@@ -85,7 +85,7 @@ export default {
 
 .search-heading {
 	width: 92%;
-	text-align: right;
+  margin-left: 10px;
 }
 
 .result-icon {

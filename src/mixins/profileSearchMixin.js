@@ -8,8 +8,16 @@ export default {
 			searchResultMessage: ""
 		}
 	},
+	watch: {
+		'$route': function(newRoute, oldRoute) {
+			// console.log(newRoute, oldRoute)
+			this.getUsers()
+		}
+	},
 	methods: {
 		getUsers: function() {
+			this.profileSearch = this.$route.query.profiles
+			this.profileResults = []
 	  		if(this.profileSearch.length > 2) {
 		  		var userArray = []
 		  		var usersRef = firebaseApp.database().ref("users")

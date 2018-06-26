@@ -79,10 +79,10 @@ export default {
   },
   computed: {
     showComponent: function() {
-      if(this.profileToolData !== null && this.profileToolData !== undefined) {
-        return true
-      } else {
+      if(this.toolsEmpty) {
         return false
+      } else {
+        return true
       }
     },
     toolsEmpty() {
