@@ -4,7 +4,7 @@ export default {
       if (!this.signedIn) {
         return false
       };
-      return this.profileId === this.$store.getters.currentUser.id;
+      return this.profileId === this.currentUser.id;
     },
   	signedIn() {
   		return this.$store.getters.isSignedIn

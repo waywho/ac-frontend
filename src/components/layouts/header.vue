@@ -62,6 +62,7 @@ export default {
       notificationAlert: false,
       showNotificatons: false,
       notificationList: [],
+      profileSearch: "",
       lastKey: ""
     }
   },

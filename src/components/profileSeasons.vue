@@ -2,7 +2,7 @@
   <div class="seasons" v-if="profileSeasons">
       <div class="title-row">
         <ul v-for="(season, key) in profileSeasons" class="non-list season-list">
-          <li class="season-list-li"><span class="selection selection-text">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
+          <li class="season-list-li"><span class="selection selection-text" @click="currentSeason = season">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
         </ul>
         <div class="season-heading"> 
           <h2 class="season-title">Company Seasons</h2>
@@ -48,6 +48,8 @@ export default {
     return {
       showSeasonForm: false,
       showProduction: false,
+      currentSeason: null,
+      currentProduction: null,
       editSeasonId: null,
       editProductions: null,
       editSeason: null,
@@ -56,23 +58,16 @@ export default {
     }
   },
   computed: {
-    currentSeason: function() {
-      if (this.profileSeasons) {
-        return this.currentSeason = this.profileSeasons[Object.keys(this.profileSeasons)[0]]
+    thisSeason: function() {
+      if(this.currentSeason) {
+        return this.currentSeason
       } else {
-        return null
-      }
-    },
-    currentProduction: function() {
-      if (this.profileSeasons) {
-        return this.currentProduction = this.currentSeason.productions[0]
-      } else {
-        return null
+        return []
       }
     },
     currentProductions: function () {
       if(this.currentSeason) {
-        return this.currentSeason.productions
+        return this.thisSeason.productions
       } else {
         return null
       }
@@ -82,7 +77,7 @@ export default {
   methods: {
     seasonAdd: function () {
       this.editSeason = null
-      this.currentSeasonId = null
+      this.editSeasonId = null
       this.editProductions = null
       this.mode = 'new'
       this.editStep = 0
@@ -102,7 +97,9 @@ export default {
     }
   },
   created() {
-
+    if(this.profileSeasons) {
+      this.currentSeason = this.profileSeasons[Object.keys(this.profileSeasons)[0]]
+    }
 
   }
 }

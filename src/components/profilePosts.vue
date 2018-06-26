@@ -86,6 +86,11 @@ export default {
 		comment: null
     }
   },
+  watch: {
+  	'$route': function() {
+  		this.profileId = this.$route.params.profileId
+  	}
+  },
   computed: {
   	displayPosts: function() {
   		return _.orderBy(this.posts, ['timestamp'], ['desc'])

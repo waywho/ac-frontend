@@ -51,7 +51,7 @@ export default {
         opportunity: null
       },
       show: true,
-      component: 'calendar',
+      component: '',
       artistAuthTools: [
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
         { name: null, component: null, icon: '', icon: require('@/assets/images/artistcenter-logo.png')},
@@ -77,9 +77,16 @@ export default {
       }
     }
   },
+  watch: {
+    '$route': function(newRoute, oldRoute) {
+      this.profileId = this.$route.params.profileId
+    }
+  },
   computed: {
     showComponent: function() {
-      if(this.toolsEmpty) {
+      if(this.authorizedUser) {
+        return true
+      } else if(this.toolsEmpty) {
         return false
       } else {
         return true
@@ -100,7 +107,7 @@ export default {
     profileTools() {
       // console.log('auth', this.authorizedUser, this.profileId)
       if(this.authorizedUser) {
-        this.component = 'message'
+        
         return this[this.profileType + 'AuthTools']
       } else if (!this.toolsEmpty) {
 
@@ -137,7 +144,7 @@ export default {
           this.component = toolSet[0].component
           return toolSet
       } else {
-          return null
+          return []
       }
        
     },
@@ -199,12 +206,15 @@ export default {
         for(var key in tools) {
           this.profileToolData[key] = tools[key]
         }
+        this.component = 'calendar'
         // console.log(this.profileToolData)
       }).catch(error => {
         if(error) {
           console.log(error)
         }
       })
+    } else {
+      this.component = 'message'
     }
   },
   mounted() {
