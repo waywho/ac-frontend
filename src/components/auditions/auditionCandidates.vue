@@ -8,13 +8,13 @@
 					<span class="role">{{ auditionee.city }}, {{ auditionee.province}}</span>
 				</div>
 				<div class="icon-container unselected">
-					<i class="fa fa-envelope-o is-golden icon" aria-hidden="true"></i>
+					<i class="fa fa-envelope-o is-gold icon" aria-hidden="true"></i>
 				</div>
 				<div :class="['icon-container', auditionee.selected ? 'selected' : 'unselected']">
-					<i :class="['fa', 'fa-check', auditionee.selected ? 'selected' : 'is-golden',  'icon']" aria-hidden="true"></i>
+					<i :class="['fa', 'fa-check', auditionee.selected ? 'selected' : 'is-gold',  'icon']" aria-hidden="true"></i>
 				</div>
 				<div :class="['icon-container', !auditionee.selected ? 'selected' : 'unselected']">
-					<i :class="['fa', 'fa-times', !auditionee.selected ? 'selected' : 'is-golden',  'icon']" aria-hidden="true"></i>
+					<i :class="['fa', 'fa-times', !auditionee.selected ? 'selected' : 'is-gold',  'icon']" aria-hidden="true"></i>
 				</div>
 			</div>
 		</div>

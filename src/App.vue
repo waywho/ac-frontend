@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <app-menu :class="['app-menu', {'menu-open': isActive}]" :style="menuStyle" v-on:toggleMenu="menuToggle($event)"></app-menu>
-    <div id="app-inner">
-      <app-header :class="navPosition" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive" :profile-id="currentUser.id"></app-header>
+    <div id="app-inner" :class="[homeHeader ? 'app-inner-row-home' : 'app-inner-row']">
+      <app-header :class="[navPosition, {'nav-up-home': homeHeader}]" v-on:toggleMenu="menuToggle($event)" v-on:signInModalShow="showSignInModal = true" :isActive="isActive" :profile-id="currentUser.id" ></app-header>
       <router-view class="main-body"></router-view>
       <app-footer></app-footer>
       <app-sign-in v-if="showSignInModal" @close="showSignInModal = false"></app-sign-in>
@@ -48,6 +48,9 @@ export default {
   },
   mixins: [currentUser],
   computed: {
+    homeHeader: function() {
+      return this.$route.name === 'home'
+    },
     menuStyle: function() {
       if(this.windowWidth >= 500) {
         return {
@@ -87,7 +90,12 @@ export default {
        // console.log('currentScrollPosition', currentScrollPosition)
        if (currentScrollPosition > this.scrollPosition && currentScrollPosition > 50) {
          // console.log('scrolling')
-         this.navPosition = 'nav-up';
+        if(this.homeHeader) {
+          this.navPosition = '';
+        } else {
+          this.navPosition = 'nav-up';
+        }
+         
        } else {
          this.navPosition = '';
        }
@@ -95,7 +103,6 @@ export default {
     },
     getWindowWidth(event) {
       this.windowWidth = document.documentElement.clientWidth;
-      // console.log('window width', this.windowWidth)
     },
     getBrowser() {
       var browser = window.navigator
@@ -120,7 +127,6 @@ export default {
   },
   destroyed() {
     document.body.removeEventListener('scroll', this.handleScroll);
-
     window.removeEventListener('resize', this.getWindowWidth);
   },
   mounted() {
@@ -142,7 +148,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: $header-height-mobile auto $footer-height;
   grid-template-areas:
     "header"
     "main"
@@ -152,8 +157,16 @@ export default {
   min-width: $app-min-width;
   max-width: $app-max-width;
   margin: 0 auto;
-  padding-bottom: 180px;
+  // padding-bottom: 180px;
   z-index: 1;
+}
+
+.app-inner-row-home {
+  grid-template-rows: $header-height-home-mobile auto $footer-height;
+}
+
+.app-inner-row {
+  grid-template-rows: $header-height-mobile auto $footer-height;
 }
 
 #app {
@@ -162,6 +175,7 @@ export default {
   width: 100vw !important;
 }
 
+
 .main-body {
   grid-area: main;
   height: 100%;
@@ -169,7 +183,11 @@ export default {
 }
 
 .nav-up {
-  top: -163px;
+  top: -$header-height-mobile !important;
+}
+
+.nav-up-home {
+  position: relative !important;
 }
 
 .app-menu {
@@ -188,12 +206,21 @@ export default {
 }
 
 @media all and (min-width: $bp-med) {
-  #app-inner {
-    grid-template-rows: $header-height auto 460px;
-  }
+
   .nav-up {
-    top: -100px !important;
-    
+    top: -$header-height !important;
+  }
+
+  .app-inner-row-home {
+    grid-template-rows: $header-height-home auto $footer-height;
+  }
+
+  .app-inner-row {
+    grid-template-rows: $header-height auto $footer-height;
+  }
+
+  .nav-up-home {
+    position: relative;
   }
 }
 

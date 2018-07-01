@@ -7,14 +7,14 @@
 		</div>
 	</div>
 	<div class="col-xs-12 col-sm-10 col-md-10 col-lg-10 complete-text">
-		<div class="is-golden large"><i class="fa fa-chevron-right" aria-hidden="true"></i>
+		<div class="is-gold large"><i class="fa fa-chevron-right" aria-hidden="true"></i>
 		<b>Opportunity Posted Successfully</b></div>
 		<span class="is-darkgray big"><b>{{postedOpp.company + " " + postedOpp.opportunity_type}}</b></span><br />
-		<span class="is-golden">{{postedOpp.created_at | moment("MMM DD, YYYY")}}</span>
+		<span class="is-gold">{{postedOpp.created_at | moment("MMM DD, YYYY")}}</span>
 	</div>
 	</div>
 	<div class="col-xs-12 col-sm-11 col-md-11 col-lg-11">
-		<div class="is-golden"><b>Information Update</b></div>
+		<div class="is-gold"><b>Information Update</b></div>
 		<p class="is-darkgray small"><b>Our opportunity creator is currently free for a limited time.</b></p>
   	</div>
   </div>

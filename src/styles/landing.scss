@@ -1,0 +1,77 @@
+// promo pages list style
+
+.lh-list li {
+	display: flex;
+	align-items: center;
+	font-size: 1.05rem;
+	color: $color-midgray;
+	line-height: 1.5em;
+	margin-bottom: 1rem;
+}
+
+.info-text-controls {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.learnmore-text-controls {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.signup-button {
+	height: auto;
+	-webkit-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.signup-underline {
+	margin-top: 0.3rem;
+	border-bottom: 2px solid $color-midgray;
+	width: 85%;
+	margin-left: 0px;
+	-webkit-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.learnmore-underline {
+	margin-top: 0.3rem;
+	border-bottom: 2px solid $color-midgray;
+}
+
+
+.button-package:hover .signup-underline {
+	border-color: $color-gold;
+	animation: lengthen 1.5s forwards;
+    -webkit-animation: lengthen 1.5s forwards;
+}
+
+.button-package:hover .signup-button {
+	color: $color-darkred;
+}
+
+@keyframes lengthen {
+	from { width: 8%; }
+    to { width: 85%; }
+}
+
+@-webkit-keyframes lengthen {
+	from { width: 8%; }
+    to { width: 85%; }
+}
+
+.conclusion {
+	position: relative;
+	text-align: center;
+}
+
+@media all and (min-width: $bp-med) {
+
+	.heading {
+		font-size: 3rem;
+	}
+}

@@ -9,6 +9,7 @@ import { store } from '@/store/store/'
 import opportunityBoard from '@/components/opportunities/opportunityBoard'
 import notFound from '@/components/notFound'
 import firebaseApp from '@/firebase/init'
+import home from '@/components/static_pages/home'
 
 //lazy loading signUp
 const signUp = resolve => {
@@ -29,6 +30,7 @@ const router = new Router({
         return {x: 0, y: 0};
     },
     routes: [
+        { path: '/home', name: 'home', component: home},
         { path: '/', redirect: '/signup' },
         { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
         { path: '/about/:page', name: 'terms', component: pageStatic},

@@ -1,9 +1,9 @@
 <template>
   <div class="text-center">
   	<div class="avatar-icon-border">
-  		<i class="fa fa-check is-golden" aria-hidden="true"></i>
+  		<i class="fa fa-check is-gold" aria-hidden="true"></i>
   	</div><br />
-  	<h3 class="is-golden">Sent Successfully</h3>
+  	<h3 class="is-gold">Sent Successfully</h3>
   	<p>Application materials are sent. You should hear from the company in due course. Good luck!</p>
   </div>
 </template>

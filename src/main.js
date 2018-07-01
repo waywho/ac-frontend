@@ -4,17 +4,13 @@ import Vue from 'vue'
 import App from './App'
 import { store } from './store/store'
 import vueMoment from 'vue-moment'
-import 'chart.js'
 import VueMediaEmbed from 'vue-media-embed'
-import 'hchs-vue-charts'
 import Vuex from 'vuex'
 import VueChatScroll from 'vue-chat-scroll';
 import firebaseApp from '@/firebase/init';
-import router from '@/router'
-
+import router from '@/router';
 
 Vue.use(VueMediaEmbed, { store });
-Vue.use(VueCharts);
 Vue.use(require('vue-moment'));
 Vue.use(firebaseApp);
 Vue.use(VueChatScroll);

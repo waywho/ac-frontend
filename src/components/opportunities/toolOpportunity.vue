@@ -2,7 +2,7 @@
   	<div class="opportunity-panel">
   		<div v-if="component === ''" class="tool-panel-left-padding">
   			<h2>Opportunity</h2>
-			<span class="is-golden"><b>Manage or Create Your Opportunities</b></span>
+			<span class="is-gold"><b>Manage or Create Your Opportunities</b></span>
 			
 			<div class="start-options" @click="component = 'opportunity-create'">
 				<h3>Create Opportunity</h3>
@@ -46,10 +46,15 @@ export default {
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
 .opportunity-panel {
-	height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+	height: auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding-bottom: 40px;
+}
+
+.tool-panel-left-padding {
+	padding-left: $body-padding-small;
 }
 
 .start-options {
@@ -68,5 +73,31 @@ export default {
 	transition: all 0.2s;
 }
 
+
+
+
+@media all and (min-width: $bp-small) {
+
+  .tool-panel-left-paddning {
+    padding-left: $body-padding-small;
+  }
+
+}
+
+@media all and (min-width: $bp-med) {
+
+  .tool-panel-left-padding {
+    padding-left: $body-padding-small;
+  }
+
+}
+
+
+@media all and (min-width: $bp-med-2) {
+  .tool-panel-left-padding {
+    padding-left: $body-padding-large;
+  }
+
+}
 
 </style>

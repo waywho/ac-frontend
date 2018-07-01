@@ -1,0 +1,182 @@
+
+.ball{
+    position:absolute;
+    z-index:2147483647;
+    border-radius:100%
+}
+
+.ball-1 {
+	position: absolute;
+	z-index: 2147483647;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+}
+
+.ball-2 {
+	position: absolute;
+	z-index: 2147483647;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+}
+
+
+.top-20{
+    top:20%
+}
+.top-30{
+    top:30%
+}
+.top-40{
+    top:40%
+}
+.top-50{
+    top:50%
+}
+.top-70{
+    top:70%
+}
+.top-75{
+    top:75%
+}
+.top-90{
+    top:90%
+}
+.left-20{
+    left:20%
+}
+.left-30{
+    left:30%
+}
+.left-40{
+    left:40%
+}
+.left-50{
+    left:50%
+}
+.left-60{
+    left:60%
+}
+.left-70{
+    left:70%
+}
+
+.anim-delay-1{
+    -webkit-animation-delay:1s;
+    animation-delay:1s
+}
+.anim-delay-2{
+    -webkit-animation-delay:2s;
+    animation-delay:2s
+}
+.anim-delay-3{
+    -webkit-animation-delay:3s;
+    animation-delay:3s
+}
+.anim-delay-4{
+    -webkit-animation-delay:4s;
+    animation-delay:4s
+}
+
+.animate{
+    -webkit-transition:all .2s ease-in-out;
+    -o-transition:all .2s ease-in-out;
+    transition:all .2s ease-in-out
+}
+.anim-vertical{
+    -webkit-animation:anim-vertical 7s ease-in-out infinite alternate;
+    animation:anim-vertical 7s ease-in-out infinite alternate
+}
+.anim-horizontal{
+    -webkit-animation:anim-horizontal 11s ease-in-out infinite alternate;
+    animation:anim-horizontal 11s ease-in-out infinite alternate
+}
+.anim-diagonal-right{
+    -webkit-animation:anim-diagonal-right 9s ease-in-out infinite alternate;
+    animation:anim-diagonal-right 9s ease-in-out infinite alternate
+}
+.anim-diagonal-left{
+    -webkit-animation:anim-diagonal-left 8s ease-in-out infinite alternate;
+    animation:anim-diagonal-left 8s ease-in-out infinite alternate
+}
+@-webkit-keyframes anim-vertical{
+    0%{
+        -webkit-transform:matrix(1,0,0,1,0,0);
+        transform:matrix(1,0,0,1,0,0)
+    }
+    to{
+        -webkit-transform:matrix(-1,0,0,-1,0,-80);
+        transform:matrix(-1,0,0,-1,0,-80)
+    }
+}
+@keyframes anim-vertical{
+    0%{
+        -webkit-transform:matrix(1,0,0,1,0,0);
+        transform:matrix(1,0,0,1,0,0)
+    }
+    to{
+        -webkit-transform:matrix(-1,0,0,-1,0,-80);
+        transform:matrix(-1,0,0,-1,0,-80)
+    }
+}
+@-webkit-keyframes anim-horizontal{
+    0%{
+        -webkit-transform:matrix(1,0,0,1,0,0);
+        transform:matrix(1,0,0,1,0,0)
+    }
+    to{
+        -webkit-transform:matrix(-1,0,0,-1,-80,0);
+        transform:matrix(-1,0,0,-1,-80,0)
+    }
+}
+@keyframes anim-horizontal{
+    0%{
+        -webkit-transform:matrix(1,0,0,1,0,0);
+        transform:matrix(1,0,0,1,0,0)
+    }
+    to{
+        -webkit-transform:matrix(-1,0,0,-1,-80,0);
+        transform:matrix(-1,0,0,-1,-80,0)
+    }
+}
+@-webkit-keyframes anim-diagonal-right{
+    0%{
+        -webkit-transform:matrix(1,0,0,1,0,0);
+        transform:matrix(1,0,0,1,0,0)
+    }
+    to{
+        -webkit-transform:matrix(-1,0,0,-1,80,-80);
+        transform:matrix(-1,0,0,-1,80,-80)
+    }
+}
+@keyframes anim-diagonal-right{
+    0%{
+        -webkit-transform:matrix(1,0,0,1,0,0);
+        transform:matrix(1,0,0,1,0,0)
+    }
+    to{
+        -webkit-transform:matrix(-1,0,0,-1,80,-80);
+        transform:matrix(-1,0,0,-1,80,-80)
+    }
+}
+@-webkit-keyframes anim-diagonal-left{
+    0%{
+        -webkit-transform:matrix(1,0,0,1,0,0);
+        transform:matrix(1,0,0,1,0,0)
+    }
+    to{
+        -webkit-transform:matrix(-1,0,0,-1,-80,-80);
+        transform:matrix(-1,0,0,-1,-80,-80)
+    }
+}
+@keyframes anim-diagonal-left{
+    0%{
+        -webkit-transform:matrix(1,0,0,1,0,0);
+        transform:matrix(1,0,0,1,0,0)
+    }
+    to{
+        -webkit-transform:matrix(-1,0,0,-1,-80,-80);
+        transform:matrix(-1,0,0,-1,-80,-80)
+    }
+}

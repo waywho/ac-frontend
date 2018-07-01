@@ -1,6 +1,6 @@
 <template>
 	<div class="event-list">
-		<span v-if="currentDateContext" class="is-golden large">{{currentDateContext | moment("dddd MMMM DD, YYYY")}}</span><span v-if="currentDateContext" class="text-button" @click="resetDates">see all</span>
+		<span v-if="currentDateContext" class="is-gold large">{{currentDateContext | moment("dddd MMMM DD, YYYY")}}</span><span v-if="currentDateContext" class="text-button" @click="resetDates">see all</span>
 		<div v-for="event in currentEvents" class="event-item">
 			<div class='dot-content'>
 				<div class="dot"></div>
@@ -8,10 +8,10 @@
 			<div class="event-item-content">
 				<div class="content-full big medium">{{event.title}}</div>
 				<div v-if="!currentDateContext" class="content-half small">{{event.date | moment("YYYY-MM-DD")}}</div>
-				<div v-else class="content-half is-golden smaller strong">{{event.type}}</div>
+				<div v-else class="content-half is-gold smaller strong">{{event.type}}</div>
 
 				<div class="content-half text-right small">{{event.start}}</div>
-				<div v-if="!currentDateContext" class="content-full is-golden smaller strong">{{event.type}}</div>
+				<div v-if="!currentDateContext" class="content-full is-gold smaller strong">{{event.type}}</div>
 				<div class="content-full small">{{event.desc}}</div>
 				
 			</div>

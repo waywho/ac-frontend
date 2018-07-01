@@ -1,44 +1,45 @@
 <template>
   <div class="memberships">
-  	<div class="hero-section">
-  		<div class="hero-banner">
-		  	<div class="hero-image" :style="{'background-image': 'url('+ heroImage +')'}">
-		  	</div>
-		</div>
-  		<div class="row hero-promo">
-  			<div class="panel-1 col-xs-12 col-sm-5">
 
-  				<span v-html="heroPromoTitle"></span>
-  			</div>
-  		</div>
-  	</div>
-  	<div class="features-section">
-  		<div class="features-inner">
-  			<h2>Memberships.</h2>
-  			<div class="row membership-details">
-	  			<div class="col-xs-12 col-sm-4" v-for="(membership, index) in memberships">
-	  				<div :class="['details-header', 'header' + index]">
-		  				<i v-if="membership.type==='artist'" class="fa fa-user-o" aria-hidden="true"></i>
-		  				<i v-if="membership.type==='company'" class="fa fa-building-o" aria-hidden="true"></i>
-		  				<i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-  					</div>
-	  				<div class="details-tile">
-	  					<div class="tile-title medium">{{membership.name}} membership</div>
-  						
-  						<div :class="['details-text', 'benefits'+index]">
-  							<ul>
-	  							<li v-for="benefit in membership.benefits">{{benefit}}</li>
-	  						</ul>
-  						</div>
-  						
-  						<span class="medium learn-action">Create Account</span>	  					
-	  				</div>
-	  			</div>
-  			</div>
-  		</div>
-  	</div>
+	<h1 class="is-lightgray">Memberships</h1>
+	<span class="h3 is-lightgray">Opportunity. Connect. <span class='is-gold'>Go.</span></span>
+
+	<div class="membership-details" v-for="(membership, index) in memberships">
+		<div class="membership-circle">
+			<img :src="require('@/assets/images/artistcenter-logo.png')" />
+		</div>
+		<h2 class="is-lightgray membership-heading">{{membership.name}} Membership</h2>
+
+		<ul class="arrow-list lh-list">
+			<li v-for="benefit in membership.benefits">{{benefit}}</li>
+		</ul>
+		<div class="info-text-controls" id="membership-controls">
+        	<div class="button-package"> 
+            	<router-link to="/signup" rel="noopener nofollow" class="signup-button is-gold strong">Sign Up Now</router-link>
+           		<hr class="signup-underline" />
+        	</div>
+    	</div>					
+	</div>
+	<div class="conclusion">
+        		<h2 class="heading"><span class="is-gold">Everything You Need</span></h2>
+        		<h3 class="is-lightgray">to promote your opera career or organization online</h3>
+				<div class="learnmore-text-controls">
+					<div class="button-package">
+	            		<router-link to="/signup" rel="noopener nofollow" class=" signup-button is-gold strong">Learn More</router-link>
+	            		<hr class="learnmore-underline" />
+            		</div>
+	        	</div>
+        		<aside role="presentation" aria-hidden="true" class="ball-2 top-40 left-60 anim-diagonal-right bg-lightgray"></aside>
+                <aside role="presentation" aria-hidden="true" class="ball-1 top-20 left-70 anim-horizontal bg-gold"></aside>
+                <aside role="presentation" aria-hidden="true" class="ball-1 top-30 left-70 anim-diagonal-left bg-gold"></aside>
+                <aside role="presentation" aria-hidden="true" class="ball-2 top-20 left-40 anim-vertical anim-delay-1 bg-lightgray"></aside>
+                <aside role="presentation" aria-hidden="true" class="ball-1 top-30 left-30 anim-horizontal anim-delay-3 bg-gray"></aside>
+                <aside role="presentation" aria-hidden="true" class="ball-1 top-75 left-60 anim-diagonal-left anim-delay-2 bg-gold"></aside>
+                <aside role="presentation" aria-hidden="true" class="ball-1 top-50 left-20 anim-vertical anim-delay-3 bg-gold"></aside>
+
+        	</div>
+
   </div>
-  <div class
 </template>
 
 <script>
@@ -47,35 +48,19 @@ export default {
   data () {
     return {
     	heroImage: require("@/assets/images/membership-hero.jpg"),
-    	heroPromoTitle: "Opportunity. <br />Connect.</br><span class='is-golden'>Go.</span>",
+    	heroPromoTitle: "",
     	memberships: [
 	      	{
 	      		type: 'artist',
-	      		name: 'Adagio Artist',
+	      		name: 'Artist',
 	      		benefits: [
 	      			'Free Mmbership',
-	      			'Promotional Web Page',
-	      			'Private Reviews and Blog',
-	      			'Media Platform',
-	      			'Full Social Network Platform',
+	      			'3GB Cloud Storage',
 	      			'Multilingual Support',
-	      			"Database access"
-	      		]
-	      	},
-	      	{
-	      		type: 'artist',
-	      		name: 'Andante Artist',
-	      		benefits: [
-	      			'Free Mmbership',
-	      			'Promotional Web Page',
-	      			'Private Reviews and Blog',
-	      			'Media Platform',
-	      			'Full Social Network Platform',
-	      			'Multilingual Support',
-	      			"Database access",
-	      			"Premium Content Access",
-	      			"Full @Operaop Email hosting",
-	      			"Free Online Advertising"
+	      			'Full Email Hosting',
+	      			'Messaging & Timeline',
+	      			'Online Cv & Media Display',
+	      			'Full Audition Board Access'
 	      		]
 	      	},
 	      	{
@@ -83,16 +68,13 @@ export default {
 	      		name: 'Company',
 	      		benefits: [
 	      			'Free Mmbership',
-	      			'Multiple Andante Logins',
-	      			'Private Reviews and Blog',
-	      			'Team Pages and Sub Tabs',
-	      			'Media Platform',
-	      			'Full Social Network Platform',
+	      			'20GB Cloud Storage',
 	      			'Multilingual Support',
-	      			"Database access",
-	      			"Full @Operaop Email hosting",
-	      			"Free Online Advertising",
-	      			"Cross Company Support"
+	      			'Full Email Hosting',
+	      			'Messaging & Timeline',
+	      			'Company Account Features',
+	      			'Audition Creator & Posting',
+	      			'Budgeting & Marketing Assistant'
 	      		]
 	      	}
       	]
@@ -104,100 +86,56 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
-@import '../../styles/hero';
+@import '../../styles/landing';
+@import '../../styles/bouncing-balls';
 
-.hero-section {
-	padding-bottom: 50px;
-}
-
-.hero-image {
-	left: 0;
-	width: 100%;
-	height: 332px;
-}
-
-.hero-banner {
-	height: 332px;
-	margin-bottom: 109px;
-}
-
-.panel-1 {
-	font-size: 42px;
-	line-height: 48px;
-}
-
-.features-section {
-	padding-top: 263px;
-	color: $color-darkgray;
-	// height: 1740px;
-	// background-color: $color-tile;
-	padding-bottom: 187px;
-}
-
-.features-inner {
-	width: 90%;
-	margin: 0 auto;
+.memberships {
+	background-color: white;
+	text-align: center;
+	padding: $body-padding-small;
+	min-width: $app-min-width;
 }
 
 .membership-details {
-	align-items: stretch;
+	max-width: 400px;
+	padding: 0px 25px;
+	margin: 0px auto 200px;
 }
 
-.features-inner h2 {
-	color: $color-darkgray;
-	text-align: right;
+.membership-heading {
+	margin-top: 41px;
+	margin-bottom: 55px;
 }
 
-.details-tile {
-	background: #fff;
-	min-height: 1050px;
-	position: relative;
+.membership-circle {
+	width: 138px;
+	height: 138px;
+	border-radius: 50%;
+	margin: 25px auto;
+	padding: 15px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-.details-tile .learn-action {
-	position: absolute;
-	bottom: 92px;
+.membership-details:nth-child(odd) .membership-circle {
+	border: 9px solid $color-gold;
 }
 
-
-.header0 {
-	background-color: #f7c58d;
+.membership-details:nth-child(even) .membership-circle {
+	border: 9px solid $color-darkred;
 }
 
-.benefits0 ul li::before {
-	color: #f7c58d;
+.arrow-list {
+	margin-bottom: 64px;
 }
 
-.header1 {
-	background-color: $color-gold;
+#membership-controls {
+	justify-content: center;
 }
 
-.benefits1 ul li::before {
-	color: $color-gold;
-}
+@media all and (min-width: $bp-med) {
 
-.header2 {
-	background-color: $color-mud;
-}
-
-.benefits2 ul li::before {
-	color: $color-mud;
-}
-
-@media screen and (max-width: 46rem) {
-	.panel-1, .panel-2 {
-		padding-left: 34px;
-		padding-right: 34px;
-		margin-bottom: 80px;
-	}
-
-	.hero-banner {
-		margin-bottom: 172px;
-	}
-
-	.features-section {
-		padding-top: 34px;
-	}
 }
 
 </style>

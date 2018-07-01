@@ -1,9 +1,9 @@
 <template>
   <div class="notifications">
-  	<h3 class="xs-visible sm-hide is-golden">Notifications</h3>
+  	<h3 class="xs-visible sm-hide is-gold">Notifications</h3>
   	<div v-for="note in notificationList" class="note">
         <avatar class="note-avatar" :image-source="note.image" :border="false" :name="note.name" :size="'small'"></avatar>
-        <div class="note-details"><span class='is-golden'>{{note.name}}</span> {{note.action}}</div>
+        <div class="note-details"><span class='is-gold'>{{note.name}}</span> {{note.action}}</div>
   	</div>
   </div>
 </template>

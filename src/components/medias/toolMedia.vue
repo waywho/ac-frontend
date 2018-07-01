@@ -198,6 +198,10 @@ export default {
   float: right;
 }
 
+.selection-text {
+  margin-left: 0px;
+}
+
 @media all and (min-width: $bp-small) {
   .media {
     display: flex;

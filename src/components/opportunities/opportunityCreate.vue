@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-xs col-sm col-md col-lg tool-panel-left-padding">
       <h2>Opportunity</h2>
-      <span class="is-golden"><b>Create Your Opportunities</b></span>
+      <span class="is-gold"><b>Create Your Opportunities</b></span>
         <h3>{{stepHeading | capitalize}}</h3>
         <progress-bar v-if="currentStep !== 3" :current-step="currentStep" :setup-steps="setupSteps"></progress-bar>
         <transition name="fade" mode="out-in">

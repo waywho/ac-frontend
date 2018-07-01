@@ -86,7 +86,7 @@ export default {
 
 @media all and (min-width: $bp-med) {
 	#footer {
-		padding: 125px $body-padding-small 40px;
+		padding: 125px $body-padding-large 40px;
 	}
 }
 </style>

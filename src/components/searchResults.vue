@@ -1,6 +1,6 @@
 <template>
   <div class="search-results">
-  	<div class="search-heading"><h3 class="is-golden">Search Results</h3></div>
+  	<div class="search-heading"><h3 class="is-gold">Search Results</h3></div>
   		<div class="search-results-inner">
   			<div class="section-title">
 	  			<img src='../assets/images/artistprofile-icon.png' alt="artist profile results icon" class="result-icon" /><span class="medium large">People</span>
@@ -11,7 +11,7 @@
          </div>
   				<div class="profile-details">
   					<div class="medium">{{profile.name}}</div>
-  					<div class="smaller"><span class="is-golden role">{{profile.role}}</span> in {{profile.city}}, {{profile.province}} </div>
+  					<div class="smaller"><span class="is-gold role">{{profile.role}}</span> in {{profile.city}}, {{profile.province}} </div>
   				</div>
   			</div>
 
@@ -24,7 +24,7 @@
           </div>
   				<div class="">
   					<div class="medium">{{profile.name}}</div>
-  					<div class="smaller"><span class="is-golden role">{{profile.companyType}}</span> company in {{profile.city}}, {{profile.province}} </div>
+  					<div class="smaller"><span class="is-gold role">{{profile.companyType}}</span> company in {{profile.city}}, {{profile.province}} </div>
   				</div>
   			</div>
   		</div>

@@ -3,7 +3,7 @@
 		<div class="not-found-inner">
 			<h1 class="title">Oops!</h1>
 			<div class="info">
-				<div class="strong is-golden error-code">Error Code: 404</div>
+				<div class="strong is-gold error-code">Error Code: 404</div>
 				<span class="large medium is-midgray">Our apologies, we can't find the page you are looking for.</span><br />
 				<br />
 				<span class="medium is-midgray">Try these links instead</span>

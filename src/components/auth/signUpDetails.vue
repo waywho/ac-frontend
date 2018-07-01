@@ -10,7 +10,7 @@
     		<div v-if="key === 'descriptions'" class="description-input-kit">
           <label class="strong label-header">{{key | camel-to-space}}</label>
           <textarea type="text" class="signup-input" name="name" :placeholder="'Enter ' + type + ' descriptions'" v-model="currentDetails[key]" rows="7" maxlength="160" /></textarea>
-          <span class="smaller word-count is-golden">{{160 - currentDetails.descriptions.length}}</span>
+          <span class="smaller word-count is-gold">{{160 - currentDetails.descriptions.length}}</span>
         </div>
         <div v-if="key === 'country'">
           <label class="strong label-header">{{key | camel-to-space}}</label>

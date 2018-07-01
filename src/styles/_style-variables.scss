@@ -1,5 +1,5 @@
-$color-silver: #cccbcb !default;
-$color-lightgray: #d4d4d4 !default;
+$color-silver: #ebe7e7 !default; // cccbcb
+$color-lightgray: #c5c1c1 !default; //d4d4d4
 $color-midgray: #8d8d8d !default;
 $color-darkgray: #3e3c3c !default;
 $color-black: #0d0d0e !default;
@@ -10,6 +10,7 @@ $color-tile: #faf6f6 !default;
 $color-darkred: #9e0b0f !default;
 $color-mud: #c3bbad !default;
 $color-body: #f9f9f9 !default;
+$color-eggwhite: #fefbf6 !default;
 
 // States
 $color-error: #f03c69 !default;
@@ -46,22 +47,22 @@ $tool-panel-height: 582px !default;
 // Headings
 // Font Size
 // By default: 60, 48, 36, 24, 21, 18, 16
-$heading-font-size-title: 48px !default;
-$heading-font-size-1: 40px !default;
-$heading-font-size-2: 31px !default;
-$heading-font-size-3: 25px !default;
-$heading-font-size-4: 20px !default;
-$heading-font-size-5: 16px !default;
-$heading-font-size-6: 15px !default;
+$heading-font-size-title: 60px !default;
+$heading-font-size-1: 48px !default;
+$heading-font-size-2: 36px !default;
+$heading-font-size-3: 24px !default;
+$heading-font-size-4: 21px !default;
+$heading-font-size-5: 18px !default;
+$heading-font-size-6: 16px !default;
 
 // Baseline
-$heading-base-line-title: 52px !default;
-$heading-base-line-1: 44px !default;
-$heading-base-line-2: 35px !default;
-$heading-base-line-3: 29px !default;
-$heading-base-line-4: 24px !default;
-$heading-base-line-5: 20px !default;
-$heading-base-line-6: 19px !default;
+$heading-base-line-title: 1.15 !default;
+$heading-base-line-1: 1.15 !default;
+$heading-base-line-2: 1.15 !default;
+$heading-base-line-3: 1.15 !default;
+$heading-base-line-4: 1.15 !default;
+$heading-base-line-5: 1.15 !default;
+$heading-base-line-6: 1.15 !default;
 
 // Margin
 $heading-margin-bottom: $font-size !default;
@@ -119,11 +120,16 @@ $input-border-radius: 10px !default;
 
 // header
 $header-height: 100px !default;
-$header-search-height-mobile: 50px !default;
+$header-search-height-mobile: 58px !default; //34 + 12 + 12
 $header-height-mobile: $header-height + $header-search-height-mobile !default;
+$header-home-logo-margin-bottom: 72px !default;
+$header-home-logo-margin-top: 100px !default;
+$header-home-logo-mobile-height: 128px !default;
+$header-home-logo-height: 78px !default;
+$header-height-home-mobile: $header-height + $header-search-height-mobile + $header-home-logo-mobile-height + $header-home-logo-margin-bottom !default;
+$header-height-home: $header-home-logo-margin-top + $header-height +  $header-home-logo-height + $header-home-logo-margin-bottom !default;
 
-
-//
+//footer
 
 $footer-height: 640px !default;
 

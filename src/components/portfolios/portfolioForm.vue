@@ -22,9 +22,9 @@
             <label v-if="key === 'scenesOrCovers'" :for="index + 'scenes'" :key="ind + 'sceneLabel'"><span></span>Scenes or Covers</label>
           </div>
 				</div>
-				<div class="smaller is-golden col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'operaRoles')">remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
+				<div class="smaller is-gold col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'operaRoles')">remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
 			</div>
-			<span @click="addFields('role', 'operaRoles')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
+			<span @click="addFields('role', 'operaRoles')" class="smaller is-gold add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
       <div class="button-row">
         <success-warning-notice  v-if="messageShow['operaRoles']" :class="'warning-message'"></success-warning-notice>
         <button @click="updateProfileTools('operaRoles', 'portfolio')" class="form-button">save</button>
@@ -37,10 +37,10 @@
 				<div v-for="(value, key, ind) in concert" :key="ind + key" class="col-xs-12 col-sm-6 input-space">
 						<input :id="key + index" :key="ind + key" v-model="concertAndOratorios[index][key]" :placeholder="key | camel-to-space" />
 				</div>
-				<div class="smaller is-golden col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'concertAndOratorios')" >remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
+				<div class="smaller is-gold col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'concertAndOratorios')" >remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
 			</div>
 
-			<span @click="addFields('concert', 'concertAndOratorios')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
+			<span @click="addFields('concert', 'concertAndOratorios')" class="smaller is-gold add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
       <div class="button-row">
            <success-warning-notice  v-if="messageShow['concertAndOratorios']" :class="'warning-message'"></success-warning-notice>
          <button @click="updateProfileTools('concertAndOratorios', 'portfolio')" class="form-button">save</button>
@@ -53,10 +53,10 @@
 				<div v-for="(value, key, ind) in training" :key="ind + key" class="col-xs-12 col-sm-6 input-space">
 						<input :id="key + index" :key="ind + key" v-model="trainingAndEducations[index][key]" :placeholder="key | camel-to-space" />
 				</div>
-				<div class="smaller is-golden col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'trainingAndEducations')">remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
+				<div class="smaller is-gold col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'trainingAndEducations')">remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
 			</div>
 
-			<span @click="addFields('training', 'trainingAndEducations')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
+			<span @click="addFields('training', 'trainingAndEducations')" class="smaller is-gold add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
 			<div class="button-row">
         <success-warning-notice  v-if="messageShow['trainingAndEducations']" :class="'warning-message'"></success-warning-notice>
            <button @click="updateProfileTools('trainingAndEducations', 'portfolio')" class="form-button">save</button>
@@ -69,10 +69,10 @@
 				<div v-for="(value, key, ind) in award" :key="ind + key" class="col-xs-12 col-sm-6 input-space">
 						<input :id="key + index" :key="ind + key" v-model="competitionAwardScholarships[index][key]" :placeholder="key | camel-to-space" />
 				</div>
-				<div class="smaller is-golden col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'competitionAwardScholarships')" >remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
+				<div class="smaller is-gold col-xs-12 col-sm-12 text-right"><span class="add-role" @click="removeFields(index, 'competitionAwardScholarships')" >remove <i class="fa fa-minus" aria-hidden="true"></i></span></div>
 			</div>
 
-			<span @click="addFields('award', 'competitionAwardScholarships')" class="smaller is-golden add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
+			<span @click="addFields('award', 'competitionAwardScholarships')" class="smaller is-gold add-role">add <i class="fa fa-plus" aria-hidden="true"></i></span>
 			<div class="button-row">
         <success-warning-notice  v-if="messageShow['competitionAwardScholarships']" :class="'warning-message'"></success-warning-notice>
            <button @click="updateProfileTools('competitionAwardScholarships', 'portfolio')" class="form-button">save</button>

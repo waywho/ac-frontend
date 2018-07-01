@@ -116,8 +116,8 @@ export default {
     }
   },
   created() {
-		this.opportunityTypes = this.$store.state.opportunityTypes
-		this.paymentTypes = this.$store.state.paymentTypes
+		// this.opportunityTypes = this.$store.state.opportunityTypes
+		// this.paymentTypes = this.$store.state.paymentTypes
     if(this.mode !== 'inputMode') {
       this.selectedFilters.region = 'all'
       this.selectedFilters.country = 'all'

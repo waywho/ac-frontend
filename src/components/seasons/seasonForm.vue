@@ -1,6 +1,6 @@
 <template>
   <modal @close="$emit('close')">
-  		<h3 slot='header' class='portfolio-header'>{{stepHeading}}<span v-if="currentSeason.name">: <span class="is-golden">{{currentSeason.name}}</span></span></h3>
+  		<h3 slot='header' class='portfolio-header'>{{stepHeading}}<span v-if="currentSeason.name">: <span class="is-gold">{{currentSeason.name}}</span></span></h3>
 		<hr slot='header' class='portfolio-line' />
 
 		<div slot='body'>

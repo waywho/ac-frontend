@@ -9,7 +9,7 @@
   		<div v-for="(field, key, index) in opportunityFields" :key="key" v-if="currentField === key">
   			
   			<label :for="key" v-if="currentField === key">Please enter the {{field.name}} below</label>
-        <div v-if="key === 'payment_details'" class="small payment-type"><i class="fa fa-check-square is-golden " aria-hidden="true"></i> <span class="is-golden">{{opp.payment_type | capitalize}}</span> <span class="is-darkgray">opportunity</span></div>
+        <div v-if="key === 'payment_details'" class="small payment-type"><i class="fa fa-check-square is-gold " aria-hidden="true"></i> <span class="is-gold">{{opp.payment_type | capitalize}}</span> <span class="is-darkgray">opportunity</span></div>
 
 	  		<input v-if="field.type !== 'textarea' && key !== 'audition_dates' && key !== 'age'" :id="key" :type="field.type"  v-model="opportunity[key]" :placeholder="field.name" @focus="showMessage = false"/>
 	  		
@@ -42,7 +42,7 @@
 
 	  		<vue-slider ref="slider" :show="currentField === key" v-if="key === 'age'" :id="key" v-model="opportunity[key]" :min="0" :max="100" :processStyle="{'backgroundColor': '#cd9d2b'}" :tooltipStyle="{'backgroundColor': '#cd9d2b', 'borderColor': '#cd9d2b', 'font-size': '12px', 'borderRadius': '50%', 'height': '28px', 'width': '28px'}" :tooltip-dir="'bottom'" class="slider-comp"></vue-slider>
 
-	  		<span v-if="key === 'age' && !no_age" class="is-golden"><b>{{opportunity.age[0]}} - {{opportunity.age[1]}} years old</b></span> 
+	  		<span v-if="key === 'age' && !no_age" class="is-gold"><b>{{opportunity.age[0]}} - {{opportunity.age[1]}} years old</b></span> 
 	  	  <div class="field-warning" v-if="currentField === 'title'"><success-warning-notice v-if="showMessage" :messaging="messaging"></success-warning-notice></div>
   		</div>
     </transition>

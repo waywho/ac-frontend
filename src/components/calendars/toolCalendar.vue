@@ -89,8 +89,18 @@ export default {
   justify-content: space-between;
 }
 
+.tool-panel-paddings {
+  padding-left: $body-padding-small;
+  padding-right: $body-padding-small;
+}
+
 .calendar-display {
   margin-bottom: 25px;
+}
+
+#tool-panel-flow {
+  padding-left: $body-padding-small;
+  overflow-y: auto;
 }
 
 .fa-times {
@@ -99,14 +109,28 @@ export default {
 
 
 @media all and (min-width: $bp-small) {
-  #tool-panel-flow {
-    padding-left: 100px;
-    overflow-y: auto;
-  }
 
   .tool-panel-paddings {
-    padding-left: 100px;
-    padding-right: 25px;
+    padding-left: $body-padding-small;
+    padding-right: $body-padding-small;
+  }
+
+}
+
+@media all and (min-width: $bp-med) {
+
+  .tool-panel-paddings {
+    padding-left: $body-padding-small;
+    padding-right: $body-padding-small;
+  }
+
+}
+
+
+@media all and (min-width: $bp-med-2) {
+  .tool-panel-paddings {
+    padding-left: $body-padding-large;
+    padding-right: $body-padding-small;
   }
 
 }

@@ -2,7 +2,7 @@
   <modal @close="$emit('close')" class="production-details">
 
   	<div slot="header" class="production-header">
-  		<span class="is-golden leading-text">{{season.name}}</span><br />
+  		<span class="is-gold leading-text">{{season.name}}</span><br />
   		<h2>Company Season</h2>
   		<i class="fa fa-times large is-darkgray close-button" aria-hidden="true" @click="$emit('close')"></i>
   	</div>
@@ -15,7 +15,7 @@
 	            </div>
 	            <div class="production-title">
 	              <h3>{{production.name}}</h3>
-	              <span class="is-golden"><b>{{production.dates[0].date | moment("MMMM")}}</b></span>
+	              <span class="is-gold"><b>{{production.dates[0].date | moment("MMMM")}}</b></span>
 	            </div>
         	</div>
 

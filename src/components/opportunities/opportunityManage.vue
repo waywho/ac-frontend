@@ -1,7 +1,7 @@
 <template>
   <div class="opportunity-manage">
     <h2>Opportunity</h2>
-    <span class="is-golden"><b>Manage Your Opportunities</b></span>
+    <span class="is-gold"><b>Manage Your Opportunities</b></span>
       <div class="row">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
           <h4>My Auditions</h4>

@@ -6,7 +6,7 @@
 		  <div v-if="signedIn" class="sign-out" v-on:click="signOut();">Sign Out</div>
 		</div>
 		<div class="menu-brand">
-		  	<div v-on:click="toggleMenu()" class="large strong">Opportunity. Connect.<span class="is-golden"> Go.</span></div>
+		  	<div v-on:click="toggleMenu()" class="large strong">Opportunity. Connect.<span class="is-gold"> Go.</span></div>
 		  	
 		</div>
 		<ul class="menu-list non-list">
@@ -15,11 +15,11 @@
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/memberships">Memberships</router-link></li>
 		</ul>
 
-		<div class="medium social-heading is-golden"><b>Follow Us</b></div>
+		<div class="medium social-heading is-gold"><b>Follow Us</b></div>
 		<ul class="menu-list non-list">
-			<li>facebook</li>
-			<li>twitter</li>
-			<li>instagram</li>
+			<li class="small">facebook</li>
+			<li class="small">twitter</li>
+			<li class="small">instagram</li>
 		</ul>
 		<div class="is-lightgray copy-right-container">
 			<p><router-link to="/about/terms">Terms & Support</router-link></p>

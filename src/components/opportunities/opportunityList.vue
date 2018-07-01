@@ -1,7 +1,7 @@
 <template>
 	<div  class="col-xs-12 col-md-10 col-lg-10 opportunity-board">
   		<h3>Opportunity Board Search Results</h3>
-  		<b class="is-golden">{{opportunityNum}} Matches Found</b>
+  		<b class="is-gold">{{opportunityNum}} Matches Found</b>
   		<p>Based on your selected criteria, opportunities are listed below. Click on the opportunities to apply</p>
   		<div class="small search-revise" @click="$emit('filter-component', 'opportunity-filter')"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i><b> Revise Search Criteria</b></div>
   		<div class='sort-checkboxes form-checkboxes'>

@@ -2,8 +2,9 @@
   <div id="header">
     <div class="header-inner">
       <ul class="non-list header-items header-items-left">
-        <li class="logo">
-          <router-link to="/"><img :src="require('@/assets/images/artistcenter-logo.png')" alt="artistcenter logo" /></router-link>
+        <li class="logo" v-if="!landingLogo">
+          <router-link to="/home"><img :src="require('@/assets/images/artistcenter-logo.png')" alt="artistcenter logo" />
+          </router-link>
         </li>
         
         <li class="search header-item-space" id="search-element">
@@ -29,8 +30,14 @@
         </li>
       </ul>
     </div>
+    <div class="home-logo" v-if="landingLogo">
+      <router-link to="/home">
+        <img :src="require('@/assets/images/ac-logo-vertical.svg')" alt="artist center logo" class="mobile-logo" />
+        <img :src="require('@/assets/images/ac-logo-horizontal.svg')" alt="artist center logo" class="desktop-logo" /></router-link>
+
+    </div>
     <div class="xs-search">
-        <input type="search" v-on:keyup.enter="searchResults($event.target.value)" id="xs-search" class="small" placeholder="search profiles" />
+        <input type="search" v-on:keyup.enter="searchResults($event.target.value)" id="xs-search-input" class="small" placeholder="search profiles" />
     </div>
     <app-notifications v-if="showNotificatons" :profile-id="currentUserId" class="app-notification" :notification-list="notificationList" v-on-clickaway="away"></app-notifications>
   </div>
@@ -68,6 +75,9 @@ export default {
   },
   computed: {
     ...mapGetters(['currentUserId']),
+    landingLogo: function() {
+      return this.$route.name === 'home'
+    }
   },
   methods: {
     getNotifications: function() {
@@ -135,7 +145,7 @@ export default {
 @import '../../styles/style-variables';
 
 #header {
-  position: fixed !important;
+  position: fixed;
   background-color: #FFFFFF;
   top: 0;
   z-index: 998;
@@ -143,9 +153,16 @@ export default {
   width: 100%;
   max-width: $app-max-width;
   min-width: $app-min-width;
-  height: $header-height-mobile;
   transition: top 0.5s ease-in-out, left 1s ease-in-out;
   -webkit-transition: top 0.5s ease-in-out, left 1s ease-in-out;
+}
+
+.header-height {
+  height: $header-height-mobile;
+}
+
+.header-home-height {
+  height: $header-height-home-mobile;
 }
 
 .header-inner {
@@ -167,6 +184,23 @@ export default {
   display: inline-block;
   flex-basis: auto;
   width: 65%;
+}
+
+.home-logo {
+  height: $header-home-logo-mobile-height;
+  max-height: $header-home-logo-mobile-height;
+  margin: 0px auto $header-home-logo-margin-bottom;
+}
+
+.mobile-logo {
+  display: block;
+  height: 100%;
+  width: auto;
+  margin: 0 auto;
+}
+
+.desktop-logo {
+  display: none;
 }
 
 .header-items {
@@ -222,7 +256,6 @@ export default {
 }
 
 
-
 .avatar img {
   width: 100%;
   border-radius: 50%;
@@ -270,15 +303,44 @@ export default {
 .xs-search {
   display: block;
   width: 100%;
-  padding: 0px $body-padding-small;
+  background-color: $color-silver;
+  padding: 11px $body-padding-small 12px;
   height: $header-search-height-mobile;
 }
 
+#xs-search-input {
+  margin-bottom: 0px;
+  background-color: white;
+}
 
+
+.home-page-logo img {
+  width: auto;
+  height: 100%;
+  margin: 0px auto;
+}
 
 @media all and (min-width: $bp-med) {
   .logo {
     flex-basis: 40%;
+  }
+
+  .home-logo {
+    height: $header-home-logo-height;
+    max-height: $header-home-logo-height;
+    margin: $header-home-logo-margin-top 0px $header-home-logo-margin-bottom;
+  }
+
+  .mobile-logo {
+    display: none;
+  }
+
+  .desktop-logo {
+    display: block;
+    width: 70%;
+    height: auto;
+    max-height: 78px;
+    margin: 0px auto;
   }
   
   .logo img {
@@ -289,8 +351,12 @@ export default {
   }
 
 
-  #header {
+  .header-height {
     height: $header-height;
+  }
+
+  .header-home-height {
+    height: $header-height-home;
   }
 
   .header-inner {

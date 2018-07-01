@@ -1,13 +1,13 @@
 <template>
   <div>
 	<div class="tile">
-		<div class="is-golden"><b>{{opp.company}}</b></div>
+		<div class="is-gold"><b>{{opp.company}}</b></div>
 		<div class="small">{{opp.title}}</div>
 	</div>
 	<h3>Application Submission</h3>
 	<div class="application-submission">
 		<div>
-			<span class="is-golden"><b>Artist.Center Profile</b></span><br />
+			<span class="is-gold"><b>Artist.Center Profile</b></span><br />
 			<p class="small">Your profile, portfolio, and contact will be used to apply for this opportunity.</p>
 		</div>
 		<a target="_blank" :href="profile.profile_url" alt="profile url">
@@ -15,7 +15,7 @@
 				<avatar :image-source="profile.avatar_url" :border="true" :size="'medium'" :name="profile.name"></avatar>
 				
 				<div class="candidate-details">
-					<div class="candidate-name strong is-golden">{{profile.name}}</div>
+					<div class="candidate-name strong is-gold">{{profile.name}}</div>
 	        	<div class="small">{{profile.role}}</div>
 	        	
 				</div>

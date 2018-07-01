@@ -31,7 +31,7 @@
 		<div id="post-masonry">
 			<div v-for="(post, index) in displayPosts" class="post-tile" :key="index">
 				<div class="post-header">
-					<span class="name is-golden strong">{{post.name}}</span>
+					<span class="name is-gold strong">{{post.name}}</span>
 					<div class="status">
 						<span class="smaller">{{ post.timestamp | moment("from")}} </span><div class="comment-circle"></div><span class="smaller">posted a status</span>
 					</div>
@@ -45,7 +45,7 @@
 	          		<div v-else-if="post.imageURLs.length === 1" class="post-image"><img v-bind:src="post.imageURLs" /></div>
 	          	</div>
 	          	<div class="post-icons">
-		          	<span :class="[post.likes && post.likes[profileId] ? 'is-golden' : '']"><i class="fa fa-heart post-icon smaller" @click="toggleLikes(post.id)" aria-hidden="true"></i><span class="icon-count medium smaller">{{post.likeCount}}</span></span>
+		          	<span :class="[post.likes && post.likes[profileId] ? 'is-gold' : '']"><i class="fa fa-heart post-icon smaller" @click="toggleLikes(post.id)" aria-hidden="true"></i><span class="icon-count medium smaller">{{post.likeCount}}</span></span>
 	          	</div>
 			</div>
 		</div>

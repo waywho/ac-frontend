@@ -17,7 +17,7 @@
           </div>
           <div class="production-title">
             <h3>{{production.name}}</h3>
-            <span class="is-golden"><b>{{production.dates[0].date | moment("MMMM")}}</b></span>
+            <span class="is-gold"><b>{{production.dates[0].date | moment("MMMM")}}</b></span>
           </div>
         </div>
     </div>
@@ -120,15 +120,17 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   min-height: 100px;
   margin-right: 10px;
+  margin-bottom: 1rem;
 }
 
 .season-heading {
   flex-basis: auto;
   width: 100%;
   order: 1;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .season-list {
@@ -143,6 +145,7 @@ export default {
 }
 
 .season-edit {
+  float: right;
   visibility: hidden;
 }
 
@@ -218,9 +221,10 @@ export default {
 
   .title-row {
     justify-content: flex-end;
-    width: 305px;
-    min-width: 305px;
+    width: 355px;
+    min-width: 355px;
     margin-right: 65px;
+    margin-bottom: 0px;
   }
 
   .season-heading {
