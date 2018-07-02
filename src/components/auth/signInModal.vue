@@ -15,7 +15,7 @@
         <button type="submit" class="button sign-in-button">Sign In</button>
       </div>
   	</form>
-  	<div slot='footer' class="modal-footer is-darkgray">@Artist.Center 2017. All Rights Reserved.</div>
+  	<div slot='footer' class="modal-footer is-darkgray small">@Artist.Center 2017. All Rights Reserved.</div>
   </modal>
 </template>
 
