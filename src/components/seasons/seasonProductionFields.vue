@@ -223,8 +223,8 @@ export default {
 	  			
 	  		})
 
-        console.log('creatives', creatives)
-        console.log('casts', casts)
+        // console.log('creatives', creatives)
+        // console.log('casts', casts)
         if(creatives !== undefined && creatives.length > 0) {
           production.creatives = creatives
         }

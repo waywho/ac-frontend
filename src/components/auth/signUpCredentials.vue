@@ -90,7 +90,7 @@ export default {
   watch: {
     idToken(value) {
       if(value !== null && value !== undefined) {
-        console.log('id', this.$store.getters.currentUser.id)
+        // console.log('id', this.$store.getters.currentUser.id)
         this.$emit('successful-signup')
       }
     }

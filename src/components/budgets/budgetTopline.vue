@@ -41,7 +41,7 @@ export default {
   methods: {
   	sumAccounts: function(object) {
   		Object.assign(this.budgetAccounts, object);
-  		console.log('Summing Budget');
+  		// console.log('Summing Budget');
   		// console.log(this.budgetAccounts);
 		var total = 0
 		// for (var i = 0; i < this.budgetAccounts.length; i++) {
@@ -65,8 +65,8 @@ export default {
   		const budgetSheet = {}
   		budgetSheet['total'] = this.currentBudgetTotal;
   		budgetSheet['accounts'] = this.budgetAccounts;
-  		console.log('budgetsheet')
-  		console.log('budgetsheet')
+  		// console.log('budgetsheet')
+  		// console.log('budgetsheet')
       	this.$emit('budgetUpdate', budgetSheet)
       }
   }, 
@@ -84,8 +84,8 @@ export default {
   	}
   },
   created() {
-  	console.log('budget at topline')
-  	console.log(this.companyBudget) 
+  	// console.log('budget at topline')
+  	// console.log(this.companyBudget) 
   }
 }
 </script>

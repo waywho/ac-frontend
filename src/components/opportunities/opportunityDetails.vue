@@ -138,7 +138,7 @@ export default {
     }
   },
   created() {
-  	console.log(this.$store.getters.profile.details.name)
+  	// console.log(this.$store.getters.profile.details.name)
   	this.opportunity.company = this.$store.getters.profile.details.name
   }
 }

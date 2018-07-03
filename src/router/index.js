@@ -31,7 +31,7 @@ const router = new Router({
     },
     routes: [
         { path: '/home', name: 'home', component: home},
-        { path: '/', name: 'home', component: home }, // redirect: '/signup' },
+        // { path: '/', name: 'home', component: home }, // redirect: '/signup' },
         { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
         { path: '/about/:page', name: 'terms', component: pageStatic},
         { path: '/profiles/:profileId', name: 'profiles', component: showProfile, props: true},

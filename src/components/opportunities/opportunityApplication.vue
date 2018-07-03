@@ -50,7 +50,7 @@ export default {
   			idToken: this.$store.getters.currentUser.idToken,
   			opportunity_application: this.profile
   		}).then(res => {
-  			console.log(res)
+  			// console.log(res)
 			this.messaging = res.data
 			this.component = "opportunity-application-success"
   		}).catch(error => {
@@ -60,7 +60,7 @@ export default {
   	}
   },
   created() {
-  	console.log(this.$store.getters.profile.type)
+  	// console.log(this.$store.getters.profile.type)
   	if(this.$store.getters.profile.type === "company") {
   		this.profile.role = this.$store.getters.profile.details.companyType
   	} else if (this.$store.getters.profile.type === "artist") {

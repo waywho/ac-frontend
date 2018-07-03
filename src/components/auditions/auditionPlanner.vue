@@ -88,8 +88,8 @@ export default {
   methods: {
     addToSchedule: function() {
       var time = moment(this.currentAudition.date).format("YYYY-MM-DD") + "T" + this.auditionTime
-      console.log(time)
-      console.log(moment(time).valueOf())
+      // console.log(time)
+      // console.log(moment(time).valueOf())
       var parsedTime = moment(time).valueOf()
 
       this.currentAudition.schedule.push({time: parsedTime, candidate: this.auditionee.firstName + " " + this.auditionee.lastName})

@@ -75,12 +75,12 @@ export default {
 	 		filterParams['sort'] = this.selectedSort
 
 	 		Object.assign(filterParams, filters)
-	 		console.log(filterParams)
+	 		// console.log(filterParams)
 
 	 		oppAxios.get('opportunities.json', {
 	 			params: filterParams
 	 		}).then(res => {
-	 			console.log(res)
+	 			// console.log(res)
 	 			this.opportunities = res.data
 	 			if(this.windowWidth <= 413) {this.component = 'opportunity-list'}
 	 			this.loading = false
@@ -90,7 +90,7 @@ export default {
 	 		})
 		},
 		sortApply: function(selectedSort) {
-			console.log(selectedSort)
+			// console.log(selectedSort)
 	 		this.opportunities = null
 	 		this.loading = true
 	 		oppAxios.get('opportunities.json', {
@@ -118,15 +118,15 @@ export default {
 	beforeRouteEnter (to, from, next) {
 	  next(vm => {
 	    // access to component instance via `vm`
-	    console.log('beforeRouteEnter')
+	    // console.log('beforeRouteEnter')
 	    let user = vm.firebaseApp.auth().currentUser
         if(user) {
-            console.log('user')
+            // console.log('user')
             // user signed in proceed
             next()
 
         } else {
-            console.log('no user')
+            // console.log('no user')
             //no user signed in redirect to signin
             next("/")
         }
@@ -136,7 +136,7 @@ export default {
 
 		if(this.$store.getters.currentUser.idToken) {
 			this.$store.dispatch('resetToken').then(() => {
-			console.log('reset token!')
+			// console.log('reset token!')
 				oppAxios.get('opportunities.json', {
 		  			params: {
 		  				idToken: this.$store.getters.currentUser.idToken,

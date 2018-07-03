@@ -114,7 +114,7 @@ export default {
       this.currentStep -= 1
     },
     addData: function(data) {
-      console.log(data)
+      // console.log(data)
       Object.assign(this.opportunity, data)
       this.currentStep += 1
     },
@@ -124,7 +124,7 @@ export default {
     },
     opportunityPost: function() {
       this.$store.dispatch('postOpportunity', {idToken: this.$store.getters.currentUser.idToken, opportunity: this.opportunity}).then(res => {
-          console.log(res)
+          // console.log(res)
           this.opportunity = {}
           this.postedOpportunity = res.data
           this.currentStep += 1

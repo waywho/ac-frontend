@@ -103,7 +103,7 @@ export default {
   		this.$emit("apply-filter", this.selectedFilters)
   	},
     sendData: function() {
-      console.log(this.anyEmpty(this.selectedFilters))
+      // console.log(this.anyEmpty(this.selectedFilters))
 
       if(this.anyEmpty(this.selectedFilters)) {
         this.messaging.message = 'all fields are required'

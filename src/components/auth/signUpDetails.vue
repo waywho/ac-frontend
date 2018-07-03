@@ -75,7 +75,7 @@ export default {
     }
   },
   created() {
-    console.log(countriesList)
+    // console.log(countriesList)
   }
 }
 </script>

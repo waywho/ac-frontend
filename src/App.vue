@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     logScroll: function(e) {
-      console.log("scrool", e)
+      // console.log("scrool", e)
     },
     handleScroll: function(e) {
       // this.navPosition = 'nav-up'

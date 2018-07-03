@@ -6,7 +6,7 @@ export default{
 		onFilePicked (event, imageType) {
 			const file = event.target.files[0]
 			let filename = file.name
-			console.log(filename)
+			// console.log(filename)
 			if (filename.lastIndexOf('.') <= 0) {
 				return alert('Please add a file with valid extension')
 			}
@@ -61,7 +61,7 @@ export default{
 		},
 		onMediaFilePicked(event) {
 			this.loading = true
-			console.log(event)
+			// console.log(event)
 			const file = event.target.files[0]
 
 			if(file.size > 5000000) {

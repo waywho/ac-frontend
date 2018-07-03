@@ -163,7 +163,7 @@ export default {
 	},
 	methods: {
 		slideImage: function() {
-			console.log($event, 'is in view!')
+			// console.log($event, 'is in view!')
 		},
 		switchAbout: function() {
 			setInterval((e) => {

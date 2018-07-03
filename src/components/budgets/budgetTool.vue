@@ -1,5 +1,5 @@
-<template>
-  <div class="budget-planner tool-panel-paddings">
+<!-- <template> -->
+  <!-- <div class="budget-planner tool-panel-paddings"> -->
 	  	<h2>Budget Planner</h2>
 	  	<div class="budget-line">
 	  		<div v-on:click="component = 'company-budgetDisplay'" v-if="component ==='company-budgetTopline'" class="toggle strong small">Company Budget</div>
@@ -42,8 +42,8 @@ export default {
   	updateBudget(object) {
   		this.companyBudget = {}
   		this.companyBudget = object;
-  		console.log('updated budget:')
-  		console.log(this.companyBudget);
+  		// console.log('updated budget:')
+  		// console.log(this.companyBudget);
   		this.component = 'company-budgetDisplay';
   	},
   	updateAccount(object) {

@@ -107,7 +107,7 @@ export default {
           host: this.mediaHost,
           timestamp: Date.now()
         }
-      console.log(mediaObject)
+      // console.log(mediaObject)
 
       this.$store.dispatch('updateUserMedia', {userId: this.$store.getters.currentUser.id, toolName: 'medias', delete: false, data: mediaObject})
           .then((res) => {
@@ -118,7 +118,7 @@ export default {
         }, error => {console.log(error)});
     },
     deleteMedia: function(keyValue) {
-      console.log(keyValue)
+      // console.log(keyValue)
       this.loading = true
       this.$store.dispatch('updateUserMedia', {mediaKey: keyValue, delete: true, data: null})
         .then(res => {

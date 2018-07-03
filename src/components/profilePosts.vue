@@ -147,7 +147,7 @@ export default {
   		this.post['timestamp'] = new Date();
   		this.$store.dispatch('createUserProfilePost', {userId: this.currentUser.id, data: this.post, images: this.imageFiles})
   			.then(res => {
-  				console.log(res)
+  				// console.log(res)
   				this.post['imageURLs'] = res.data.imageURLs
   				this.post['id'] = res.data.postId
   				this.posts.unshift(this.post)

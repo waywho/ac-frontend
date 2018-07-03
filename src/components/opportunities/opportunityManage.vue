@@ -69,7 +69,7 @@ export default {
             page: 1
           }
         }).then(res => {
-          console.log(res)
+          // console.log(res)
           this.opportunities = res.data
           // this.loading = false
         }).catch(error => {

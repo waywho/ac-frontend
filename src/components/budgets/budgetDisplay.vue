@@ -77,8 +77,8 @@ export default {
   computed: {
   	lineItems() {
   		if (this.currentDisplayAccount.lineItems.length) {
-  			console.log("here are the budget items 1")
-  			console.log(this.currentDisplayAccount)
+  			// console.log("here are the budget items 1")
+  			// console.log(this.currentDisplayAccount)
   			// var i = Object.keys(this.currentDisplayAccount.lineItems)
   			// for(i; i < 3; i++) {
   			// 	this.currentDisplayAccount.lineItems[i] = {"description":"", "amount": null}
@@ -87,8 +87,8 @@ export default {
 
   			return this.currentDisplayAccount.lineItems;
   		} else {
-  			console.log("no line item! 1-n")
-  			console.log(this.currentDisplayAccount)
+  			// console.log("no line item! 1-n")
+  			// console.log(this.currentDisplayAccount)
   			const tempLineItems = []
   			for(var i = 0; i < 3; i++) {
   				tempLineItems.push({id: 'lineItem' + i + Date.now(), description: "", amount: null})
@@ -101,8 +101,8 @@ export default {
   },
   methods: {
   	getAccount(object, key) {
-  		console.log('get account!')
-  		console.log(this.currentDisplayAccount.lineItems)
+  		// console.log('get account!')
+  		// console.log(this.currentDisplayAccount.lineItems)
   		// while(this.currentDisplayAccount.lineItems.length > 0) {
   		// 	this.currentDisplayAccount.lineItems.pop();
   		// }
@@ -112,14 +112,14 @@ export default {
 
   		this.percentSpent = this.percent(this.currentDisplayAccount.lineItems, this.currentDisplayAccount.amount)
   		this.charting(this.currentDisplayAccount.lineItems);
-  		console.log(this.currentDisplayAccount);
+  		// console.log(this.currentDisplayAccount);
   	},
   	addBudgetLines(object) {
   		// console.log('lineItemInputs 5')
-  		console.log(object)
-  		Object.assign(this.lineItemInputs, object);
-  		console.log('lineItemInputs 6')
-  		console.log(this.lineItemInputs)
+  		// console.log(object)
+  		// Object.assign(this.lineItemInputs, object);
+  		// console.log('lineItemInputs 6')
+  		// console.log(this.lineItemInputs)
   		this.percentSpent = this.percent(this.lineItemInputs, this.currentDisplayAccount.amount)
 
   		const unspent = this.currentDisplayAccount.amount - this.summing(this.lineItemInputs)
@@ -128,7 +128,7 @@ export default {
 		// this.budgetChartData.labels.push('unspent')
 		// this.budgetChartData.data.push(unspent)
 		// this.currentDisplayAccount.lineItems = filteredArray;
-		console.log(this.budgetChartData)
+		// console.log(this.budgetChartData)
 		
 		// need to update budget
 
@@ -145,7 +145,7 @@ export default {
   		let filteredArray = inputArray.filter(function(object) {
  	 		return object.descripton !== "" && object.amount !== null
  	 	})
- 	 	console.log(filteredArray);
+ 	 	// console.log(filteredArray);
 
   		this.currentDisplayAccount.lineItems = filteredArray;
 
@@ -163,8 +163,8 @@ export default {
  	 		return object.descripton !== "" && object.amount !== null
  	 	})
 
- 	 	console.log('input array')
- 	 	console.log(filteredArray)
+ 	 	// console.log('input array')
+ 	 	// console.log(filteredArray)
 
   		const arrayKeys = []
  	 	const arrayValues = []
@@ -173,13 +173,13 @@ export default {
 			arrayValues.push(filteredArray[i]['amount'])
 		}
 
-		console.log(this.budgetChartData)
+		// console.log(this.budgetChartData)
 
 		this.budgetChartData.labels = arrayKeys
 		this.budgetChartData.data = arrayValues
   	},
   	percent(lineItems, accountTotal) {
-		console.log("percentSpent is called 3")
+		// console.log("percentSpent is called 3")
 		return Math.round(this.summing(lineItems)/accountTotal * 100)
   	},
   	summing(object) {
@@ -187,8 +187,8 @@ export default {
 		for (const prop in object) {
 			sum += object[prop]['amount']
 		}
-		console.log('sum:')
-		console.log(sum)
+		// console.log('sum:')
+		// console.log(sum)
 		return sum
   	}
   },
@@ -198,8 +198,8 @@ export default {
   	Object.assign(this.currentDisplayAccount, 
   		Object.assign(this.companyBudget.accounts[Object.keys(this.companyBudget.accounts)[0]], 
   			{id: Object.keys(this.companyBudget.accounts)[0]}));
-  	console.log('currentDisplayAccount 8')
-  	console.log(this.currentDisplayAccount)
+  	// console.log('currentDisplayAccount 8')
+  	// console.log(this.currentDisplayAccount)
   	this.percentSpent = this.percent(this.currentDisplayAccount.lineItems, this.currentDisplayAccount.amount)
 
   }

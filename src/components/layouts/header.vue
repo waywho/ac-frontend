@@ -88,7 +88,7 @@ export default {
       
          var notificationRef = firebaseApp.database().ref('notifications/' + this.currentUserId)
          notificationRef.once('value', snapshot => {
-          console.log(snapshot.val())
+          // console.log(snapshot.val())
             var keys = Object.keys(snapshot.val() || {})
             this.lastKey = keys[keys.length-1]
 
@@ -122,7 +122,7 @@ export default {
       } else {
         firebaseApp.database().ref('notificationViews').child(this.currentUserId).once("value", snapshot => {
           this.lastKey = snapshot.val()
-          console.log(this.lastKey)
+          // console.log(this.lastKey)
           if(!snapshot.val()) {
             notificationRef.orderByChild('created').startAt(Date.now()).on('child_added', snapshot => {
              this.notificationAlert = true

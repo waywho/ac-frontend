@@ -112,7 +112,7 @@ export default {
       } else if (!this.toolsEmpty) {
 
           let ToolNames = Object.keys(this.profileToolData)
-          console.log('tool names', ToolNames)
+          // console.log('tool names', ToolNames)
           let toolSet = []
           ToolNames.forEach(toolName => {
             if(this.profileToolData[toolName] !== null && this.profileToolData[toolName] !== undefined) {
@@ -120,9 +120,9 @@ export default {
             }
           })
 
-          console.log('toolset first', toolSet)
+          // console.log('toolset first', toolSet)
 
-          console.log('tool length', toolSet.length)
+          // console.log('tool length', toolSet.length)
           if(this.windowWidth <= 768 && toolSet.length < 2) {
             var fill = 2 - toolSet.length
             toolSet = this.fillToolBox(fill, toolSet)
@@ -140,7 +140,7 @@ export default {
             toolSet = this.fillToolBox(fill, toolSet)
           }
 
-          console.log('tool set length', toolSet.length)
+          // console.log('tool set length', toolSet.length)
           this.component = toolSet[0].component
           return toolSet
       } else {
@@ -198,7 +198,7 @@ export default {
     if(!this.authorizedUser) {
       var toolsRef = firebaseApp.database().ref("toolsPublic")
       toolsRef.child(this.profileId).once("value", snapshot => {
-        console.log('get profile tools', snapshot.val())
+        // console.log('get profile tools', snapshot.val())
         // var keys = Object.keys
 
         var tools = snapshot.val()

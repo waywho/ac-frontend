@@ -112,11 +112,11 @@ export default {
     },
     saveSeason: function () {
       // alert('save season')
-      console.log(this.currentSeason)
+      // console.log(this.currentSeason)
 
       this.$store.dispatch('createSeason', {season: this.currentSeason})
         .then(res => {
-          console.log(res)
+          // console.log(res)
           // this.$emit('close')
         })
     },
@@ -128,7 +128,7 @@ export default {
 
       this.$store.dispatch('updateSeason', {season: this.currentSeason, seasonId: this.seasonId})
         .then(res => {
-          console.log(res)
+          // console.log(res)
         this.messaging.message = "season info is updated"
         this.messaging.messageType = 'success'
         this.currentStep = 2

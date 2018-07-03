@@ -124,7 +124,7 @@ export default {
   		Promise.all(
   			chatArray.map(chat => {
   				return chatMembershipRef.child(chat.id).once('value', snapshot => {
-  					console.log(snapshot.val())
+  					// console.log(snapshot.val())
   					Object.assign(this.chatMemberships, {[chat.id]: snapshot.val()})
   					return snapshot.val()
   					})
@@ -154,11 +154,11 @@ export default {
   	},
   	getChatPartner: function(userID) {
   		this.warningActive = false
-  		console.log(userID)
+  		// console.log(userID)
   		this.chatee = null
   		var usersRef = firebaseApp.database().ref("users").child(userID)
   		usersRef.on("value", snapshot => {
-  			console.log(snapshot.val())
+  			// console.log(snapshot.val())
   			if(snapshot.val() === null) {
   				this.warningActive = true
   				this.chatee = {
@@ -358,7 +358,7 @@ export default {
   		let changedChat = childSnapshot.val()
   		changedChat.id = childSnapshot.key
   		changedChat.status = "changed-chat"
-  		console.log('changed chat', changedChat)
+  		// console.log('changed chat', changedChat)
 		let oldChat = this.chats.filter((chat, index) => {
   			return chat.id.match(childSnapshot.key)
   		})[0]

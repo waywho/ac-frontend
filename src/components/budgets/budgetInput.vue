@@ -43,8 +43,8 @@ export default {
   	amountInput: function (value) {
   		if (this.budgetLineItem && value) {
   			const lineItem = {};
-  			console.log('this id')
-  			console.log(this.key)
+  			// console.log('this id')
+  			// console.log(this.key)
   			lineItem[this.id] = {'description' : this.budgetLineItem, 'amount' : Number(value)};
   			this.error.message = ""
   			this.error.isShow = false
