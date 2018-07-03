@@ -1,10 +1,10 @@
 <template>
-  <div class="row">
-  	<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+  <div class="opportunity-details">
+  	<div class="fields-selector">
   		<div v-for="(field, key, index) in opportunityFields" :class="['selection-text-vertical', { 'selection-text-active': currentField === key}]" @click="currentField = key"><i v-if=" currentField === key" class="fa fa-chevron-right" aria-hidden="true"></i> {{field.name}}</div>
   		
   	</div>
-  	<div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+  	<div class="fields">
       <transition name="fade" mode="out-in">
   		<div v-for="(field, key, index) in opportunityFields" :key="key" v-if="currentField === key">
   			
@@ -173,6 +173,31 @@ export default {
 
 .field-warning {
   margin-top: 50px;
+}
+.fields {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  min-height: 265px;
+}
+
+@media all and (min-width: $bp-med) {
+  .opportunity-details {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .fields-select {
+    width: 40%;
+    flex-basis: auto;
+  }
+  .fields {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 60%;
+    flex-basis: auto;
+  }
 }
 
 </style>

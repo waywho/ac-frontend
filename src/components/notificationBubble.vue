@@ -21,6 +21,8 @@ export default {
 .bubble {
 	height: 20px;
 	width: 20px;
+  min-height: 20px;
+  min-width: 20px;
 	border-radius: 50%;
 	background-color: $color-darkred;
 }

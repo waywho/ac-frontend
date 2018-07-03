@@ -1,27 +1,27 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="col-xs col-sm col-md col-lg tool-panel-left-padding">
-      <h2>Opportunity</h2>
+  <div class="create-panel">
+    <div class="create-panel-inner">
+    <h2>Opportunity</h2>
       <span class="is-gold"><b>Create Your Opportunities</b></span>
-        <h3>{{stepHeading | capitalize}}</h3>
-        <progress-bar v-if="currentStep !== 3" :current-step="currentStep" :setup-steps="setupSteps"></progress-bar>
-        <transition name="fade" mode="out-in">
-          <div v-if="currentStep > 0 && currentStep !== 3" class="is-lightgray small text-button back-button" @click="backStep"><i class="fa fa-chevron-left" aria-hidden="true" key="backButton"></i>Back to {{lastStep}}</div>
-          <div v-else class="back-button small" key="home">Select opportunity types to begin</div>
-        </transition>
-        <transition name="fade" mode="out-in">
-          <keep-alive>
-            
-            <component :is="stepComponent" ref="opportunitySteps" class="inner-panel-padding" :continents="continents" :countries="countries" :opportunity-types="opportunityTypes" :categories="categories" :subcategories="subcategories" :payment-types="paymentTypes" :opp="opportunity" :postedOpp="postedOpportunity" @subcategory-change="changeSubcategories" @country-change="changeCountries" @send-data="addData" @post-opportunity="opportunityPost" :mode="mode"></component>
+      <opportunity-back @click.native="$emit('back-start')"></opportunity-back>
+      <h3>{{stepHeading | capitalize}}</h3>
+      <progress-bar v-if="currentStep !== 3" class="progressbar-left" :current-step="currentStep" :setup-steps="setupSteps"></progress-bar>
+      <transition name="fade" mode="out-in">
+        <div v-if="currentStep > 0 && currentStep !== 3" class="is-lightgray small text-button back-button" @click="backStep"><i class="fa fa-chevron-left" aria-hidden="true" key="backButton"></i>Back to {{lastStep}}</div>
+        <div v-else class="back-button small" key="home">Select opportunity types to begin</div>
+      </transition>
+      <transition name="fade" mode="out-in">
+        <keep-alive>
           
-          </keep-alive>
-        </transition>
-      </div>
-      <div v-if="currentStep < 2" class="col-xs-2 col-sm-1 col-md-1 col-lg-1 opportunity-next is-silver" @click="nextStep">
+          <component :is="stepComponent" ref="opportunitySteps" :continents="continents" :countries="countries" :opportunity-types="opportunityTypes" :categories="categories" :subcategories="subcategories" :payment-types="paymentTypes" :opp="opportunity" :postedOpp="postedOpportunity" @subcategory-change="changeSubcategories" @country-change="changeCountries" @send-data="addData" @post-opportunity="opportunityPost" :mode="mode"></component>
+        
+        </keep-alive>
+      </transition>
+    </div>
+      <div v-if="currentStep < 2" class="opportunity-next is-silver" @click="nextStep">
         <i class="fa fa-chevron-right" style="font-size: 40px;" aria-hidden="true"></i>
       </div>
-    </div>
+
 
     <div v-if="currentStep < 2" class="bottom-button bottom-button-next is-silver" @click="nextStep">
         <i class="fa fa-chevron-right" aria-hidden="true"></i>{{nextStepHeading}}
@@ -40,6 +40,7 @@ import opportunityFilters from './opportunityFilters';
 import opportunityDetails from './opportunityDetails';
 import opportunityReview from './opportunityReview';
 import opportunityComplete from './opportunityComplete';
+import opportunityBack from './opportunityBack';
 import countriesList from 'countries-list';
 import progressBar from '@/components/progressBar';
 // import axios from 'axios'; // for dev
@@ -51,6 +52,7 @@ export default {
     'opportunity-details': opportunityDetails,
     'opportunity-review': opportunityReview,
     'opportunity-complete': opportunityComplete,
+    'opportunity-back': opportunityBack,
     'progress-bar': progressBar
   },
   props: {
@@ -143,12 +145,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
-
-.inner-panel-padding {
-  padding-right: 20px;
-  height: 320px;
-  overflow-y: scroll;
+.create-panel {
+  min-height: 100%;
+  height: 100%;
 }
+
 .back-button {
   margin-bottom: 25px;
 }
@@ -156,14 +157,6 @@ export default {
   margin-right: 1rem;
 }
 
-.opportunity-next {
-  background: #f6f3ed;
-  cursor: pointer;
-  height: $tool-panel-height;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .bottom-button {
   display: flex;
@@ -174,36 +167,66 @@ export default {
   align-items: center;
   padding-left: 100px;
   font-weight: bold;
+  margin-left: -$body-padding-small;
+  margin-right: -$body-padding-small;
 }
 
 .bottom-button i {
   margin-right: 40px;
 }
 
-.opportunity-next:hover, .bottom-button:hover {
-  background: #ecddba;
-  color: white;
+
+
+.progressbar-left {
+  justify-content: left !important;
 }
 
-.bottom-button-next {
+.opportunity-next {
   display: none;
 }
 
 
-@media screen and (max-width: 46rem) {
+@media all and (min-width: $bp-med) {
+  .create-panel {
+    height: 320px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    margin-right: -$body-padding-small;
+  }
+
+  .create-panel-inner {
+    margin-right: 20px;
+    width: 90%;
+    flex-basis: auto;
+    flex-grow: 2;
+  }
+
   .opportunity-next {
+    background: #f6f3ed;
+    cursor: pointer;
+    height: $tool-panel-height;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+    max-width: 67px;
+    flex-basis: auto;
+  }
+
+  .opportunity-next:hover, .bottom-button:hover {
+    background: #ecddba;
+    color: white;
+  }
+
+
+  .bottom-button-next {
     display: none;
   }
 
-  .tool-panel-left-padding {
-    margin-left: 0.5rem;
-    padding-left: 28px;
-    height: 100%;
-  }
 
-  .inner-panel-padding {
-    min-height: 600px;
-  }
+
 
 }
 </style>

@@ -400,7 +400,7 @@ li.slick-active{
 	}
 
 	#image-bubbles {
-		transform: translateX(22%);
+		transform: translateX(29%);
 	}
 
 	#image-bubbles img {

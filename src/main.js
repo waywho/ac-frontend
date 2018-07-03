@@ -8,8 +8,13 @@ import VueMediaEmbed from 'vue-media-embed'
 import Vuex from 'vuex'
 import VueChatScroll from 'vue-chat-scroll';
 import firebaseApp from '@/firebase/init';
+import VueGtm from 'vue-gtm'
 import router from '@/router';
 
+Vue.use(VueGtm, {
+  debug: true,
+  vueRouter: router
+})
 Vue.use(VueMediaEmbed, { store });
 Vue.use(require('vue-moment'));
 Vue.use(firebaseApp);

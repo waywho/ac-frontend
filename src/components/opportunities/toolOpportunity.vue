@@ -1,6 +1,6 @@
 <template>
   	<div class="opportunity-panel">
-  		<div v-if="component === ''" class="tool-panel-left-padding">
+  		<div v-if="component === '' && profileType === 'company'">
   			<h2>Opportunity</h2>
 			<span class="is-gold"><b>Manage or Create Your Opportunities</b></span>
 			
@@ -20,19 +20,25 @@
 				<i class="fa fa-chevron-right"></i> <b>Arrange & Manage</b>
 			</div>
 		</div>
-		<component :is="component" class=""></component>
+		<opportunity-manage-artist v-if="profileType === 'artist'"></opportunity-manage-artist>
+		<component :is="component" class="" v-on:back-start="component = ''"></component>
   	</div>
 </template>
 
 <script>
 import opportunityCreate from './opportunityCreate'
 import opportunityManage from './opportunityManage'
+import opportunityManageArtist from './opportunityManageArtist'
 
 export default {
-  name: '',
+  name: 'opportunityTool',
   components: {
   	'opportunity-create': opportunityCreate,
-  	'opportunity-manage': opportunityManage
+  	'opportunity-manage': opportunityManage,
+  	'opportunity-manage-artist': opportunityManageArtist
+  },
+  props: {
+  	profileType: String
   },
   data () {
     return {
@@ -50,11 +56,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	padding-bottom: 40px;
-}
-
-.tool-panel-left-padding {
-	padding-left: $body-padding-small;
+	padding: 0px $body-padding-small;
 }
 
 .start-options {
@@ -78,7 +80,7 @@ export default {
 
 @media all and (min-width: $bp-small) {
 
-  .tool-panel-left-paddning {
+  .opportunity-panel {
     padding-left: $body-padding-small;
   }
 
@@ -86,7 +88,7 @@ export default {
 
 @media all and (min-width: $bp-med) {
 
-  .tool-panel-left-padding {
+  .opportunity-panel {
     padding-left: $body-padding-small;
   }
 
@@ -94,7 +96,7 @@ export default {
 
 
 @media all and (min-width: $bp-med-2) {
-  .tool-panel-left-padding {
+  .opportunity-panel {
     padding-left: $body-padding-large;
   }
 

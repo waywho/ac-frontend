@@ -1,7 +1,7 @@
 <template>
   <div class="profile-tools" v-if="showComponent">
     <keep-alive>
-      <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="toolData"></component>
+      <component :is="component" :profile-id="profileId" :class="[authorizedUser ? 'tool-panel-auth' : 'tool-panel-public']" v-bind="toolData" :profile-type="profileType"></component>
     </keep-alive>
     <div :class="[authorizedUser ? 'toolbox-auth' : 'toolbox-public']" :style="gridSpec">
       <div v-for="tool in profileTools" @click="component = tool.component" :class="['is-lightgray', {'active-tool': component === tool.component}, [tool.component !== null ? 'toolbox-tile' : 'toolbox-tile-not-active']]">
@@ -58,7 +58,7 @@ export default {
         { name: 'calendar', component: 'calendar', icon: 'fa-calendar' },
         { name: 'Media', component: 'medias', icon: 'fa-play-circle' },
         { name: 'Portfolio', component: 'portfolio', icon: 'fa-file-text-o' },
-        { name: null, component: null, icon: '', icon: ''}
+        { name: 'Opportunity', component: 'opportunity', icon: 'fa-handshake-o'}
       ],
       companyAuthTools: [
         { name: 'Messages', component: 'message', icon: 'fa-comments-o' },
@@ -245,7 +245,7 @@ export default {
   width: 100vw;
   height: 100%;
   overflow-y: hidden;
-  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .toolbox-inner {
@@ -325,6 +325,8 @@ export default {
   .profile-tools {
     height: $tool-panel-height;
     min-height: $tool-panel-height;
+    flex-direction: row;
+    flex-wrap: nowrap;
   }
 
   .tool-panel-public {
@@ -361,6 +363,13 @@ export default {
 }
 
 @media all and (min-width: $bp-small) {
+  .profile-tools {
+    height: $tool-panel-height;
+    min-height: $tool-panel-height;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
   .tool-panel-public {
      width: 80%;
      order: 1;

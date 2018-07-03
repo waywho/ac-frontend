@@ -10,32 +10,30 @@
 	 		<div class="col-sm-12 col-xs-12">
 		    	<span class="medium is-midgray">memberships</span>
 		    	<ul>
-		    		<li class="is-lightgray small">Adante Artist</li>
-		    		<li class="is-lightgray small">Adagio Artist</li>
-		    		<li class="is-lightgray small">Company</li>
+		    		<li class="is-lightgray small"><router-link to="/memberships" class="is-midgray">Artist</router-link></li>
+		    		<li class="is-lightgray small"><router-link to="/memberships" class="is-midgray">Company</router-link></li>
 		    	</ul>
 		    </div>
 		    <div class="col-sm-12 col-xs-12">
 		    		 <span class="medium is-midgray">account</span>
 		    	<ul>
-		    		<li class="is-lightgray small">login</li>
-		    		<li class="is-lightgray small">settings</li>
+		    		<li class="is-lightgray small"><router-link to="/signin" class="is-midgray">Signin</router-link></li>
 		    		<li class="is-lightgray small">contact</li>
 		    	</ul>
 		    </div>
 		    <div class="col-sm-12 col-xs-12">
 		    	<span class="medium is-midgray">socials</span>
 		    	<ul>
-		    		<li class="is-lightgray small">facebook</li>
-		    		<li class="is-lightgray small">twitter</li>
-		    		<li class="is-lightgray small">instagram</li>
+		    		<li class="is-lightgray small"><a href="https://www.facebook.com/operaop/" target="_blank" class="is-midgray" rel="nofollow">facebook</a></li>
+		    		<li class="is-lightgray small"><a href="https://twitter.com/artistcenterapp" target="_blank" class="is-midgray" rel="nofollow">twitter</a></li>
+		    		<li class="is-lightgray small"><a href="https://www.instagram.com/artistcenterapp/" target="_blank" class="is-midgray" rel="nofollow">instagram</a></li>
 		    	</ul>
 		    </div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-sm-8 col-xs-12 is-lightgray footnote smaller">
-			©OperaOp 2017. All Rigths Reserved.
+			©OperaOp 2017. All Rigths Reserved. <router-link to="/about/terms" class="is-midgray">Terms and Conditions</router-link>
 		</div>
 	</div>
   </div>

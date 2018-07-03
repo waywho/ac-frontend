@@ -39,7 +39,7 @@
 				
 				<div class="profile-name"><h1>{{ profile.details.name }}</h1></div>
 
-				<profile-details v-if="profile" v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details" :connection-level="connectionLevel"></profile-details>
+				<profile-details v-if="profile" v-bind:profile-type="profile.type" class="profile-banner-text" v-bind:profile-details="profile.details" :connection-level="connectionLevel" :profile-socials="profile.socials"></profile-details>
 			</div>
 
 			<profile-seasons v-if="profile.type === 'company'" class="profile-section" v-bind:profile-id="profile.id" :profile-seasons="profile.seasons"></profile-seasons>

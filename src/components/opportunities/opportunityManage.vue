@@ -2,6 +2,7 @@
   <div class="opportunity-manage">
     <h2>Opportunity</h2>
     <span class="is-gold"><b>Manage Your Opportunities</b></span>
+      <opportunity-back @click.native="$emit('back-start')"></opportunity-back>
       <div class="row">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
           <h4>My Auditions</h4>
@@ -42,9 +43,13 @@
 
 <script>
 import oppAxios from '@/axios/axios-opportunities.js';
+import opportunityBack from './opportunityBack';
 
 export default {
   name: 'opportunityManage',
+  components: {
+    'opportunity-back': opportunityBack
+  },
   data () {
     return {
       opportunities: null,
@@ -80,8 +85,8 @@ export default {
 @import '../../styles/style-variables';
 
 .opportunity-manage {
-  padding-left: 100px;
-  padding-right: 25px;
+  // padding-left: 100px;
+  // padding-right: 25px;
 }
 
 .audition-window {
@@ -141,7 +146,7 @@ export default {
 
 @media screen and (max-width: 46rem) {
   .opportunity-manage {
-    padding-left: 28px;
+    // padding-left: 28px;
   }
 
 

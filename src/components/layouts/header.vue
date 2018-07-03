@@ -3,7 +3,9 @@
     <div class="header-inner">
       <ul class="non-list header-items header-items-left">
         <li class="logo" v-if="!landingLogo">
-          <router-link to="/home"><img :src="require('@/assets/images/artistcenter-logo.png')" alt="artistcenter logo" />
+          <router-link to="/">
+            <img :src="require('@/assets/images/artistcenter-logo.png')" alt="artistcenter logo" class="logo-mobile" />
+            <img :src="require('@/assets/images/ac-logo-horizontal.svg')" alt="artistcenter logo" class="logo-desktop" />
           </router-link>
         </li>
         
@@ -31,9 +33,9 @@
       </ul>
     </div>
     <div class="home-logo" v-if="landingLogo">
-      <router-link to="/home">
-        <img :src="require('@/assets/images/ac-logo-vertical.svg')" alt="artist center logo" class="mobile-logo" />
-        <img :src="require('@/assets/images/ac-logo-horizontal.svg')" alt="artist center logo" class="desktop-logo" /></router-link>
+      <router-link to="/">
+        <img :src="require('@/assets/images/ac-logo-vertical.svg')" alt="artist center logo" class="home-mobile-logo" />
+        <img :src="require('@/assets/images/ac-logo-horizontal.svg')" alt="artist center logo" class="home-desktop-logo" /></router-link>
 
     </div>
     <div class="xs-search">
@@ -179,12 +181,28 @@ export default {
   margin-bottom: 0px;
 }
 
+// regular logo
+
 .logo {
   // height: 57px;
   display: inline-block;
   flex-basis: auto;
-  width: 65%;
 }
+
+.logo img {
+  width: 75px;
+}
+
+.logo-mobile {
+  display: block;
+}
+
+.logo-desktop {
+  display: none;
+}
+
+
+// logos on home/landing and static pages
 
 .home-logo {
   height: $header-home-logo-mobile-height;
@@ -192,14 +210,14 @@ export default {
   margin: 0px auto $header-home-logo-margin-bottom;
 }
 
-.mobile-logo {
+.home-mobile-logo {
   display: block;
   height: 100%;
   width: auto;
   margin: 0 auto;
 }
 
-.desktop-logo {
+.home-desktop-logo {
   display: none;
 }
 
@@ -211,10 +229,13 @@ export default {
 }
 
 .header-items-left {
+  width: 50%;
+  max-width: 550px;
   justify-content: flex-start;
 }
 
 .header-items-right {
+  width: 50%;
   justify-content: flex-end;
 }
 
@@ -229,10 +250,11 @@ export default {
 .notification-icon {
   width: 30px;
   height: 30px;
+  min0width: 30px;
+  min-height: 30px;
   border-radius: 50%;
   background-color: $color-gold;
   color: white;
-  margin-left: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -245,10 +267,6 @@ export default {
   z-index: 9990;
   top: -8px;
   right: 15px;
-}
-
-.logo img {
-  width: 75px;
 }
 
 .header-item-space {
@@ -321,9 +339,44 @@ export default {
 }
 
 @media all and (min-width: $bp-med) {
-  .logo {
-    flex-basis: 40%;
+  .header-height {
+    height: $header-height;
   }
+
+  .header-home-height {
+    height: $header-height-home;
+  }
+
+  .header-inner {
+    padding: 0px $body-padding-large;
+  }
+
+  .header-items-left {
+    width: 70%;
+    justify-content: flex-start;
+  }
+
+  .header-items-right {
+    width: 30%;
+    justify-content: flex-end;
+  }
+
+  // regular logo
+
+  .logo-mobile {
+    display: none;
+  }
+
+  .logo-desktop {
+    display: block;
+  }
+
+  .logo img {
+    min-width: 228px;
+    width: 228px;
+  }
+
+  // logos on home/landing and static pages
 
   .home-logo {
     height: $header-home-logo-height;
@@ -331,11 +384,11 @@ export default {
     margin: $header-home-logo-margin-top 0px $header-home-logo-margin-bottom;
   }
 
-  .mobile-logo {
+  .home-mobile-logo {
     display: none;
   }
 
-  .desktop-logo {
+  .home-desktop-logo {
     display: block;
     width: 70%;
     height: auto;
@@ -351,25 +404,9 @@ export default {
   }
 
 
-  .header-height {
-    height: $header-height;
-  }
-
-  .header-home-height {
-    height: $header-height-home;
-  }
-
-  .header-inner {
-    padding: 0px $body-padding-large;
-  }
-
-  .header-items {
-    flex-basis: 25%;
-  }
-
   #search-element {
     display: block;
-    width: 250px;
+    width: 50%;
   }
 
   .header-item-space {

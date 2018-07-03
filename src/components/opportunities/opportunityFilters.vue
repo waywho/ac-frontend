@@ -133,6 +133,7 @@ export default {
 @import '../../styles/style-variables';
 
 .filters-panel {
+
 }
 
 .options-selector {
