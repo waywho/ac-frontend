@@ -10,14 +10,14 @@
 	 		<div class="col-sm-12 col-xs-12">
 		    	<span class="medium is-midgray">memberships</span>
 		    	<ul>
-		    		<li class="is-lightgray small"><router-link to="/memberships" class="is-midgray">Artist</router-link></li>
-		    		<li class="is-lightgray small"><router-link to="/memberships" class="is-midgray">Company</router-link></li>
+		    		<li class="is-lightgray small"><router-link to="/memberships" class="is-midgray">artist</router-link></li>
+		    		<li class="is-lightgray small"><router-link to="/memberships" class="is-midgray">company</router-link></li>
 		    	</ul>
 		    </div>
 		    <div class="col-sm-12 col-xs-12">
 		    		 <span class="medium is-midgray">account</span>
 		    	<ul>
-		    		<li class="is-lightgray small"><router-link to="/signin" class="is-midgray">Signin</router-link></li>
+		    		<li class="is-lightgray small"><router-link to="/signin" class="is-midgray">sign in</router-link></li>
 		    		<li class="is-lightgray small">contact</li>
 		    	</ul>
 		    </div>

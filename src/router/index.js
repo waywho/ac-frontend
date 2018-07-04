@@ -30,8 +30,8 @@ const router = new Router({
         return {x: 0, y: 0};
     },
     routes: [
-        { path: '/home', name: 'home', component: home},
-        // { path: '/', name: 'home', component: home }, // redirect: '/signup' },
+        // { path: '/home', name: 'home', component: home},
+        { path: '/', redirect: '/signup' }, //name: 'home', component: home },
         { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
         { path: '/about/:page', name: 'terms', component: pageStatic},
         { path: '/profiles/:profileId', name: 'profiles', component: showProfile, props: true},
