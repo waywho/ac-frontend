@@ -5,15 +5,15 @@
       <b>publish date:</b> {{season.published_at | moment("MMMM D YYYY")}} 
       <p><b>Productions:</b>
             <ul>
-              <li v-for="(production, index) in productions" :key="index">
-                {{production.name}}, from {{production.dates[0].date}} to {{production.dates[production.dates.length - 1].date}} <span class="small is-darkgray text-button" @click="editProduction(index)">edit</span>
+              <li v-for="(production, key, index) in productions" :key="key">
+                {{production.name}}, from {{production.dates[0].date}} to {{production.dates[production.dates.length - 1].date}} <span class="small is-darkgray text-button" @click="editProduction(key)">edit</span>
               </li>
             </ul>
         </p>
       <success-warning-notice :messaging="messaging"></success-warning-notice>
         <br />
       <button v-if="mode !== 'edit'" class="button-right" @click="saveSeason">Save Season</button>
-      <button class="button-right button-right-margin" @click="productionNew">Add Another Production</button>
+      <button class="button-right button-right-margin" @click="productionNew">Add New Production</button>
       <span @click="cancelSeason" class="small text-button button-right button-right-margin cancel-button">cancel</span>
   </div>
 </template>
@@ -25,7 +25,7 @@ export default {
   name: 'seasonReview',
   props: {
   	season: Object,
-  	productions: Array,
+  	productions: Object,
   	mode: String,
   	messaging: {
   		type: Object,
@@ -50,8 +50,8 @@ export default {
   	editSeason: function() {
   		this.$emit('season-edit')
   	},
-  	editProduction: function(index) {
-  		this.$emit('production-edit', index)
+  	editProduction: function(key) {
+  		this.$emit('production-edit', key)
   	},
   	cancelSeason: function() {
   		this.$emit('cancel-season')
@@ -70,7 +70,7 @@ export default {
 
 .cancel-button {
 	min-height: 30px;
-	padding: 3px 10px;
+	padding: 7px 10px 0px;
 	line-height: 24px;
 }
 

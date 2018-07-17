@@ -391,7 +391,7 @@ li.slick-active{
 	}
 
 	.hero-image img, {
-		width: 70%;
+		width: 80%;
 		margin: 0 0;
 	}
 

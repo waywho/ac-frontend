@@ -111,7 +111,7 @@ export default {
   		type: Object,
   		required: false
   	},
-  	index: Number,
+  	productionKey: String,
     productionMode: String
   },
   components: {
@@ -132,6 +132,7 @@ export default {
      	currentProduction: {
      		name: null,
      		composers: "",
+        composersArray: [],
      		imageURL: null,
      		imageFile: null,
      		description: null,
@@ -202,7 +203,7 @@ export default {
   		if(this.requiredField(this.currentProduction.name)) {
         let production = this.currentProduction
   			if(production.composers) {
-  			 production.composers = production.composers.split(',')
+  			 production.composersArray = production.composers.split(',')
 	  		}
 
 	  		let creatives = this.currentProduction.creatives.forEach(creative => {
@@ -244,10 +245,10 @@ export default {
   		this.currentProduction[fields].splice(index, 1);
   	},
   	productionUpdate: function() {
-  		this.$emit('production-update', {index: this.index, production: this.currentProduction})
+  		this.$emit('production-update', {key: this.productionKey, production: this.currentProduction})
   	},
     productionEditUpdate: function() {
-      this.$emit('production-edit-update', {index: this.index, production: this.currentProduction})
+      this.$emit('production-edit-update', {key: this.productionKey, production: this.currentProduction})
     },
   	cancelProduction: function() {
   		this.$emit('cancel-production')
@@ -257,6 +258,10 @@ export default {
   		if(this.production) {
   			this.currentProduction = this.production
   		}
+
+      if(this.production) {
+        this.production.composers = this.production.composersArray.join(', ')
+      }
   }
 }
 </script>
@@ -294,7 +299,7 @@ export default {
 
 .cancel-button {
   min-height: 30px;
-  padding: 3px 10px;
+  padding: 7px 10px 0px;
   line-height: 24px;
 }
 

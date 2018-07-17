@@ -10,7 +10,7 @@
 		  	
 		</div>
 		<ul class="menu-list non-list">
-			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/opportunities">Opportunities</router-link></li>
+			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/opportunities">Opportunity Board</router-link></li>
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/about/center">About</router-link></li>
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/memberships">Memberships</router-link></li>
 		</ul>

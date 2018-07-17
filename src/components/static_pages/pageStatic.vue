@@ -1,8 +1,10 @@
 <template>
 	<div class="content">
-  		<h1 class="is-lightgray">{{page.title}}</h1>
-  		<div class="translate-button"><span v-on:click="language='EN'" :class="['selection-text', 'is-lightgray', {'selection-text-active': language === 'EN'}]">EN</span>.<span :class="['selection-text', 'is-lightgray', {'selection-text-active': language === 'FR'}]" v-on:click="language='FR'">FR</span></div>
-  		<div v-html="content"></div>
+  		<h1 class="is-lightgray">{{content.title}}</h1>
+  		<div class="translate-button">
+  			<span v-for="(lang, key) in content.translations" :key="key" :class="['selection-text', 'is-lightgray', {'selection-text-active': language === key}]" @click="language = key">{{key | to-uppercase}}</span>
+  		</div>
+  		<div v-html="content.translations[language]"></div>
 	</div>
 </template>
 
@@ -12,18 +14,15 @@ export default {
   data () {
     return {
     	page: {},
-    	pageId: this.$route.params.page,
-    	language: "EN"
+    	language: "en"
     }
   },
   computed: {
   	content: function() {
-  		var contentLang = 'content'+ this.language
-  		return this.page[contentLang]
+  		return this.$store.getters.static(this.$route.params.page)
   	}
   },
   created() {
-  	this.page = this.$store.state.staticPages[this.pageId]
   }
 }
 </script>

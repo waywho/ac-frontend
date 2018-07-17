@@ -23,7 +23,8 @@ import opportunityFilter from './opportunityFilters';
 import countriesList from 'countries-list';
 import Velocity from 'velocity-animate';
 import 'velocity-animate/velocity.ui';
-import firebaseApp from '@/firebase/init'
+import firebaseApp from '@/firebase/init';
+import opportunityFilterMixin from '@/mixins/opportunityFilterMixin';
 // import axios from 'axios'
 
 export default {
@@ -37,21 +38,16 @@ export default {
 	    	windowWidth: 0,
 	    	component: 'opportunity-filter',
 	    	loading: true,
-	    	subcategories: null,
 	    	countries: null,
 	    	opportunities: null,
 	    	continents: countriesList.continents,
-	    	opportunityTypes: null,
-	    	categories: null,
-	    	paymentTypes: null,
+	    	selectedCategory: null,
 	    	selectedFilters: [],
 	    	selectedSort: 'created_at DESC'
 	    }
 	},
+	mixins: [opportunityFilterMixin],
 	methods: {
-		changeSubcategories: function(selected) {
-			this.subcategories = this.$store.state.categorySubcategories[selected]
-		},
 		changeCountries: function(continent) {
 	  		let countryList = []
 	  		for (var country in countriesList.countries) {
@@ -155,9 +151,6 @@ export default {
 					this.$router.push("/")
 				})
 
-			this.opportunityTypes = this.$store.state.opportunityTypes
-			this.categories = Object.keys(this.$store.state.categorySubcategories)
-			this.paymentTypes = this.$store.state.paymentTypes
 		} else {
 			// alert('Please sign in')
 			// this.$router.push("/")
