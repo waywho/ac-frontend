@@ -10,7 +10,6 @@
                   :productions="productions" 
                   :index="currentProductionIndex"
                   :mode="mode"
-                  :current-season-id="currentSeasonId"
                   :production-mode="productionMode"
                   :messaging="messaging" 
                   @season-save="saveSeason()" 
@@ -18,7 +17,7 @@
                   @season-update="updateSeason()"
                   @season-review="currentStep = 2" 
                   @production-add="saveProduction($event)" 
-                  @production-new="newProduction" 
+                  @production-new="newProduction()" 
                   @production-edit="editProduction($event)" 
                   @production-update="updateProduction($event)"
                   @production-edit-update="updateEditProduction($event)" 
@@ -56,10 +55,6 @@ export default {
       type: String,
       required: false
     },
-    editProductions: {
-      type: Object,
-      required: false
-    },
     step: {
       type: Number,
       required: false
@@ -81,8 +76,7 @@ export default {
         to: null,
         published_at: null,
       },
-      currentSeasonId: null,
-      productions: [],
+      productions: {},
       steps: [{heading: "Add Season", component: "season-fields"}, {heading: "Add Productions", component: "season-production-fields"}, {heading: "Review/Edit Season", component: "season-review"}]
     }
   },
@@ -142,9 +136,9 @@ export default {
         this.messaging.message = object.name + " production is added"
         this.messaging.messageType = 'success'
       // console.log('before sent', this.currentSeason)
-      this.$store.dispatch('createProduction', {seasonId: this.currentSeasonId, production: object}).then(res => {
+      this.$store.dispatch('createProduction', {seasonId: this.seasonId, production: object}).then(res => {
         object['id'] = res.productionId
-        this.productions.push(object)
+        this.productions[res.productionId] = object
         this.currentStep = 2
       })
       
@@ -175,8 +169,8 @@ export default {
       this.currentSeason = this.season
     }
 
-    if(this.editProductions) {
-      this.productions = this.editProductions
+    if(this.season) {
+      this.productions = this.season.productions
     }
 
     if(this.step) {

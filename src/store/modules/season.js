@@ -1,3 +1,4 @@
+import firebaseApp from '@/firebase/init';
 const season = {
 	actions: {
 		createSeason({commit, dispatch, state}, payload) {

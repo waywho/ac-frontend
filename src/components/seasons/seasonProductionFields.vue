@@ -111,7 +111,6 @@ export default {
   		type: Object,
   		required: false
   	},
-    currentSeasonId: String,
   	productionKey: String,
     productionMode: String
   },
@@ -133,6 +132,7 @@ export default {
      	currentProduction: {
      		name: null,
      		composers: "",
+        composersArray: [],
      		imageURL: null,
      		imageFile: null,
      		description: null,
@@ -203,7 +203,7 @@ export default {
   		if(this.requiredField(this.currentProduction.name)) {
         let production = this.currentProduction
   			if(production.composers) {
-  			 production.composers = production.composers.split(',')
+  			 production.composersArray = production.composers.split(',')
 	  		}
 
 	  		let creatives = this.currentProduction.creatives.forEach(creative => {
@@ -258,6 +258,10 @@ export default {
   		if(this.production) {
   			this.currentProduction = this.production
   		}
+
+      if(this.production.composersArray) {
+        this.production.composers = this.production.composersArray.join(', ')
+      }
   }
 }
 </script>
@@ -295,7 +299,7 @@ export default {
 
 .cancel-button {
   min-height: 30px;
-  padding: 3px 10px;
+  padding: 7px 10px 0px;
   line-height: 24px;
 }
 

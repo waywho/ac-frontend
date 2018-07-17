@@ -1,5 +1,5 @@
 <template>
-  <div class="seasons" v-if="profileSeasons">
+  <div class="seasons" v-if="profileSeasons || authorizedUser">
       <div class="title-row">
         <ul v-for="(season, key) in profileSeasons" class="non-list season-list">
           <li class="season-list-li"><span class="selection selection-text" @click="currentSeason = season">{{season.name}}</span> <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonEdit(season, key)">edit</span></li>
@@ -11,7 +11,7 @@
       </div>
       
       <div class="production-row slide">
-        <div v-for="(production, index) in currentProductions" :key="index" class="production-block" @click="viewProduction(production)">
+        <div v-for="(production, key) in currentProductions" :key="key" class="production-block" @click="viewProduction(production)">
           <div class="production-image">
             <img :src="production.imageURL | imageProcess('season')" />
           </div>
@@ -22,7 +22,8 @@
         </div>
     </div>
         	 
-    <season-form v-if="showSeasonForm === true && authorizedUser" @close="showSeasonForm = false" :season="editSeason" :season-id="editSeasonId" :step="editStep" :edit-productions="editProductions" :mode="mode"></season-form >
+    <season-form v-if="showSeasonForm === true && authorizedUser" @close="showSeasonForm = false" :season="editSeason" :season-id="editSeasonId" :step="editStep" :mode="mode"></season-form>
+
     <production-details v-if="showProduction === true"  :production="currentProduction" :season="currentSeason" @close="showProduction = false"></production-details >
 
   </div>
@@ -58,16 +59,9 @@ export default {
     }
   },
   computed: {
-    thisSeason: function() {
-      if(this.currentSeason) {
-        return this.currentSeason
-      } else {
-        return []
-      }
-    },
     currentProductions: function () {
       if(this.currentSeason) {
-        return this.thisSeason.productions
+        return this.currentSeason.productions
       } else {
         return null
       }

@@ -29,10 +29,11 @@
       </div>
     </div>
     <br />
-    
-    <button class="button-right" v-if="mode === 'edit'" @click="updateSeason">Update Season Info</button>
-		<button class="button-right button-right-margin" @click="saveSeason">Save & Add Productions <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-    <span class="button-right text-button button-right-margin cancel-button" v-if="mode === 'edit'" @click="reviewSeason">Review Season </span>
+
+    <button class="button-right" @click="saveSeason">Save & Add Productions <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+    <button class="button-right button-right-margin" v-if="mode === 'edit'" @click="updateSeason">Save Season Info</button>
+		
+    <span class="button-right text-button button-right-margin cancel-button" v-if="mode === 'edit'" @click="reviewSeason">cancel </span>
   </div>
 </template>
 
@@ -113,7 +114,7 @@ export default {
 
 .cancel-button {
   min-height: 30px;
-  padding: 3px 10px;
+  padding: 7px 10px 0px;
   line-height: 24px;
 }
 </style>

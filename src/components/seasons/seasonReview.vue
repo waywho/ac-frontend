@@ -13,7 +13,7 @@
       <success-warning-notice :messaging="messaging"></success-warning-notice>
         <br />
       <button v-if="mode !== 'edit'" class="button-right" @click="saveSeason">Save Season</button>
-      <button class="button-right button-right-margin" @click="productionNew">Add Another Production</button>
+      <button class="button-right button-right-margin" @click="productionNew">Add New Production</button>
       <span @click="cancelSeason" class="small text-button button-right button-right-margin cancel-button">cancel</span>
   </div>
 </template>
@@ -70,7 +70,7 @@ export default {
 
 .cancel-button {
 	min-height: 30px;
-	padding: 3px 10px;
+	padding: 7px 10px 0px;
 	line-height: 24px;
 }
 
