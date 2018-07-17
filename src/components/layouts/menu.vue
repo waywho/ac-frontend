@@ -18,7 +18,6 @@
 		<div class="medium social-heading is-gold"><b>Follow Us</b></div>
 		<ul class="menu-list non-list">
 			<li class="small"><a href="https://www.facebook.com/operaop/" target="_blank" rel="nofollow">facebook</a></li>
-		    <li class="small"><a href="https://twitter.com/artistcenterapp" target="_blank" rel="nofollow">twitter</a></li>
 		    <li class="small"><a href="https://www.instagram.com/artistcenterapp/" target="_blank" rel="nofollow">instagram</a></li>
 
 		</ul>
