@@ -24,7 +24,7 @@
 		    <div class="col-sm-12 col-xs-12">
 		    	<span class="medium is-midgray">socials</span>
 		    	<ul>
-		    		<li class="is-lightgray small"><a href="https://www.facebook.com/operaop/" target="_blank" class="is-midgray" rel="nofollow">facebook</a></li>
+		    		<li class="is-lightgray small"><a href="https://www.facebook.com/ArtistCenterNetwork/" target="_blank" class="is-midgray" rel="nofollow">facebook</a></li>
 		    		<li class="is-lightgray small"><a href="https://www.instagram.com/artistcenterapp/" target="_blank" class="is-midgray" rel="nofollow">instagram</a></li>
 		    	</ul>
 		    </div>

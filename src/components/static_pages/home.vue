@@ -7,7 +7,7 @@
 
                 <div class="info-text-controls">
                 	<div class="button-package"> 
-	                	<router-link to="/signup" rel="noopener nofollow" class="signup-button is-gold strong">Sign Up Now</router-link>
+	                	<router-link to="/" rel="noopener nofollow" class="signup-button is-gold strong">Sign Up Now</router-link>
 	               		<hr class="signup-underline" />
 	            	</div>
             	</div>
