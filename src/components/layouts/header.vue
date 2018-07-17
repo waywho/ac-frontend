@@ -4,8 +4,8 @@
       <ul class="non-list header-items header-items-left">
         <li class="logo" v-if="!landingLogo">
           <router-link to="/">
-            <img :src="require('@/assets/images/artistcenter-logo.png')" alt="artistcenter logo" class="logo-mobile" />
-            <img :src="require('@/assets/images/ac-logo-horizontal.svg')" alt="artistcenter logo" class="logo-desktop" />
+            <img :src="require('@/assets/images/ac-logo-mobile-beta.svg')" alt="artistcenter logo" class="logo-mobile" />
+            <img :src="require('@/assets/images/ac-logo-horizontal-beta.svg')" alt="artistcenter logo" class="logo-desktop" />
           </router-link>
         </li>
         
@@ -35,7 +35,7 @@
     <div class="home-logo" v-if="landingLogo">
       <router-link to="/">
         <img :src="require('@/assets/images/ac-logo-vertical.svg')" alt="artist center logo" class="home-mobile-logo" />
-        <img :src="require('@/assets/images/ac-logo-horizontal.svg')" alt="artist center logo" class="home-desktop-logo" /></router-link>
+        <img :src="require('@/assets/images/ac-logo-horizontal-beta.svg')" alt="artist center logo" class="home-desktop-logo" /></router-link>
 
     </div>
     <div class="xs-search">
