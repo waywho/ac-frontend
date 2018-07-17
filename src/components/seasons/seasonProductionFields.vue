@@ -259,7 +259,7 @@ export default {
   			this.currentProduction = this.production
   		}
 
-      if(this.production.composersArray) {
+      if(this.production) {
         this.production.composers = this.production.composersArray.join(', ')
       }
   }
