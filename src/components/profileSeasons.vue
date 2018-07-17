@@ -6,7 +6,7 @@
         </ul>
         <div class="season-heading"> 
           <h2 class="season-title">Company Seasons</h2>
-          <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonAdd">add</span>
+          <span v-if="authorizedUser" class="smaller text-button season-edit" @click="seasonNew">add</span>
         </div>
       </div>
       
@@ -75,7 +75,7 @@ export default {
     }
   },
   methods: {
-    seasonAdd: function () {
+    seasonNew: function () {
       this.editSeason = null
       this.editSeasonId = null
       this.editProductions = null
@@ -171,6 +171,7 @@ export default {
   width: auto;
   flex-wrap: nowrap;
   overflow-x: scroll;
+  padding: 10 px 0px;
 }
 
 .production-block {
@@ -210,6 +211,10 @@ export default {
   margin-bottom: 10px;
 }
 
+
+.selection-text {
+  margin-left: 0;
+}
 
 
 @media all and (min-width: $bp-med) {

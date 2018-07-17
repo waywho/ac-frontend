@@ -43,6 +43,7 @@ import opportunityComplete from './opportunityComplete';
 import opportunityBack from './opportunityBack';
 import countriesList from 'countries-list';
 import progressBar from '@/components/progressBar';
+import opportunityFilterMixin from '@/mixins/opportunityFilterMixin';
 // import axios from 'axios'; // for dev
 
 export default {
@@ -55,9 +56,7 @@ export default {
     'opportunity-back': opportunityBack,
     'progress-bar': progressBar
   },
-  props: {
-   
-  },
+  mixins: [opportunityFilterMixin],
   data () {
     return {
       currentStep: 0,
@@ -65,10 +64,6 @@ export default {
       countries: null,
       opportunity: {},
       postedOpportunity: {},
-      opportunityTypes: null,
-      categories: null,
-      subcategories: null,
-      paymentTypes: null,
       mode: 'inputMode',
       setupSteps: [{heading: 'Create Opportunity', component: 'opportunity-filters'}, {heading: 'Opportunity Details', component: 'opportunity-details'}, {heading: 'Review Details', component: 'opportunity-review'}, {heading: null, component: 'opportunity-complete'}]
     }
@@ -94,9 +89,6 @@ export default {
    }
   },
   methods: {
-    changeSubcategories: function(selected) {
-      this.subcategories = this.$store.state.categorySubcategories[selected]
-    },
     changeCountries: function(continent) {
         let countryList = []
         for (var country in countriesList.countries) {
@@ -135,9 +127,6 @@ export default {
     }
   },
   created() {
-    this.opportunityTypes = this.$store.state.opportunityTypes
-    this.categories = Object.keys(this.$store.state.categorySubcategories)
-    this.paymentTypes = this.$store.state.paymentTypes
   }
 }
 </script>

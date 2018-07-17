@@ -5,8 +5,8 @@
       <b>publish date:</b> {{season.published_at | moment("MMMM D YYYY")}} 
       <p><b>Productions:</b>
             <ul>
-              <li v-for="(production, index) in productions" :key="index">
-                {{production.name}}, from {{production.dates[0].date}} to {{production.dates[production.dates.length - 1].date}} <span class="small is-darkgray text-button" @click="editProduction(index)">edit</span>
+              <li v-for="(production, key, index) in productions" :key="key">
+                {{production.name}}, from {{production.dates[0].date}} to {{production.dates[production.dates.length - 1].date}} <span class="small is-darkgray text-button" @click="editProduction(key)">edit</span>
               </li>
             </ul>
         </p>
@@ -25,7 +25,7 @@ export default {
   name: 'seasonReview',
   props: {
   	season: Object,
-  	productions: Array,
+  	productions: Object,
   	mode: String,
   	messaging: {
   		type: Object,
@@ -50,8 +50,8 @@ export default {
   	editSeason: function() {
   		this.$emit('season-edit')
   	},
-  	editProduction: function(index) {
-  		this.$emit('production-edit', index)
+  	editProduction: function(key) {
+  		this.$emit('production-edit', key)
   	},
   	cancelSeason: function() {
   		this.$emit('cancel-season')

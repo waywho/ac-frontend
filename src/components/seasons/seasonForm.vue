@@ -10,6 +10,7 @@
                   :productions="productions" 
                   :index="currentProductionIndex"
                   :mode="mode"
+                  :current-season-id="currentSeasonId"
                   :production-mode="productionMode"
                   :messaging="messaging" 
                   @season-save="saveSeason()" 
@@ -56,7 +57,7 @@ export default {
       required: false
     },
     editProductions: {
-      type: Array,
+      type: Object,
       required: false
     },
     step: {
@@ -74,13 +75,13 @@ export default {
       currentStep: 0,
       currentProduction: null,
       currentProductionIndex: null,
-      component: "",
       currentSeason: {
         name: null,
         from: null,
         to: null,
         published_at: null,
       },
+      currentSeasonId: null,
       productions: [],
       steps: [{heading: "Add Season", component: "season-fields"}, {heading: "Add Productions", component: "season-production-fields"}, {heading: "Review/Edit Season", component: "season-review"}]
     }
@@ -90,7 +91,7 @@ export default {
       return this.steps[this.currentStep].heading
     },
     currentComponent: function() {
-      return this.component = this.steps[this.currentStep].component
+      return this.steps[this.currentStep].component
     }
   },
   methods: {
@@ -106,16 +107,13 @@ export default {
       this.productionMode = 'new'
       this.currentStep = 1
     },
-    addSeason: function () {
-      // console.log(object)
-      this.currentStep += 1
-    },
     saveSeason: function () {
       // alert('save season')
       // console.log(this.currentSeason)
-
       this.$store.dispatch('createSeason', {season: this.currentSeason})
         .then(res => {
+          this.currentSeasonId = res.seasonId
+          this.currentStep += 1
           // console.log(res)
           // this.$emit('close')
         })
@@ -140,29 +138,31 @@ export default {
       this.$emit('close')
     },
     saveProduction: function (object) {
-      this.productions.push(object)
+
         this.messaging.message = object.name + " production is added"
         this.messaging.messageType = 'success'
       // console.log('before sent', this.currentSeason)
-      this.$store.dispatch('createProduction', {seasonId: this.seasonId, production: object}).then(res => {
+      this.$store.dispatch('createProduction', {seasonId: this.currentSeasonId, production: object}).then(res => {
+        object['id'] = res.productionId
+        this.productions.push(object)
         this.currentStep = 2
       })
       
     },
-    editProduction: function (index) {
-      this.currentProduction = this.productions[index]
-      this.currentProductionIndex = index
+    editProduction: function (key) {
+      this.currentProduction = this.productions[key]
+      this.currentProductionIndex = key
       this.currentStep = 1
     },
     updateProduction: function(object) {
-      this.productions[object.index] = object.production
+      this.productions[object.key] = object.production
         this.messaging.message = object.production.name + " production is updated"
         this.messaging.messageType = 'success'
       this.currentStep = 2
     },
     updateEditProduction: function(object) {
-      this.productions[object.index] = object.production
-      this.$store.dispatch('updateProduction', {seasonId: this.seasonId, productionIndex: object.index, production: object.production}).then(res => {
+      this.productions[object.key] = object.production
+      this.$store.dispatch('updateProduction', {seasonId: this.seasonId, productionIndex: object.key, production: object.production}).then(res => {
           this.messaging.message = object.production.name + " production is updated"
           this.messaging.messageType = 'success'
           this.currentStep = 2

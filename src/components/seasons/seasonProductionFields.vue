@@ -111,7 +111,8 @@ export default {
   		type: Object,
   		required: false
   	},
-  	index: Number,
+    currentSeasonId: String,
+  	productionKey: String,
     productionMode: String
   },
   components: {
@@ -244,10 +245,10 @@ export default {
   		this.currentProduction[fields].splice(index, 1);
   	},
   	productionUpdate: function() {
-  		this.$emit('production-update', {index: this.index, production: this.currentProduction})
+  		this.$emit('production-update', {key: this.productionKey, production: this.currentProduction})
   	},
     productionEditUpdate: function() {
-      this.$emit('production-edit-update', {index: this.index, production: this.currentProduction})
+      this.$emit('production-edit-update', {key: this.productionKey, production: this.currentProduction})
     },
   	cancelProduction: function() {
   		this.$emit('cancel-production')

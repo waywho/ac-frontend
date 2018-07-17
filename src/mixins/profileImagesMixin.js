@@ -1,4 +1,4 @@
-export default{
+export default {
 	methods: {
 		onPickFile(refTarget) {
 			this.$refs[refTarget].click()

@@ -30,7 +30,7 @@ const router = new Router({
         return {x: 0, y: 0};
     },
     routes: [
-        // { path: '/home', name: 'home', component: home},
+        { path: '/home', name: 'home', component: home},
         { path: '/', redirect: '/signup' }, //name: 'home', component: home },
         { path: '/memberships', name: 'membershipDetails', component: membershipDetails},
         { path: '/about/:page', name: 'terms', component: pageStatic},
