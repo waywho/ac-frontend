@@ -159,7 +159,7 @@ export default {
 #media-panel {
   height: 100%;
   width: auto;
-  margin-left: 7px;
+  // margin-left: 7px;
   background-color: #fff;
   padding: 0px $body-padding-small 16px;
   vertical-align: top;

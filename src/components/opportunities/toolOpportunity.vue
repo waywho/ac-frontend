@@ -56,7 +56,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	padding: 0px $body-padding-small;
+	padding: 0px $body-padding-small 25px;
 }
 
 .start-options {

@@ -253,8 +253,7 @@ export default {
 }
 
 .tool-panel-public, .tool-panel-auth {
-  width: 100%;
-  max-width: 100%;
+  width: auto;
   height: 100%;
   min-height: 100%;
   flex-basis: auto;
@@ -338,68 +337,26 @@ export default {
   }
 
   .toolbox-public {
-    width: 20%;
+    width: 19%;
     padding-right: 0rem;
     height:  $tool-panel-height;
     min-height: $tool-panel-height;
-    min-width: auto;
     order: 2;
   }
 
   .tool-panel-auth {
-    width: 70%;
+    width: 67%;
     order: 2;
   }
 
   .toolbox-auth {
-    width: 30%;
+    width: 32%;
     padding-right: 0rem;
     height:  $tool-panel-height;
     min-height: $tool-panel-height;
-    min-width: auto;
     order: 2;
   }
 
-}
-
-@media all and (min-width: $bp-small) {
-  .profile-tools {
-    height: $tool-panel-height;
-    min-height: $tool-panel-height;
-    flex-direction: row;
-    flex-wrap: nowrap;
-  }
-
-  .tool-panel-public {
-     width: 80%;
-     order: 1;
-  }
-  .toolbox-public {
-    grid-template-columns: 1fr; 
-  }
-
-  .toolbox-public {
-    width: 20%;
-    padding-right: 0rem;
-    height:  $tool-panel-height;
-    min-height: $tool-panel-height;
-    min-width: auto;
-    order: 2;
-  }
-
-  .tool-panel-auth {
-    width: 63%;
-    order: 2;
-  }
-
-  .toolbox-auth {
-    width: 36%;
-    padding-right: 0rem;
-    height:  $tool-panel-height;
-    min-height: $tool-panel-height;
-    min-width: auto;
-    order: 2;
-  }
 }
 
 </style>

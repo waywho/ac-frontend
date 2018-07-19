@@ -514,7 +514,7 @@ export default {
 
 
 
-@media all and (min-width: $bp-small) {
+@media all and (min-width: $bp-med) {
 	.last-message {
 		display: block;
 	}
