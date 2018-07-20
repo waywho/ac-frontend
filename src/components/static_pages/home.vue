@@ -41,7 +41,7 @@
                 <div class="about-text-content">
                 	<transition name="fade-long" mode="out-in">
                     <div v-for="(about, index) in aboutText" v-if="aboutPanel === index + 1":key="'aboutText' + index">
-                        <h3 class="h2 is-gold slider-heading">{{about.heading}}</h3>
+                        <span class="h2 is-gold slider-heading">{{about.heading}}</span>
                         <p class="f-lead large is-midgray">{{about.body}}</p>
                         <ul class="arrow-list lh-list">
                             <li v-for="point in about.points"> 
@@ -107,7 +107,7 @@
 	        	</div>
 	        </div>
            	<div class="hero-image-3 image-start-right" id="image-2">
-                <img alt="An opera singer&#39;s account page in the Artist.Center app." :src="require('@/assets/images/hero-feature.png')" />
+                <img alt="An opera singer&#39;s account page in the Artist.Center app." :src="require('@/assets/images/hero-features.png')" />
             </div>
         </section>
         <section>
@@ -272,8 +272,8 @@ figure {
 }
 
 .image-start-right {
-    transform: translateX(105%);
-    -webkit-transform: translateX(105%);
+    transform: translateX(150%);
+    -webkit-transform: translateX(150%);
 }
 
 .slide-in {
@@ -367,7 +367,7 @@ li.slick-active{
 		max-width: 20rem;
 	}
 
-	.heading {
+	.heading, .slider-heading {
 		font-size: 3rem;
 	}
 
@@ -408,9 +408,9 @@ li.slick-active{
 	}
 
 	.hero-text {
-		width: 50%;
+		width: 60%;
 		flex-grow: 1;
-		max-width: 35rem;
+		max-width: 48rem;
 		flex-basis: auto;
 	}
 
