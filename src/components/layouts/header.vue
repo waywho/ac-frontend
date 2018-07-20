@@ -9,13 +9,13 @@
           </router-link>
         </li>
         
-        <li class="search header-item-space" id="search-element">
-          <input v-on:keyup.enter="searchResults($event.target.value)" v-model="profileSearch" type="search" id="search" placeholder="search profiles" />
-        </li>
+
       </ul>
 
       <ul class="non-list header-items header-items-right">
-        
+        <li class="search header-item-space" id="search-element">
+          <input v-on:keyup.enter="searchResults($event.target.value)" v-model="profileSearch" type="search" id="search" placeholder="search profiles" />
+        </li>
         <li v-if="signedIn" class="notification-icon" v-on:click="getNotifications">
           <app-notification-bubble v-if="notificationAlert" class="notification-bubble"></app-notification-bubble>
           <i class="fa fa-bell-o" aria-hidden="true"></i>
@@ -190,7 +190,8 @@ export default {
 }
 
 .logo img {
-  width: 75px;
+  width: auto;
+  height: 50px;
 }
 
 .logo-mobile {
@@ -352,12 +353,12 @@ export default {
   }
 
   .header-items-left {
-    width: 70%;
+    width: 40%;
     justify-content: flex-start;
   }
 
   .header-items-right {
-    width: 30%;
+    width: 60%;
     justify-content: flex-end;
   }
 
@@ -371,10 +372,6 @@ export default {
     display: block;
   }
 
-  .logo img {
-    min-width: 228px;
-    width: 228px;
-  }
 
   // logos on home/landing and static pages
 
@@ -396,9 +393,6 @@ export default {
     margin: 0px auto;
   }
   
-  .logo img {
-    width: 100px;
-  }
   .xs-search {
     display: none;
   }

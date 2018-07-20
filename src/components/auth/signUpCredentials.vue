@@ -1,5 +1,9 @@
 <template>
   <form class="signup-form" v-on:submit.prevent="onSignUp">
+    <div>
+      <span class="small is-gold">Artist.Center is currently in its BETA phase of production. By signing up, I understand that I am using Artist.Center in development.</span>
+    </div>
+    <br />
   	<input type="email" class="signup-input" name="profileEmail" placeholder="Email Address" v-model="credentials.email" @input="$emit('update:email', credentials.email)" @focus="clearMessage"/>
   	<input type="password" class="signup-input" name="profilePassword" placeholder="Password with 6 or more characters" v-model="credentials.password" @focus="clearMessage"/>
     <input type="password" class="signup-input" name="confirmPassword" placeholder="Confirm Password" v-model="credentials.confirmPassword" @focus="clearMessage"/>
@@ -7,6 +11,7 @@
           <input id='consent' type='checkbox' v-model='credentials.consent' @input.lazy="$emit('update:consent', credentials.consent)" />
           <label for='consent'><span></span>I agree to receiving site updates and related news.</label>
     </div>
+
     <success-warning-notice v-if="messageShow" :messaging="messaging" class="signup-input"></success-warning-notice>
     <div class="button-container">
       <button type="submit" class="signup-button">Sign Up</button>
