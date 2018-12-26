@@ -12,7 +12,7 @@
       <success-warning-notice v-if="messageShow" :messaging="messaging" class="form-element"></success-warning-notice>
 	  	<div class="password form-element is-darkgray text-button" @click="resetPassword">Forgot Password</div>
 	  	<div>
-        <button type="submit" class="button sign-in-button">Sign In</button>
+        <button type="submit" class="button signin-button"><i v-if="loading" class="fa fa-circle-o-notch fa-spin signin-spinner"></i><span v-if="!loading">Sign In</span></button>
       </div>
   	</form>
   	<div slot='footer' class="modal-footer is-darkgray small">@Artist.Center 2017. All Rights Reserved.</div>
@@ -23,6 +23,7 @@
 import modal from '@/components/modal';
 import successWarningNotice from '@/components/successWarningNotice';
 
+
 export default {
   name: 'signIn',
   components: {
@@ -31,6 +32,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
      	messageShow: false,
      	remember: true,
      	email: null,
@@ -49,14 +51,17 @@ export default {
   methods: {
   	onSignIn: function(){
       this.messageShow = false
+      this.loading = true
   		this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
         .then(res => {
           this.$store.dispatch('clearingMessage')
           this.$router.push({name: 'profiles', params: { profileId: res.uid }})
+          this.loading = false
           this.$emit('close')
         },
           error => {
             this.messageShow = true
+            this.loading = false
           })
   	},
   	resetPassword: function() {
@@ -117,10 +122,16 @@ export default {
 	width: 80%;
 }
 
-.sign-in-button {
+.signin-button {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  min-width: 80px;
+}
+
+.signin-spinner {
+  color: white;
+  font-size: 1rem;
 }
 
 </style>

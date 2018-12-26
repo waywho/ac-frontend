@@ -74,6 +74,8 @@ export default {
   // display: flex;
   // flex-direction: column;
   // justify-content: space-between;
+  overflow-y: scroll;
+  height: 50%;
 }
 
 .post-review {
@@ -97,7 +99,7 @@ export default {
   margin-right: 40px;
 }
 
-.bottom-button:hover {
+.bottom-button-review:hover {
   background: #ecddba;
   color: white;
 }

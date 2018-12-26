@@ -189,13 +189,11 @@ export default {
   flex-basis: auto;
 }
 
-.logo img {
-  width: auto;
-  height: 50px;
-}
 
 .logo-mobile {
   display: block;
+  width: auto;
+  height: 50px;
 }
 
 .logo-desktop {
@@ -364,12 +362,19 @@ export default {
 
   // regular logo
 
+  li.logo {
+    width: 100%;
+  }
+
   .logo-mobile {
     display: none;
   }
 
   .logo-desktop {
     display: block;
+    width: 100%;
+    height: auto;
+    max-height: 50px;
   }
 
 
@@ -400,7 +405,8 @@ export default {
 
   #search-element {
     display: block;
-    width: 50%;
+    width: 40%;
+    max-width: 224px;
   }
 
   .header-item-space {

@@ -177,7 +177,7 @@ export default {
 
 @media all and (min-width: $bp-med) {
   .create-panel {
-    height: 320px;
+    height: 325px;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;

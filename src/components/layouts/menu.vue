@@ -13,16 +13,17 @@
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/opportunities">Opportunity Board</router-link></li>
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/about/center">About</router-link></li>
 			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/memberships">Memberships</router-link></li>
+			<li v-on:click="toggleMenu()" class="selection-text-vertical medium"><router-link to="/about/terms">Terms & Conditions</router-link></li>
 		</ul>
 
-		<div class="medium social-heading is-gold"><b>Follow Us</b></div>
+		<div class="large strong social-heading is-gold"><b>Follow Us</b></div>
 		<ul class="menu-list non-list">
-			<li class="small"><a href="https://www.facebook.com/ArtistCenterNetwork/" target="_blank" rel="nofollow">facebook</a></li>
-		    <li class="small"><a href="https://www.instagram.com/artistcenterapp/" target="_blank" rel="nofollow">instagram</a></li>
+			<li v-on:click="toggleMenu()" class="medium"><a href="https://www.facebook.com/ArtistCenterNetwork/" target="_blank" rel="nofollow">facebook</a></li>
+		    <li v-on:click="toggleMenu()" class="medium"><a href="https://www.instagram.com/artistcenterapp/" target="_blank" rel="nofollow">instagram</a></li>
 
 		</ul>
 		<div class="is-lightgray copy-right-container">
-			<p><router-link to="/about/terms">Terms & Support</router-link></p>
+			
 			<hr class="copy-right" />
 			<span>@Copyright Artist Center 2017</span>
 		</div>
