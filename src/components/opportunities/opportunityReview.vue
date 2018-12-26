@@ -33,7 +33,7 @@
 		<div class="is-darkgray bottom-button-review" @click="postOpportunity">
      		<i class="fa fa-chevron-right" aria-hidden="true" v-if="!loading"></i>
         <i v-if="loading" class="fa fa-circle-o-notch fa-spin"></i>
-        Post opportunity Now
+        Post opportunity
    	</div>
   </div>
 </template>
