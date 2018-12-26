@@ -70,13 +70,7 @@ export default {
 	padding-right: 0px;
 }
 
-.review-panel {
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: space-between;
-  overflow-y: scroll;
-  height: 50%;
-}
+
 
 .post-review {
 	padding-left: 0px;
@@ -105,7 +99,13 @@ export default {
 }
 
 @media screen and (max-width: 46rem) {
-
+  .review-panel {
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: space-between;
+    overflow-y: scroll;
+    height: 50%;
+  }
 }
 
 </style>
