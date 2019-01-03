@@ -15,7 +15,7 @@
     	</div>
   		
   		<i v-if="loading" class="fa fa-circle-o-notch fa-spin loading-spinner"></i>
-	  	<transition-group tag="div" class="opportunity-list row center-md center-lg top-md top-lg" v-on:before-enter="beforeListEnter" v-on:enter="listEnter" v-bind:css="false">
+	  	<transition-group tag="div" class="opportunity-items row center-md center-lg top-md top-lg" v-on:before-enter="beforeListEnter" v-on:enter="listEnter" v-bind:css="false">
 	  				
 	  		<div class="opportunity-post col-md-12 col-lg-12 row" v-for="(op, index) in opportunities" :key="op.id"  v-bind:data-index="index" v-on:click="showOp(op)">	
 	  			
@@ -120,7 +120,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../styles/style-variables';
 
-.opportunity-list {
+.opportunity-items {
 	max-height: 800px;
 	min-height: 200px;
 	position: relative;
