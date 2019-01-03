@@ -115,7 +115,7 @@ export default {
 	  next(vm => {
 	    // access to component instance via `vm`
 	    // console.log('beforeRouteEnter')
-	    let user = vm.firebaseApp.auth().currentUser
+	    let user = firebaseApp.auth().currentUser
         if(user) {
             // console.log('user')
             // user signed in proceed
